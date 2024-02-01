@@ -38,9 +38,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Login"
-        android:textSize="20sp"
-        android:textColor="#ffffff">
-    </Button>
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
+
+    <Button
+        android:id="@+id/main_logout_btn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Signout"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
 
     <Button
         android:id="@+id/main_signup_btn"
