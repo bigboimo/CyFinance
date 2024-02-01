@@ -13,7 +13,9 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView messageText;   // define message textview variable
+    private TextView messageText;
+    private TextView extraText;
+    private TextView newText; // define message textview variable
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,8 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
         /* initialize UI elements */
         messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        messageText.setText("Hello there! General Kenobi! You are a bold one!");
-        messageText.setTextColor(0x00D800FF);
+        messageText.setText("Hello there!");
+        extraText = findViewById(R.id.extra_txt);
+        extraText.setText("General Kenobi!");
 
     }
 }

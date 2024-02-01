@@ -8,13 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;     // define message textview variable
     private Button counterButton;     // define counter button variable
 
+    private Button nextBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
         /* initialize UI elements */
         messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        counterButton = findViewById(R.id.main_counter_btn);// link to counter button in the Main activity XML
+        counterButton = findViewById(R.id.main_btn);
+        nextBtn = findViewById(R.id.next_page_btn); // link to counter button in the Main activity XML
 
         /* extract data passed into this activity from another activity */
         Bundle extras = getIntent().getExtras();
@@ -40,6 +40,16 @@ public class MainActivity extends AppCompatActivity {
 
                 /* when counter button is pressed, use intent to switch to Counter Activity */
                 Intent intent = new Intent(MainActivity.this, CounterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /* when counter button is pressed, use intent to switch to Counter Activity */
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
