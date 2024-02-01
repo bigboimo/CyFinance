@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if(extras == null) {
             messageText.setText("Home Page");
-            usernameText.setVisibility(View.INVISIBLE);
-            logoutButton.setVisibility(View.INVISIBLE);// set username text invisible initially
+            usernameText.setVisibility(View.INVISIBLE); // set username text invisible initially
+            logoutButton.setVisibility(View.INVISIBLE);// set logout button to invisible initially
         } else {
             messageText.setText("Welcome");
             usernameText.setText(extras.getString("USERNAME")); // this will come from LoginActivity
-            loginButton.setVisibility(View.INVISIBLE);
-            logoutButton.setVisibility(View.VISIBLE);// set login button invisible
+            loginButton.setVisibility(View.INVISIBLE); // set login button invisible
+            logoutButton.setVisibility(View.VISIBLE);// set logout button visible
             signupButton.setVisibility(View.INVISIBLE);             // set signup button invisible
         }
 
