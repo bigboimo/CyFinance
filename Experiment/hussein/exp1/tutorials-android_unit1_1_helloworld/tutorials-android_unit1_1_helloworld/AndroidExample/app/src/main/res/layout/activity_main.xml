@@ -18,4 +18,19 @@
         android:textColor="#000000" >
     </TextView>
 
+    <TextView
+        android:id="@+id/textHusseinstarting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Demo1"
+        android:textColor="#111111"
+        android:textSize="50dp"
+
+        />
+
+
+
 </androidx.appcompat.widget.LinearLayoutCompat>
