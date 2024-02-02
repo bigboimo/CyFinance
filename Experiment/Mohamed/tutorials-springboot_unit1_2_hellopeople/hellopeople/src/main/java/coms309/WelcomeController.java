@@ -14,6 +14,12 @@ class WelcomeController {
 
     @GetMapping("/")
     public String welcome() {
-        return "Hello and welcome to COMS 309";
+        System.out.println("This is just extras");
+        return "Hello and welcome to COMS 309 THIS IS A FUN CLAS" + System.lineSeparator() + "It's a lot of work and practice but worth it";
+    }
+
+    @GetMapping("/69")
+    public void easter() {
+        System.out.println("Another easter buddy!");
     }
 }
