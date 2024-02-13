@@ -1,14 +1,12 @@
 package onetoone.Users;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import onetoone.Laptops.Laptop;
+import onetoone.Projects.Project;
+
+import java.util.*;
 
 /**
  * 
@@ -17,6 +15,7 @@ import onetoone.Laptops.Laptop;
  */ 
 
 @Entity
+@Table(name = "user")
 public class User {
 
      /* 
@@ -40,10 +39,14 @@ public class User {
     @JoinColumn(name = "laptop_id")
     private Laptop laptop;
 
+    @OneToMany
+    private List<Project> projects;
+
     public User(String name, String emailId) {
         this.name = name;
         this.emailId = emailId;
         this.ifActive = true;
+        this.projects = new ArrayList<>();
     }
 
     public User() {
@@ -90,5 +93,10 @@ public class User {
     public void setLaptop(Laptop laptop){
         this.laptop = laptop;
     }
-    
+
+    public List<Project> getProjects() {return this.projects;}
+
+    public void setProjects(List<Project> projects) {this.projects = projects;}
+
+    public void addProject(Project project) {this.projects.add(project);}
 }
