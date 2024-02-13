@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#F1BE48"
+    android:backgroundTint="#BBBBBB"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -13,10 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="0dp"
         android:text="Welcome to"
         android:textColor="#fc0303"
-        android:textSize="30dp"></TextView>
+        android:textSize="30dp"
+        android:textStyle="bold"></TextView>
 
     <TextView
         android:id="@+id/main_msg_name_txt"
@@ -24,28 +25,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
         android:layout_marginTop="0dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="250dp"
         android:text="CyFinance"
         android:textColor="#F1BE48"
-        android:textSize="30dp"></TextView>
-
-    <TextView
-        android:id="@+id/main_username_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="100dp"
-        android:text="{{username}}"
-        android:textColor="#000000"
-        android:textSize="30dp"></TextView>
+        android:textSize="50dp"
+        android:textStyle="bold|italic"></TextView>
 
 
     <Button
         android:id="@+id/main_login_btn"
-        android:layout_width="150dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginLeft="0dp"
+        android:layout_marginBottom="0dp"
         android:backgroundTint="#C8102E"
         android:text="Login"
         android:textColor="#ffffff"
@@ -53,9 +46,11 @@
 
     <Button
         android:id="@+id/main_signup_btn"
-        android:layout_width="150dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="#C8102E"
         android:text="Signup"
         android:textColor="#ffffff"
