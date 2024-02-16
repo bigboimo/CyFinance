@@ -1,0 +1,30 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color white
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+id login_login_btn
+id login_password_edt
+id login_signup_btn
+id login_username_edt
+id main_login_btn
+id main_msg_name_txt
+id main_msg_welcome_txt
+id main_signup_btn
+id main_username_txt
+id signup_confirm_edt
+id signup_login_btn
+id signup_password_edt
+id signup_signup_btn
+id signup_username_edt
+layout activity_login
+layout activity_main
+layout activity_signup
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+style Base.Theme.AndroidExample
+style Theme.AndroidExample
+xml backup_rules
+xml data_extraction_rules
