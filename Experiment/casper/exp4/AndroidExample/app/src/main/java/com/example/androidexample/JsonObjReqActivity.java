@@ -25,7 +25,7 @@ public class JsonObjReqActivity extends AppCompatActivity {
     private Button btnJsonObjReq;
     private TextView msgResponse;
 
-    private static final String URL_JSON_OBJECT = "https://jsonplaceholder.typicode.com/users/1";
+    private static final String URL_JSON_OBJECT = "https://d554d75c-1592-4b85-af00-063902ea36df.mock.pstmn.io";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
