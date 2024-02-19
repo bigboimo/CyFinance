@@ -1,6 +1,6 @@
 package onetoone;
 
-import onetoone.Cars.Cars;
+import onetoone.Cars.CarsRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +11,9 @@ import onetoone.Laptops.Laptop;
 import onetoone.Laptops.LaptopRepository;
 import onetoone.Users.User;
 import onetoone.Users.UserRepository;
+import onetoone.Cars.Cars;
+import onetoone.Cars.CarsRepository;
+
 
 /**
  * 
@@ -31,11 +34,12 @@ class Main {
      * 
      * @param userRepository repository for the User entity
      * @param laptopRepository repository for the Laptop entity
+     * @param carsRepository repository for the Cars entity
      * Creates a commandLine runner to enter dummy data into the database
      * As mentioned in User.java just associating the Laptop object with the User will save it into the database because of the CascadeType
      */
     @Bean
-    CommandLineRunner initUser(UserRepository userRepository, LaptopRepository laptopRepository) {
+    CommandLineRunner initUser(UserRepository userRepository, LaptopRepository laptopRepository, CarsRepository carsRepository) {
         return args -> {
             User user1 = new User("John", "john@somemail.com");
             User user2 = new User("Jane", "jane@somemail.com");
