@@ -8,17 +8,32 @@
     android:orientation="vertical"
     android:background="#2A2A2A">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CyFinance"
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="80dp"
-        android:textColor="#F1BE48"
-        android:textSize="50dp"
-        android:textStyle="bold|italic">
-    </TextView>
+        android:layout_marginLeft="35dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cy"
+            android:textColor="#C8102E"
+            android:textSize="50dp"
+            android:textStyle="bold|italic"></TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Finance"
+            android:textColor="#F1BE48"
+            android:textSize="50dp"
+            android:textStyle="bold|italic"></TextView>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -31,10 +46,10 @@
             android:id="@+id/signup_username_edt"
             android:layout_width="wrap_content"
             android:layout_height="70dp"
-            android:textSize="30dp"
             android:hint="Email"
             android:textColor="#FFFFFF"
-            android:textColorHint="#808080"></EditText>
+            android:textColorHint="#808080"
+            android:textSize="30dp"></EditText>
 
     </LinearLayout>
 
