@@ -13,8 +13,6 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;   // define message textview variable
-    private TextView usernameText; // define username textview variable
-    private TextView name;
     private Button loginButton;     // define login button variable
     private Button signupButton;    // define signup button variable
 
@@ -35,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
         if(extras == null) {
             messageText.setText("CyFinance");// set username text invisible initially
         } else {
-            messageText.setText("Welcome");
-            usernameText.setText(extras.getString("USERNAME")); // this will come from LoginActivity
+            messageText.setText("Welcome");// this will come from LoginActivity
             loginButton.setVisibility(View.INVISIBLE);              // set login button invisible
             signupButton.setVisibility(View.INVISIBLE);             // set signup button invisible
         }
