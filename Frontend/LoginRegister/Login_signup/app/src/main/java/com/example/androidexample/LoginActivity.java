@@ -52,6 +52,7 @@ LoginActivity extends AppCompatActivity {
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);  // go to SignupActivity
+
             }
         });
     }
