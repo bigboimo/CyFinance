@@ -44,7 +44,7 @@ public class User {
         return "{" +
                 "\"name\":\"" + name + '\"' +
                 ", \"email\":\"" + email + '\"' +
-                ", \"password:\"" + password + '\"' +
+                ", \"password\":\"" + password + '\"' +
                 ", \"role\":\"" + role + '\"' +
                 '}';
     }
