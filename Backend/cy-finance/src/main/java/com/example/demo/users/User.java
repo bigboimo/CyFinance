@@ -1,11 +1,38 @@
 package com.example.demo.users;
 
+import com.example.demo.earnings.Earnings;
+import jakarta.persistence.*;
+
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     private String name;
     private String email;
     private String password;
     private String role;
+
+    @OneToOne
+    @JoinColumn
+    private Earnings earnings;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Earnings getEarnings() {
+        return earnings;
+    }
+
+    public void setEarnings(Earnings earnings) {
+        this.earnings = earnings;
+    }
 
     public String getName() {
         return name;

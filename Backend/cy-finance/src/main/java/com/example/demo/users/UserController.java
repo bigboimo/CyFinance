@@ -1,6 +1,9 @@
 package com.example.demo.users;
 
+import com.example.demo.earnings.Earnings;
+import com.example.demo.earnings.EarningsRepository;
 import com.example.demo.util.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -9,6 +12,9 @@ import java.util.HashMap;
 public class UserController {
 
     Response<User> users = new Response<>();
+
+    @Autowired
+    EarningsRepository earningsRepository;
 
     @GetMapping("/users")
     public String getUsers(){
@@ -65,6 +71,18 @@ public class UserController {
         response.put("message", "User modified");
         return response.toString();
     }
+//Can be uncommented when User Repo is up
+//    @PutMapping("/users/{userId}/earnings/{earningsId}")
+//    String assignEarningsToUser(@PathVariable int userId,@PathVariable int earningsId){
+//        User user = userRepository.findById(userId);
+//        Earnings earnings = earningsRepository.findById(earningsId);
+//        if(user == null || earnings == null)
+//            return failure;
+//        earnings.setUser(user);
+//        user.setEarnings(earnings);
+//        userRepository.save(user);
+//        return success;
+//    }
 
     @DeleteMapping("/users/{email}")
     public String deleteUser(@PathVariable String email){
