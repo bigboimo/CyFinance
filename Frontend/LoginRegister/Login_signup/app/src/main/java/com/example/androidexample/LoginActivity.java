@@ -24,7 +24,7 @@ LoginActivity extends AppCompatActivity {
         /* initialize UI elements */
         usernameEditText = findViewById(R.id.login_username_edt);
         passwordEditText = findViewById(R.id.login_password_edt);
-        loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
+        loginButton = findViewById(R.id.login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
 
         /* click listener on login button pressed */

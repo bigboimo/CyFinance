@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayoutCompat2"
+    android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4A4A4A"
+    android:background="#2A2A2A"
+    android:layout_gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="36dp"
-        android:text=" Finance"
-        android:textColor="#FFE500"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
+    <!-- You can adjust the style here -->
+<!--    android:background="@drawable/underline"/> &lt;!&ndash; Use a drawable to simulate underline &ndash;&gt;-->
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="76dp"
         android:text="Welcome to"
         android:textColor="#F1EDED"
         android:textSize="34sp"
@@ -40,67 +36,70 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" Cy"
-        android:textColor="#EA0000"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="36dp"
+        android:text="CyFinance"
+        android:textColor="#F1BE48"
         android:textSize="34sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="211dp"
-        tools:layout_editor_absoluteY="84dp"></TextView>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></TextView>
+
+</LinearLayout>
 
     <EditText
         android:id="@+id/login_username_edt"
         style="@style/Widget.Material3.AutoCompleteTextView.FilledBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
-        android:layout_marginBottom="88dp"
-        android:hint="email"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="164dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Email"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#808080"
         app:layout_constraintBottom_toTopOf="@+id/login_password_edt"
         app:layout_constraintStart_toStartOf="parent"></EditText>
 
     <EditText
         android:id="@+id/login_password_edt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="132dp"
-        android:layout_marginBottom="264dp"
-        android:hint="Enter Password Here"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="164dp"
+        android:layout_marginBottom="424dp"
+        android:hint="Password"
         android:inputType="textPassword"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#808080"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"></EditText>
 
     <Button
-        android:id="@+id/login_login_btn"
-        android:layout_width="wrap_content"
+        android:id="@+id/login_btn"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="176dp"
-        android:text="Login"
-        android:textColor="#ffffff"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/login_signup_btn"></Button>
-
-    <Button
-        android:id="@+id/login_signup_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="600dp"
-        android:layout_marginEnd="116dp"
-        android:text="Signup"
+        android:layout_gravity="center"
+        android:layout_marginTop="340dp"
+        android:layout_marginEnd="124dp"
+        android:backgroundTint="#F1BE48"
+        android:text="Log In"
         android:textColor="#ffffff"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"></Button>
 
-    <FrameLayout
-        android:layout_width="409dp"
-        android:layout_height="70dp"
-        android:background="#FFEB3B"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+    <Button
+        android:id="@+id/login_signup_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="396dp"
+        android:layout_marginEnd="152dp"
+        android:backgroundTint="#C8102E"
+        android:text="Sign Up"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></Button>
 
-    </FrameLayout>
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
