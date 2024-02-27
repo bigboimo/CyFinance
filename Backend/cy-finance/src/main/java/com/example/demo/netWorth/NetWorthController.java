@@ -42,6 +42,10 @@ public class NetWorthController {
         } else if (netWorthRepository.findById(netWorth.getId()) == null) {
             response.put("message", "Net worth doesn't exist");
         } else {
+            if (netWorth.getAssets() == -1)
+                netWorth.setAssets(netWorthRepository.findById(netWorth.getId()).getAssets());
+            if (netWorth.getLiabilities() == -1)
+                netWorth.setLiabilities(netWorthRepository.findById(netWorth.getId()).getLiabilities());
             netWorthRepository.save(netWorth);
             response.put("message", "Net worth modified");
         }
@@ -49,10 +53,10 @@ public class NetWorthController {
     }
 
     @DeleteMapping(path = "/networth/{id}")
-    String deleteNetWorth(@RequestParam int id) {
+    String deleteNetWorth(@PathVariable int id) {
         Response<String> response = new Response<>();
         netWorthRepository.deleteById(id);
-        response.put("message", "Net worths deleted");
+        response.put("message", "Net worth deleted");
         return response.toString();
     }
 
