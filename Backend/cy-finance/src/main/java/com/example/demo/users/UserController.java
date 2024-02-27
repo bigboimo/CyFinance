@@ -2,6 +2,8 @@ package com.example.demo.users;
 
 import com.example.demo.earnings.Earnings;
 import com.example.demo.earnings.EarningsRepository;
+import com.example.demo.netWorth.NetWorth;
+import com.example.demo.netWorth.NetWorthRepository;
 import com.example.demo.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -21,6 +23,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    NetWorthRepository netWorthRepository;
 
     @GetMapping("/users")
     public List<User> getUsers(){
@@ -96,6 +101,22 @@ public class UserController {
         Response<String> response = new Response<>();
         userRepository.deleteById(id);
         response.put("message", "User deleted");
+        return response.toString();
+    }
+
+    @PostMapping("/users/{userId}/networth/{netWorthId}")
+    String attachNetWorthToUser(@PathVariable int userId, @PathVariable int netWorthId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findById(userId);
+        NetWorth netWorth = netWorthRepository.findById(netWorthId);
+        if(user == null || netWorth == null) {
+            response.put("message", "Failed to assign net worth");
+        } else {
+            netWorth.setUser(user);
+            user.setNetWorth(netWorth);
+            userRepository.save(user);
+            response.put("message", "Earnings assigned to net worth");
+        }
         return response.toString();
     }
 }

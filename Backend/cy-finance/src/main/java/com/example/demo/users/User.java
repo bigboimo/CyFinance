@@ -1,6 +1,7 @@
 package com.example.demo.users;
 
 import com.example.demo.earnings.Earnings;
+import com.example.demo.netWorth.NetWorth;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,10 @@ public class User {
     private String email;
     private String password;
     private String role;
+
+    @OneToOne
+    @JoinColumn(name = "net_worth_id")
+    private NetWorth netWorth;
 
     @OneToOne
     @JoinColumn(name = "earnings_id")
@@ -78,9 +83,18 @@ public class User {
         this.role = role;
     }
 
+    public NetWorth getNetWorth() {
+        return netWorth;
+    }
+
+    public void setNetWorth(NetWorth netWorth) {
+        this.netWorth = netWorth;
+    }
+
     @Override
     public String toString() {
         return "{" +
+                "\"id\":" + id +
                 "\"name\":\"" + name + '\"' +
                 ", \"email\":\"" + email + '\"' +
                 ", \"password\":\"" + password + '\"' +

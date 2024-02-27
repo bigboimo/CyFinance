@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "1a723154-44e9-44ea-bde4-27b0cad77961",
-		"name": "REST API basics: CRUD, test & variable",
+		"name": "Cy-Finance API",
 		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) in \"Tests\" to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "32868455",
@@ -302,83 +302,198 @@
 			]
 		},
 		{
-			"name": "Accounts",
+			"name": "Net-Worth",
 			"item": [
 				{
-					"name": "Get accounts",
+					"name": "Get Net-Worth",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/accounts",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"accounts"
+								"networth"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get Net-Worth",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 27 Feb 2024 16:14:57 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"assets\": 1235,\n        \"liabilities\": 0,\n        \"user\": null\n    },\n    {\n        \"id\": 2,\n        \"assets\": 1000.23,\n        \"liabilities\": 246.5,\n        \"user\": null\n    }\n]"
+						}
+					]
 				},
 				{
-					"name": "Get account by id",
+					"name": "Get Net-Worth by ID",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/accounts",
+							"raw": "{{base_url}}/networth/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"accounts"
+								"networth",
+								"1"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Basic",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 27 Feb 2024 16:15:52 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"assets\": 1235,\n    \"liabilities\": 0,\n    \"user\": null\n}"
+						}
+					]
 				},
 				{
-					"name": "Add account",
+					"name": "Add Net-Worth",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/accounts",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"accounts"
+								"networth"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Edit account",
+					"name": "Edit Net-Worth",
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/accounts",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"accounts"
+								"networth"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Delete account",
+					"name": "Remove Net-Worth",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
 						}
 					},
 					"response": []
@@ -386,184 +501,12 @@
 			]
 		},
 		{
-			"name": "Plans",
-			"item": [
-				{
-					"name": "Get plans",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/plans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"plans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get plan by id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/plans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"plans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add plan",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/plans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"plans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit plan",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/plans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"plans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete plan",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/plans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"plans"
-							]
-						}
-					},
-					"response": []
-				}
-			]
+			"name": "Earnings",
+			"item": []
 		},
 		{
-			"name": "Loans",
-			"item": [
-				{
-					"name": "Get loans",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/loans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"loans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get loan by id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/loans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"loans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add loan",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/loans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"loans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit loan",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/loans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"loans"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete loan",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/loans",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"loans"
-							]
-						}
-					},
-					"response": []
-				}
-			]
+			"name": "Assets",
+			"item": []
 		}
 	],
 	"event": [
@@ -590,6 +533,11 @@
 		{
 			"key": "base_url",
 			"value": "coms-309-038.class.las.iastate.edu",
+			"type": "string"
+		},
+		{
+			"key": "local",
+			"value": "localhost:8080",
 			"type": "string"
 		}
 	]
