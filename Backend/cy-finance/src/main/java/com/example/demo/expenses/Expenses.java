@@ -98,10 +98,10 @@ public class Expenses {
     public String toString() {
         return "Expenses{" + "\"id\":" + id +
                 ", \"food\":" + food +
-                ", \"Rent and bills\":" + rentandBills +
-                ", \"School\":" + school +
-                ", \"Other necessities\":" + otherNeeds +
-                ", \"Extras\":" + misc +
+                ", \"rantandBills\":" + rentandBills +
+                ", \"school\":" + school +
+                ", \"otherNeeds\":" + otherNeeds +
+                ", \"misc\":" + misc +
                 '}';
     }
 }

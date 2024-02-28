@@ -62,4 +62,11 @@ public class Earnings {
     public void setSecondaryMonthlyIncome(float secondaryMonthlyIncome) {
         this.secondaryMonthlyIncome = secondaryMonthlyIncome;
     }
+    @Override
+    public String toString() {
+        return "Earnings{" + "\"id\":" + id +
+                ", \"food\":" + primaryMonthlyIncome +
+                ", \"rantandBills\":" + secondaryMonthlyIncome +
+                '}';
+    }
 }
