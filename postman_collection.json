@@ -502,7 +502,51 @@
 		},
 		{
 			"name": "Earnings",
-			"item": []
+			"item": [
+				{
+					"name": "Get earnings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/earnings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"earnings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add earning",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"primaryMonthlyIncome\": 1234, \"secondaryMonthlyIncome\": 4576}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/earnings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"earnings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Assets",
