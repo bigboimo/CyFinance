@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;
     private TextView extraText;
-    private TextView newText; // define message textview variable
+    // define message textview variable
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

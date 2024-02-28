@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2A2A2A"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/main_msg_welcome_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="0dp"
+        android:text="Welcome to"
+        android:textColor="#fc0303"
+        android:textSize="30dp"
+        android:textStyle="bold"></TextView>
+
+    <TextView
+        android:id="@+id/main_msg_name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="250dp"
+        android:text="CyFinance"
+        android:textColor="#F1BE48"
+        android:textSize="50dp"
+        android:textStyle="bold|italic"></TextView>
+
+
+    <Button
+        android:id="@+id/main_login_btn"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="0dp"
+        android:layout_marginBottom="0dp"
+        android:backgroundTint="#C8102E"
+        android:text="Login"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
+
+    <Button
+        android:id="@+id/main_signup_btn"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="#C8102E"
+        android:text="Signup"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
