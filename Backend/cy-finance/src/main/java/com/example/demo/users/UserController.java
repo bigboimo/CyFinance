@@ -2,6 +2,8 @@ package com.example.demo.users;
 
 import com.example.demo.earnings.Earnings;
 import com.example.demo.earnings.EarningsRepository;
+import com.example.demo.expenses.Expenses;
+import com.example.demo.expenses.ExpensesRepository;
 import com.example.demo.netWorth.NetWorth;
 import com.example.demo.netWorth.NetWorthRepository;
 import com.example.demo.util.Response;
@@ -26,6 +28,9 @@ public class UserController {
 
     @Autowired
     NetWorthRepository netWorthRepository;
+
+    @Autowired
+    ExpensesRepository expensesRepository;
 
     @GetMapping("/users")
     public List<User> getUsers(){
@@ -80,7 +85,7 @@ public class UserController {
         return response.toString();
     }
 
-    @PutMapping("/users/{userId}/earnings/{earningsId}")
+    @PostMapping("/users/{userId}/earnings/{earningsId}")
     String assignEarningsToUser(@PathVariable int userId,@PathVariable int earningsId){
         Response<String> response = new Response<>();
         User user = userRepository.findById(userId);
@@ -116,6 +121,22 @@ public class UserController {
             user.setNetWorth(netWorth);
             userRepository.save(user);
             response.put("message", "Earnings assigned to net worth");
+        }
+        return response.toString();
+    }
+
+    @PostMapping("/users/{userId}/expenses/{expensesId}")
+    String attachExpensesToUser(@PathVariable int userId, @PathVariable int expensesId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findById(userId);
+        Expenses expenses = expensesRepository.findById(expensesId);
+        if(user == null || expenses == null) {
+            response.put("message", "Failed to assign expenses");
+        } else {
+            expenses.setUser(user);
+            user.setExpenses(expenses);
+            userRepository.save(user);
+            response.put("message", "Expenses assigned");
         }
         return response.toString();
     }
