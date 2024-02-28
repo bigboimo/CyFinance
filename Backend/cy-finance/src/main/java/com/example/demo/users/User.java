@@ -1,6 +1,7 @@
 package com.example.demo.users;
 
 import com.example.demo.earnings.Earnings;
+import com.example.demo.expenses.Expenses;
 import com.example.demo.netWorth.NetWorth;
 import jakarta.persistence.*;
 
@@ -25,6 +26,10 @@ public class User {
     @OneToOne
     @JoinColumn(name = "earnings_id")
     private Earnings earnings;
+
+    @OneToOne
+    @JoinColumn
+    private Expenses expenses;
 
     public User(String name, String email, String password, String role) {
         this.name = name;
@@ -89,6 +94,14 @@ public class User {
 
     public void setNetWorth(NetWorth netWorth) {
         this.netWorth = netWorth;
+    }
+
+    public Expenses getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(Expenses expenses) {
+        this.expenses = expenses;
     }
 
     @Override
