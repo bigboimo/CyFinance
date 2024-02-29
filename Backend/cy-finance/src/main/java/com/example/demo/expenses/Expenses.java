@@ -23,6 +23,7 @@ public class Expenses {
 
     private float misc;
     @OneToOne
+    @JsonIgnore
     private User user;
 
 
