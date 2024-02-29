@@ -1,6 +1,7 @@
 package com.example.demo.netWorth;
 
 import com.example.demo.users.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class NetWorth {
     private float assets;
     private float liabilities;
     @OneToOne
+    @JsonIgnore
     private User user;
 
 
