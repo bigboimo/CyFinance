@@ -9,6 +9,7 @@ import com.example.demo.netWorth.NetWorthRepository;
 import com.example.demo.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -43,46 +44,60 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public String setUser(@RequestBody User user){
+    public ResponseEntity<Response<String>> setUser(@RequestBody User user){
         Response<String> response = new Response<>();
         if (user == null) {
             response.put("message", "No user specified");
+            return ResponseEntity.ok(response);
         } else {
-            response.put("message", "User created");
             userRepository.save(user);
+            response.put("message", "User created");
+            return ResponseEntity.ok(response);
         }
-        return response.toString();
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String email, @RequestParam String password){
+    public ResponseEntity<Response<String>> login(@RequestParam String email, @RequestParam String password){
         Response<String> response = new Response<>();
+
         User foundUser = userRepository.findByEmail(email);
         if (foundUser.getPassword().equals(password)){
             response.put("message", "success");
+            ResponseCookie springCookie = ResponseCookie.from("user-id", email)
+                    .maxAge(60)
+                    .build();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+                    .body(response);
         } else {
             response.put("message", "failure");
+            return ResponseEntity.ok(response);
         }
-        return response.toString();
     }
 
     @PostMapping("/logout")
-    public String logout(){
+    public ResponseEntity<Response<String>> logout(){
         Response<String> response = new Response<>();
         response.put("message", "Successfully logged out");
-        return response.toString();
+        ResponseCookie springCookie = ResponseCookie
+                .from("user-id", null)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+                .body(response);
     }
 
     @PutMapping("/users")
-    public String changeUser(@RequestBody User user){
+    public ResponseEntity<Response<String>> changeUser(@RequestBody User user){
         Response<String> response = new Response<>();
         if (user == null) {
             response.put("message", "No user provided");
+            return ResponseEntity.ok(response);
         } else {
             userRepository.save(user);
             response.put("message", "User modified");
+            return ResponseEntity.ok(response);
         }
-        return response.toString();
     }
 
     @PostMapping("/users/{userId}/earnings/{earningsId}")
@@ -102,27 +117,28 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public String deleteUser(@PathVariable int id){
+    public ResponseEntity<Response<String>> deleteUser(@PathVariable int id){
         Response<String> response = new Response<>();
         userRepository.deleteById(id);
         response.put("message", "User deleted");
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/users/{userId}/networth/{netWorthId}")
-    String attachNetWorthToUser(@PathVariable int userId, @PathVariable int netWorthId) {
+    public ResponseEntity<Response<String>> attachNetWorthToUser(@PathVariable int userId, @PathVariable int netWorthId) {
         Response<String> response = new Response<>();
         User user = userRepository.findById(userId);
         NetWorth netWorth = netWorthRepository.findById(netWorthId);
         if(user == null || netWorth == null) {
             response.put("message", "Failed to assign net worth");
+            return ResponseEntity.ok(response);
         } else {
             netWorth.setUser(user);
             user.setNetWorth(netWorth);
             userRepository.save(user);
-            response.put("message", "Earnings assigned to net worth");
+            response.put("message", "Net-worth assigned to user");
+            return ResponseEntity.ok(response);
         }
-        return response.toString();
     }
 
     @PostMapping("/users/{userId}/expenses/{expensesId}")

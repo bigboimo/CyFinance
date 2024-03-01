@@ -2,6 +2,8 @@ package com.example.demo.netWorth;
 
 import com.example.demo.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,24 +25,27 @@ public class NetWorthController {
     }
 
     @PostMapping(path = "/networth")
-    String createNetWorth(@RequestBody NetWorth netWorth) {
+    ResponseEntity<Response<String>> createNetWorth(@RequestBody NetWorth netWorth) {
         Response<String> response = new Response<>();
         if (netWorth == null) {
             response.put("message", "No net worth specified");
+            return ResponseEntity.ok(response);
         } else {
             response.put("message", "Net worth created");
             netWorthRepository.save(netWorth);
+            return ResponseEntity.ok(response);
         }
-        return response.toString();
     }
 
     @PutMapping(path = "/networth")
-    String modifyNetWorth(@RequestBody NetWorth netWorth) {
+    ResponseEntity<Response<String>> modifyNetWorth(@RequestBody NetWorth netWorth) {
         Response<String> response = new Response<>();
         if (netWorth == null) {
             response.put("message", "No net worth provided");
+            return ResponseEntity.ok(response);
         } else if (netWorthRepository.findById(netWorth.getId()) == null) {
             response.put("message", "Net worth doesn't exist");
+            return ResponseEntity.ok(response);
         } else {
             if (netWorth.getAssets() == -1)
                 netWorth.setAssets(netWorthRepository.findById(netWorth.getId()).getAssets());
@@ -48,16 +53,16 @@ public class NetWorthController {
                 netWorth.setLiabilities(netWorthRepository.findById(netWorth.getId()).getLiabilities());
             netWorthRepository.save(netWorth);
             response.put("message", "Net worth modified");
+            return ResponseEntity.ok(response);
         }
-        return response.toString();
     }
 
     @DeleteMapping(path = "/networth/{id}")
-    String deleteNetWorth(@PathVariable int id) {
+    ResponseEntity<Response<String>> deleteNetWorth(@PathVariable int id) {
         Response<String> response = new Response<>();
         netWorthRepository.deleteById(id);
         response.put("message", "Net worth deleted");
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
 }
