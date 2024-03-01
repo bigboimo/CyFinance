@@ -26,6 +26,9 @@
             android:exported="true"></activity>
         <activity android:name=".SignupActivity"
             android:exported="true"></activity>
+        <activity android:name=".NetworthActivity"
+            android:exported="true">
+        </activity>
 
     </application>
 
