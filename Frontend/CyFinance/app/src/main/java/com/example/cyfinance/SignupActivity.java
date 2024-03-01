@@ -17,6 +17,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
@@ -31,7 +33,14 @@ public class SignupActivity extends AppCompatActivity {
     private Button loginButton;         // define login button variable
     private Button signupButton;       // define signup button variable
 
-    private String url = "https://599699cd-3804-43f3-aea2-867d18c9bbff.mock.pstmn.io/users";
+    private String username;
+
+    private String password;
+
+    private String confirm;
+
+    private String Response;
+    private String url = "https://coms-309-038.class.las.iastate.edu/users";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,42 +70,66 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 /* grab strings from user inputs */
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                String confirm = confirmEditText.getText().toString();
+                username = usernameEditText.getText().toString();
+                password = passwordEditText.getText().toString();
+                confirm = confirmEditText.getText().toString();
 
-                getRequest();
+                postRequest();
 
-                if (password.equals(confirm)) {
-                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
+                if(Response != null && Response.equals("User created")) {
+
                 }
+//                if (password.equals(confirm)) {
+//                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
+//                }
             }
         });
     }
 
-    private void getRequest() {
+    private void postRequest() {
 
 
-        // Request a string response from the provided URL.
-        JsonObjectRequest JSONObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
+        // Request a JSONObject response from the provided URL.
+        JSONObject adduser = new JSONObject();
+        try {
+
+            adduser.put("id", 1);
+            adduser.put("name", confirm);
+            adduser.put("email", username);
+            adduser.put("password", password);
+            adduser.put("role", "user");
+            System.out.println(adduser);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest createUser = new JsonObjectRequest(
+                Request.Method.POST,
                 url,
-                null,
-                new Response.Listener<JSONObject>() {
+                adduser, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Display the first 500 characters of the response string.
                         // String response can be converted to JSONObject via
-                        // JSONObject object = new JSONObject(response);
-                        //tvResponse.setText("Response is: " + response);
+                        //JSONObject object = response;
+                        try {
+                            Response = response.getString("message");
+                            System.out.println(Response);
+                        }
+                        catch(JSONException e) {
+
+                        }
+
+                        System.out.println(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //tvResponse.setText("That didn't work!" + error.toString());
+                        System.out.println(error);
                     }
                 }) {
 
@@ -118,6 +151,6 @@ public class SignupActivity extends AppCompatActivity {
         };
 
         // Adding request to request queue
-        //VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(createUser);
     }
 }
