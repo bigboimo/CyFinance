@@ -34,8 +34,12 @@ public class UserController {
     ExpensesRepository expensesRepository;
 
     @GetMapping("/users")
-    public List<User> getUsers(){
-        return userRepository.findAll();
+    public ResponseEntity<List<User>> getUsers(@CookieValue(name = "user-id", required = false) String userId){
+        if (userId == null || userId.equals("") || !userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin")) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.ok(userRepository.findAll());
+        }
     }
 
     @GetMapping("/users/{id}")
@@ -63,7 +67,7 @@ public class UserController {
         User foundUser = userRepository.findByEmail(email);
         if (foundUser.getPassword().equals(password)){
             response.put("message", "success");
-            ResponseCookie springCookie = ResponseCookie.from("user-id", email)
+            ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(foundUser.getId()))
                     .maxAge(60)
                     .build();
             return ResponseEntity.ok()
