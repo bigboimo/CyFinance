@@ -1,5 +1,6 @@
 package com.example.cyfinance;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +31,6 @@ public class SignupActivity extends AppCompatActivity {
     private EditText usernameEditText;  // define username edittext variable
     private EditText passwordEditText;  // define password edittext variable
     private EditText confirmEditText;   // define confirm edittext variable
-    private Button loginButton;         // define login button variable
     private Button signupButton;       // define signup button variable
 
     private String username;
@@ -40,7 +40,7 @@ public class SignupActivity extends AppCompatActivity {
     private String confirm;
 
     private String Response;
-    private String url = "https://coms-309-038.class.las.iastate.edu/users";
+    private String url = "http://coms-309-038.class.las.iastate.edu:8080/users";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,19 +50,9 @@ public class SignupActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.signup_username_edt);  // link to username edtext in the Signup activity XML
         passwordEditText = findViewById(R.id.signup_password_edt);  // link to password edtext in the Signup activity XML
         confirmEditText = findViewById(R.id.signup_confirm_edt);    // link to confirm edtext in the Signup activity XML
-//        loginButton = findViewById(R.id.signup_login_btn);    // link to login button in the Signup activity XML
         signupButton = findViewById(R.id.signup_signup_btn);  // link to signup button in the Signup activity XML
 
-        /* click listener on login button pressed */
-//        loginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                /* when login button is pressed, use intent to switch to Login Activity */
-//                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-//                startActivity(intent);  // go to LoginActivity
-//            }
-//        });
+
 
         /* click listener on signup button pressed */
         signupButton.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +67,9 @@ public class SignupActivity extends AppCompatActivity {
                 postRequest();
 
                 if(Response != null && Response.equals("User created")) {
-
+                    System.out.println("Hello");
+                    Intent intent = new Intent(SignupActivity.this, NetworthActivity.class);
+                    startActivity(intent);
                 }
 //                if (password.equals(confirm)) {
 //                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();

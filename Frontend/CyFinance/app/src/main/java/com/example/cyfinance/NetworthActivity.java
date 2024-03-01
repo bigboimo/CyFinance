@@ -1,5 +1,6 @@
 package com.example.cyfinance;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,19 +24,18 @@ import java.util.Map;
 
 public class NetworthActivity extends AppCompatActivity {
 
-
     private EditText assetEditText;
 
     private EditText liabiltiesEditText;
 
     private Button nextButton;
 
-    private String assetNum;
+    private int assetNum;
 
-    private String liabilityNum;
+    private int liabilityNum;
 
     private String Response;
-    private String url = "https://coms-309-038.class.las.iastate.edu/networth";
+    private String url = "http://coms-309-038.class.las.iastate.edu/networth";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +51,16 @@ public class NetworthActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                assetNum = assetEditText.getText().toString();
-                liabilityNum = liabiltiesEditText.getText().toString();
+                assetNum = Integer.parseInt(assetEditText.getText().toString());
+                liabilityNum = Integer.parseInt(liabiltiesEditText.getText().toString());
 
+                postRequest();
+
+                if(Response != null && Response.equals("Net worth created")) {
+                    System.out.println("Hello");
+                    //Intent intent = new Intent(SignupActivity.this, EarningsActivity.class);
+                    //startActivity(intent);
+                }
             }
         });
     }
