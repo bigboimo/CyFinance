@@ -9,6 +9,18 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class NetworthActivity extends AppCompatActivity {
 
 
@@ -22,6 +34,7 @@ public class NetworthActivity extends AppCompatActivity {
 
     private String liabilityNum;
 
+    private String Response;
     private String url = "https://coms-309-038.class.las.iastate.edu/networth";
 
     @Override
@@ -43,5 +56,66 @@ public class NetworthActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void postRequest() {
+
+
+        // Request a JSONObject response from the provided URL.
+        JSONObject networth = new JSONObject();
+        try {
+
+            networth.put("assets", assetNum);
+            networth.put("liabilities", liabilityNum);
+            System.out.println(networth);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest createUser = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                networth, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                // Display the first 500 characters of the response string.
+                // String response can be converted to JSONObject via
+                //JSONObject object = response;
+                try {
+                    Response = response.getString("message");
+                    System.out.println(Response);
+                } catch (JSONException e) {
+
+                }
+
+                System.out.println(response);
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //tvResponse.setText("That didn't work!" + error.toString());
+                        System.out.println(error);
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+                //                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                //                params.put("param1", "value1");
+                //                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(createUser);
     }
 }
