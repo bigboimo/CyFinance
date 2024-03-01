@@ -11,312 +11,6 @@
 			"name": "User",
 			"item": [
 				{
-					"name": "Earnings",
-					"item": [
-						{
-							"name": "Get Earnings",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/networth",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "Get Earnings",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{base_url}}/networth",
-											"host": [
-												"{{base_url}}"
-											],
-											"path": [
-												"networth"
-											]
-										}
-									},
-									"_postman_previewlanguage": null,
-									"header": null,
-									"cookie": [],
-									"body": null
-								}
-							]
-						},
-						{
-							"name": "Get Earnings by ID",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/networth/1",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth",
-										"1"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "Get Earnings by ID",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{base_url}}/networth/1",
-											"host": [
-												"{{base_url}}"
-											],
-											"path": [
-												"networth",
-												"1"
-											]
-										}
-									},
-									"_postman_previewlanguage": null,
-									"header": null,
-									"cookie": [],
-									"body": null
-								}
-							]
-						},
-						{
-							"name": "Add Earnings",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/networth",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Edit Earnings by ID",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/networth",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Earnings by ID",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/networth/1",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth",
-										"1"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Expenses",
-					"item": [
-						{
-							"name": "Get Expenses",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/networth",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "Get Expenses",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{base_url}}/networth",
-											"host": [
-												"{{base_url}}"
-											],
-											"path": [
-												"networth"
-											]
-										}
-									},
-									"_postman_previewlanguage": null,
-									"header": null,
-									"cookie": [],
-									"body": null
-								}
-							]
-						},
-						{
-							"name": "Get Expenses by ID",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/networth/1",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth",
-										"1"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "Get Expenses by ID",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{base_url}}/networth/1",
-											"host": [
-												"{{base_url}}"
-											],
-											"path": [
-												"networth",
-												"1"
-											]
-										}
-									},
-									"_postman_previewlanguage": null,
-									"header": null,
-									"cookie": [],
-									"body": null
-								}
-							]
-						},
-						{
-							"name": "Add Expenses",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/networth",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Edit Expenses by ID",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/networth",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Expenses by ID",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/networth/1",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"networth",
-										"1"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
 					"name": "login",
 					"event": [
 						{
@@ -864,6 +558,312 @@
 				},
 				{
 					"name": "Remove Net-Worth",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Earnings",
+			"item": [
+				{
+					"name": "Get Earnings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Earnings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get Earnings by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Earnings by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Add Earnings",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Earnings by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Earnings by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Expenses",
+			"item": [
+				{
+					"name": "Get Expenses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Expenses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get Expenses by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Expenses by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Add Expenses",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Expenses by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Expenses by ID",
 					"request": {
 						"method": "DELETE",
 						"header": [],
