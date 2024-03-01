@@ -1,5 +1,7 @@
 package com.example.cyfinance;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,9 +19,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +39,9 @@ LoginActivity extends AppCompatActivity {
 
     String username;
     String password;
+
+    String Response;
+    boolean success = false;
     private String url = "https://599699cd-3804-43f3-aea2-867d18c9bbff.mock.pstmn.io/login";
 
     @Override
@@ -57,13 +64,17 @@ LoginActivity extends AppCompatActivity {
                 username = usernameEditText.getText().toString();
                 password = passwordEditText.getText().toString();
 
-                /* when login button is pressed, use intent to switch to Login Activity */
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                startActivity(intent);  // go to MainActivity with the key-value data
-
                 postRequest();
+                //sleep(10);
+                /* when login button is pressed, use intent to switch to Login Activity */
+
+                if(Response != null && Response.equals("success")) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
+                    intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
+                    startActivity(intent);  // go to MainActivity with the key-value data
+                }
+
             }
         });
 
@@ -88,12 +99,20 @@ LoginActivity extends AppCompatActivity {
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                url+"?username="+username+"&password="+password,
+                url + "?username=" + username + "&password=" + password,
                 postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         //Response = response.toString();
+                        try {
+                            Response = response.getString("message");
+                            System.out.println(Response);
+                        }
+                        catch(JSONException e) {
+
+                        }
+                        //System.out.println(Response);
                         System.out.println(response);
                     }
                 },
@@ -101,7 +120,9 @@ LoginActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //Response = error.getMessage();
+                        Response = error.toString();
                         System.out.println(error);
+
                     }
                 }
         ) {

@@ -8,6 +8,23 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class SignupActivity extends AppCompatActivity {
 
     private EditText usernameEditText;  // define username edittext variable
@@ -16,6 +33,14 @@ public class SignupActivity extends AppCompatActivity {
     private Button loginButton;         // define login button variable
     private Button signupButton;       // define signup button variable
 
+    private String username;
+
+    private String password;
+
+    private String confirm;
+
+    private String Response;
+    private String url = "https://coms-309-038.class.las.iastate.edu/users";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,17 +70,87 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 /* grab strings from user inputs */
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                String confirm = confirmEditText.getText().toString();
+                username = usernameEditText.getText().toString();
+                password = passwordEditText.getText().toString();
+                confirm = confirmEditText.getText().toString();
 
-                if (password.equals(confirm)){
-                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
+                postRequest();
+
+                if(Response != null && Response.equals("User created")) {
+
                 }
-                else {
-                    Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
-                }
+//                if (password.equals(confirm)) {
+//                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
+//                }
             }
         });
+    }
+
+    private void postRequest() {
+
+
+        // Request a JSONObject response from the provided URL.
+        JSONObject adduser = new JSONObject();
+        try {
+
+            adduser.put("id", 1);
+            adduser.put("name", confirm);
+            adduser.put("email", username);
+            adduser.put("password", password);
+            adduser.put("role", "user");
+            System.out.println(adduser);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest createUser = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                adduser, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Display the first 500 characters of the response string.
+                        // String response can be converted to JSONObject via
+                        //JSONObject object = response;
+                        try {
+                            Response = response.getString("message");
+                            System.out.println(Response);
+                        }
+                        catch(JSONException e) {
+
+                        }
+
+                        System.out.println(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //tvResponse.setText("That didn't work!" + error.toString());
+                        System.out.println(error);
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+                //                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                //                params.put("param1", "value1");
+                //                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(createUser);
     }
 }
