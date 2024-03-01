@@ -54,9 +54,4 @@ public class EarningsController {
         earningsRepository.deleteById(id);
         return success;
     }
-
-
-
-
-
 }
