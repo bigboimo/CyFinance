@@ -28,7 +28,7 @@ public class User {
     private Earnings earnings;
 
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "expenses_id")
     private Expenses expenses;
 
     public User(String name, String email, String password, String role) {
