@@ -34,8 +34,13 @@ public class UserController {
     ExpensesRepository expensesRepository;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers(@CookieValue(name = "user-id", required = false) String userId){
-        if (userId == null || userId.equals("") || !userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin")) {
+    public ResponseEntity<List<User>> getUsers(
+            @CookieValue(name = "user-id", required = false) String userId)
+    {
+        if (userId == null
+                || userId.isEmpty()
+                || !userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin"))
+        {
             return ResponseEntity.ok(null);
         } else {
             return ResponseEntity.ok(userRepository.findAll());
@@ -43,19 +48,35 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable int id){
-        return userRepository.findById(id);
+    public ResponseEntity<User> getUser(@PathVariable int id,
+                                        @CookieValue(name = "user-id", required = false) String userId){
+        // TODO: Find out how to make sure the empty cookie request is only for signup
+        // Only return user if the cookie is set and the user is either an admin or the requested user
+        if (userId == null
+                || userId.isEmpty()
+                || (!userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin") && id != Integer.parseInt(userId))) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.ok(userRepository.findById(id));
+        }
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Response<String>> setUser(@RequestBody User user){
+    public ResponseEntity<Response<String>> setUser(@RequestBody User user,
+                                                    @CookieValue(name = "user-id", required = false) String userId){
         Response<String> response = new Response<>();
-        if (user == null) {
-            response.put("message", "No user specified");
-            return ResponseEntity.ok(response);
+        // Able to create user if not logged in (for signup) or admin
+        if (userId == null || userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin")) {
+            if (user == null) {
+                response.put("message", "No user specified");
+                return ResponseEntity.ok(response);
+            } else {
+                userRepository.save(user);
+                response.put("message", "User created");
+                return ResponseEntity.ok(response);
+            }
         } else {
-            userRepository.save(user);
-            response.put("message", "User created");
+            response.put("message", "User creation not allowed");
             return ResponseEntity.ok(response);
         }
     }
@@ -92,10 +113,20 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<Response<String>> changeUser(@RequestBody User user){
+    public ResponseEntity<Response<String>> changeUser(@RequestBody User user,
+                                                       @CookieValue(name = "user-id", required = false) String userId){
         Response<String> response = new Response<>();
+
         if (user == null) {
             response.put("message", "No user provided");
+            return ResponseEntity.ok(response);
+
+            // Only edit user if the cookie is set and the user is either an admin or the requested user
+        } else if (userId.isEmpty()
+                || (!userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin")
+                    && user.getId() != Integer.parseInt(userId))) {
+
+            response.put("message", "User not allowed to perform this action");
             return ResponseEntity.ok(response);
         } else {
             userRepository.save(user);
