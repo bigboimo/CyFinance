@@ -8,13 +8,10 @@ import com.example.demo.netWorth.NetWorth;
 import com.example.demo.netWorth.NetWorthRepository;
 import com.example.demo.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {
