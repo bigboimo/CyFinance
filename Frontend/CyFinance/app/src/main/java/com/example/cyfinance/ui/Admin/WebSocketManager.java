@@ -1,4 +1,4 @@
-package com.example.cyfinance.ui.notifications;
+package com.example.cyfinance.ui.Admin;
 
 import android.util.Log;
 
