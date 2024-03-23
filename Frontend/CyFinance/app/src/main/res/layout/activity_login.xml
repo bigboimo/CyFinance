@@ -27,7 +27,7 @@
             android:layout_marginTop="76dp"
             android:text="Welcome to"
             android:textColor="#F1EDED"
-            android:textSize="34sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"></TextView>
@@ -37,10 +37,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="76dp"
-            android:layout_marginEnd="36dp"
-            android:text="CyFinance"
+            android:layout_marginEnd="25dp"
+            android:text=" CyFinance"
             android:textColor="#F1BE48"
-            android:textSize="34sp"
+            android:textSize="30sp"
             android:textStyle="bold">
         </TextView>
 
@@ -55,8 +55,9 @@
 
         <EditText
             android:id="@+id/login_username_edt"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="50dp"
+            android:textSize="25dp"
             android:hint="username"
             android:textColor="#FFFFFF"
             android:textColorHint="#808080">
@@ -64,8 +65,9 @@
 
         <EditText
             android:id="@+id/login_password_edt"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="50dp"
+            android:textSize="25dp"
             android:hint="password"
             android:textColor="#FFFFFF"
             android:textColorHint="#808080"></EditText>
@@ -82,7 +84,8 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#F1BE48"
             android:text="Log In"
-            android:textColor="#ffffff">
+            android:textColor="#ffffff"
+            android:textSize="20sp">
 
         </Button>
 
