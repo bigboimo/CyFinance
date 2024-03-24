@@ -45,4 +45,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'org.java-websocket:Java-WebSocket:1.5.6'
+    //implementation "androidx.notificationcompat:notificationcompat:1.12.0"
 }
