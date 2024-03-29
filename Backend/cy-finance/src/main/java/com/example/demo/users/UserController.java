@@ -67,6 +67,8 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<Response<String>> setUser(@RequestBody User user,
                                                     @CookieValue(name = "user-id", required = false) String userId) {
+        User createdUser;
+
         logger.info("[POST /users] Cookie: " + userId);
         logger.info("[POST /users] User: " + user);
         Response<String> response = new Response<>();
@@ -77,8 +79,18 @@ public class UserController {
                 response.put("message", "No user provided");
             } else {
                 userRepository.save(user);
+                createdUser = userRepository.findByEmail(user.getEmail());
                 logger.info("[POST /users] User created: " + user);
+
+                ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(createdUser.getId()))
+                        .maxAge(60)
+                        .build();
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set(HttpHeaders.SET_COOKIE, springCookie.toString());
+
                 response.put("message", "User created");
+
+                return ResponseEntity.ok().headers(responseHeaders).body(response);
             }
         } else {
             logger.warn("[POST /users] Attempted access from invalid user");
@@ -92,7 +104,7 @@ public class UserController {
         Response<String> response = new Response<>();
 
         User foundUser = userRepository.findByEmail(email);
-        if (foundUser.getPassword().equals(password)) {
+        if (foundUser != null && foundUser.getPassword().equals(password)) {
             ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(foundUser.getId()))
                     .maxAge(60)
                     .build();
