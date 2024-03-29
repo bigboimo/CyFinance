@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.cyfinance.util.Constants;
 
 public class NetworthActivity extends AppCompatActivity {
 
@@ -22,7 +22,7 @@ public class NetworthActivity extends AppCompatActivity {
 
     private String liabilityNum;
 
-    private String url = "https://coms-309-038.class.las.iastate.edu/networth";
+    private String url = Constants.URL + "/networth";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
