@@ -1,5 +1,6 @@
 package com.example.cyfinance;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,13 @@ import com.example.cyfinance.util.Constants;
 
 public class NetworthActivity extends AppCompatActivity {
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class NetworthActivity extends AppCompatActivity {
 
     private EditText assetEditText;
 
@@ -18,9 +26,9 @@ public class NetworthActivity extends AppCompatActivity {
 
     private Button nextButton;
 
-    private String assetNum;
+    private int assetNum;
 
-    private String liabilityNum;
+    private int liabilityNum;
 
     private String url = Constants.URL + "/networth";
 
@@ -38,10 +46,78 @@ public class NetworthActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                assetNum = assetEditText.getText().toString();
-                liabilityNum = liabiltiesEditText.getText().toString();
+                assetNum = Integer.parseInt(assetEditText.getText().toString());
+                liabilityNum = Integer.parseInt(liabiltiesEditText.getText().toString());
 
+                postRequest();
+
+                if(Response != null && Response.equals("Net worth created")) {
+                    System.out.println("Hello");
+                    //Intent intent = new Intent(SignupActivity.this, EarningsActivity.class);
+                    //startActivity(intent);
+                }
             }
         });
+    }
+
+    private void postRequest() {
+
+
+        // Request a JSONObject response from the provided URL.
+        JSONObject networth = new JSONObject();
+        try {
+
+            networth.put("assets", assetNum);
+            networth.put("liabilities", liabilityNum);
+            System.out.println(networth);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest createUser = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                networth, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                // Display the first 500 characters of the response string.
+                // String response can be converted to JSONObject via
+                //JSONObject object = response;
+                try {
+                    Response = response.getString("message");
+                    System.out.println(Response);
+                } catch (JSONException e) {
+
+                }
+
+                System.out.println(response);
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //tvResponse.setText("That didn't work!" + error.toString());
+                        System.out.println(error);
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+                //                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                //                params.put("param1", "value1");
+                //                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(createUser);
     }
 }

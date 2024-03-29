@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".MainActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#2A2A2A">
+    <EditText
+        android:id="@+id/food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:text="Earnings"
+        android:textColor="#ffffff"
+        android:textSize="40dp"></EditText>
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="dp"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@id/rent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Food"
+            android:textColor="#ffffff"
+            android:textSize="40dp"></EditText>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:textColor="#ffffff">
+
+
+        <EditText
+            android:id="@+id/Rent"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="70dp"
+            android:hint="Rent/Bills"
+            android:textColor="#ffffff"
+            android:textSize="40dp"></EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@+id/school"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:textSize="30dp"
+            android:hint="School"
+            android:inputType="textPassword"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#808080"></EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/OtherNecessities"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:textSize="30dp"
+            android:textColor="#FFFFFF"
+            android:hint="OtherNecessities"
+            android:textColorHint="#808080">
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:orientation="horizontal">
+
+        <!--        <Button-->
+        <!--            android:id="@+id/signup_login_btn"-->
+        <!--            android:layout_width="150dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginRight="10dp"-->
+        <!--            android:text="Login"-->
+        <!--            android:textSize="20sp"-->
+        <!--            android:backgroundTint="#C8102E">-->
+        <!--        </Button>-->
+
+        <EditText
+            android:id="@+id/extras"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Extras"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#C8102E"
+            android:textSize="30sp"></EditText>
+    </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+
+</androidx.appcompat.widget.LinearLayoutCompat>
