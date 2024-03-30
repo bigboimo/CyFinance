@@ -12,22 +12,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.cyfinance.ui.home.HomeFragment;
+import com.example.cyfinance.util.Constants;
+import com.example.cyfinance.util.JsonRequest;
+import com.example.cyfinance.util.SessionManager;
 
 public class
 LoginActivity extends AppCompatActivity {
@@ -41,8 +38,14 @@ LoginActivity extends AppCompatActivity {
     String password;
 
     String Response;
+
+    // user Id set by cookie on login
+    String userId;
+
+    // User session for other classes to track
+    SessionManager session;
     boolean success = false;
-    private String url = "https://599699cd-3804-43f3-aea2-867d18c9bbff.mock.pstmn.io/login";
+    private String url = Constants.URL + "/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +68,6 @@ LoginActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
 
                 postRequest();
-                //sleep(10);
-                /* when login button is pressed, use intent to switch to Login Activity */
-
-                if(Response != null && Response.equals("success")) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                    intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                    startActivity(intent);  // go to MainActivity with the key-value data
-                }
 
             }
         });
@@ -97,23 +91,37 @@ LoginActivity extends AppCompatActivity {
         // Convert input to JSONObject
         JSONObject postBody = null;
 
-        JsonObjectRequest request = new JsonObjectRequest(
+        JsonRequest request = new JsonRequest(
                 Request.Method.POST,
-                url + "?username=" + username + "&password=" + password,
+                url + "?email=" + username + "&password=" + password,
                 postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Response = response.toString();
                         try {
-                            Response = response.getString("message");
-                            System.out.println(Response);
+                            System.out.println("[Login] HTTP Response: " + response);
+                            JSONArray data = response.getJSONArray("data");
+                            JSONObject headers = response.getJSONObject("headers");
+
+                            Response = data.getJSONObject(0).getString("message");
+                            if (Response.equals("success"))
+                                userId = headers.getString("Set-Cookie").split(";")[0].split("=")[1];
+                            System.out.println("[login] Response message: " + Response);
+
+                            // Go to main activity if login success
+                            if(Response != null && Response.equals("success")) {
+                                // Set the session for the user
+                                session = new SessionManager(getApplicationContext());
+                                session.createLoginSession(userId);
+
+                                // Go to the main activity
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
                         }
                         catch(JSONException e) {
-
+                            System.out.println(e);
                         }
-                        //System.out.println(Response);
-                        System.out.println(response);
                     }
                 },
                 new Response.ErrorListener() {
