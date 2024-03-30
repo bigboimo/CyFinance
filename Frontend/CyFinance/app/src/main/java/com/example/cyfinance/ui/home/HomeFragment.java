@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.TextView;
-
+import com.example.cyfinance.R;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -20,10 +21,19 @@ import com.android.volley.VolleyError;
 import com.example.cyfinance.LoginActivity;
 import com.example.cyfinance.MainActivity;
 import com.example.cyfinance.VolleySingleton;
-import com.example.cyfinance.databinding.FragmentHomeBinding;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
+import android.view.MenuItem;
+
+import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationBarView;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,35 +41,34 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends AppCompatActivity {
 
-    private FragmentHomeBinding binding;
-    private SessionManager session;
     private Button testButton;
-    private android.content.Context context;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_home);
 
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        NavigationBarView navView = findViewById(R.id.nav_view);
 
-        if (getActivity() != null) {
-            context = getActivity().getApplicationContext();
-        } else {
-            System.out.println("No valid activity");
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            startActivity(intent);
-        }
+        navView.setSelectedItemId(R.id.navigation_home);
 
-        session = new SessionManager(context);
 
-        System.out.println("User id " + session.getUserDetails());
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+//        if (getActivity() != null) {
+//            context = getActivity().getApplicationContext();
+//        } else {
+//            System.out.println("No valid activity");
+//            Intent intent = new Intent(getContext(), LoginActivity.class);
+//            startActivity(intent);
+//        }
+//
+//        session = new SessionManager(context);
+
+//        System.out.println("User id " + session.getUserDetails());
+
+//        final TextView textView = binding.textHome;
+//        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
 //        // Example button for sending a request with session headers
 //        testButton = binding.testBtn;
@@ -101,11 +110,7 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
 
-        return root;
+//        return root;
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
+
 }

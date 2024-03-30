@@ -2,6 +2,7 @@ package com.example.cyfinance;
 
 import android.os.Bundle;
 
+import com.example.cyfinance.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,29 +11,50 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.cyfinance.databinding.ActivityMainBinding;
+import android.content.Intent;
+import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+
+import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
-
-    private ActivityMainBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        NavigationBarView navView = findViewById(R.id.nav_view);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_admin)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
+        navView.setSelectedItemId(R.id.navigation_home);
+
+        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.navigation_dashboard:
+                        startActivity(new Intent(getApplicationContext(), HomeFragment.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_home:
+                        return true;
+//                    case R.id.about:
+//                        startActivity(new Intent(getApplicationContext(), About.class));
+//                        overridePendingTransition(0, 0);
+//                        return true;
+                }
+                return false;
+            }
+        });
+
     }
-
 }
