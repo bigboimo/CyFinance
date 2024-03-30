@@ -19,15 +19,15 @@ public class User {
     private String password;
     private String role;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "net_worth_id")
     private NetWorth netWorth;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "earnings_id")
     private Earnings earnings;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "expenses_id")
     private Expenses expenses;
 

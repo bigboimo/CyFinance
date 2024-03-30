@@ -5,23 +5,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.example.cyfinance.util.Constants;
+import com.example.cyfinance.util.JsonRequest;
+import com.example.cyfinance.util.SessionManager;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +38,9 @@ public class SignupActivity extends AppCompatActivity {
     private String confirm;
 
     private String Response;
-    private String url = "http://coms-309-038.class.las.iastate.edu:8080/users";
+    private SessionManager session;
+    private String userId;
+    private String url = Constants.URL + "/users";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,17 +65,6 @@ public class SignupActivity extends AppCompatActivity {
                 confirm = confirmEditText.getText().toString();
 
                 postRequest();
-
-                if(Response != null && Response.equals("User created")) {
-                    System.out.println("Hello");
-                    Intent intent = new Intent(SignupActivity.this, NetworthActivity.class);
-                    startActivity(intent);
-                }
-//                if (password.equals(confirm)) {
-//                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
-//                } else {
-//                    Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
-//                }
             }
         });
     }
@@ -87,7 +76,8 @@ public class SignupActivity extends AppCompatActivity {
         JSONObject adduser = new JSONObject();
         try {
 
-            adduser.put("id", 1);
+            // This is handled by the server. IDs should not be set by the client
+            // adduser.put("id", 1);
             adduser.put("name", confirm);
             adduser.put("email", username);
             adduser.put("password", password);
@@ -97,33 +87,44 @@ public class SignupActivity extends AppCompatActivity {
         catch(Exception e) {
             e.printStackTrace();
         }
-        JsonObjectRequest createUser = new JsonObjectRequest(
+        JsonRequest createUser = new JsonRequest(
                 Request.Method.POST,
                 url,
                 adduser, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // Display the first 500 characters of the response string.
-                        // String response can be converted to JSONObject via
-                        //JSONObject object = response;
-                        try {
-                            Response = response.getString("message");
-                            System.out.println(Response);
-                        }
-                        catch(JSONException e) {
 
-                        }
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    System.out.println("[Signup] HTTP Response: " + response);
+                    JSONArray data = response.getJSONArray("data");
+                    JSONObject headers = response.getJSONObject("headers");
 
-                        System.out.println(response);
+                    Response = data.getJSONObject(0).getString("message");
+                    if (Response.equals("User created"))
+                        userId = headers.getString("Set-Cookie").split(";")[0].split("=")[1];
+                    System.out.println("[login] Response message: " + Response);
+
+                    // Go to main activity if login success
+                    if(Response != null && Response.equals("User created")) {
+                        // Set the session for the user
+                        session = new SessionManager(getApplicationContext());
+                        session.createLoginSession(userId);
+
+                        // Go to the main activity
+                        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                        startActivity(intent);  // go to MainActivity with the key-value data
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //tvResponse.setText("That didn't work!" + error.toString());
-                        System.out.println(error);
-                    }
-                }) {
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);;
+            }
+        }) {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
