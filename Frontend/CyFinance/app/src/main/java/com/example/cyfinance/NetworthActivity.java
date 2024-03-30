@@ -6,11 +6,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cyfinance.util.Constants;
-
-public class NetworthActivity extends AppCompatActivity {
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +25,8 @@ import java.util.Map;
 public class NetworthActivity extends AppCompatActivity {
 
     private EditText assetEditText;
+
+    private String Response;
 
     private EditText liabiltiesEditText;
 
