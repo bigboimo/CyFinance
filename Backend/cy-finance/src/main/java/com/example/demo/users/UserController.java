@@ -39,25 +39,25 @@ public class UserController {
             @CookieValue(name = "user-id", required = false) String userId) {
         logger.info("[GET /users] Cookie: " + userId);
         if (isValidUserId(userId) && isAdmin(userId)) {
-            logger.info("[GET /users] Successfully accessed data by user: " + userRepository.findById(Integer.parseInt(userId)).getName());
+            logger.info("[GET /users] Successfully accessed data by user: " + userRepository.findByEmail(userId).getName());
             return ResponseEntity.ok(userRepository.findAll());
         } else {
             if (isValidUserId(userId))
-                logger.info("[GET /users] Role: " + userRepository.findById(Integer.parseInt(userId)).getRole());
+                logger.info("[GET /users] Role: " + userRepository.findByEmail(userId).getRole());
             logger.warn("[GET /users] Attempted access from invalid user");
             return ResponseEntity.ok(null);
         }
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable int id,
+    public ResponseEntity<User> getUser(@PathVariable String id,
                                         @CookieValue(name = "user-id", required = false) String userId) {
         logger.info("[GET /users/{id}] Cookie: " + userId);
         // TODO: Find out how to make sure the empty cookie request is only for signup
         // Only return user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || id == Integer.parseInt(userId))) {
-            logger.info("[GET /users/{id}] Successfully accessed data by user: " + userRepository.findById(Integer.parseInt(userId)).getName());
-            return ResponseEntity.ok(userRepository.findById(id));
+        if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
+            logger.info("[GET /users/{id}] Successfully accessed data by user: " + userId);
+            return ResponseEntity.ok(userRepository.findByEmail(id));
         } else {
             logger.warn("[GET /users/{id}] Attempted access from invalid user");
             return ResponseEntity.ok(null);
@@ -82,7 +82,7 @@ public class UserController {
                 createdUser = userRepository.findByEmail(user.getEmail());
                 logger.info("[POST /users] User created: " + user);
 
-                ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(createdUser.getId()))
+                ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(createdUser.getEmail()))
                         .maxAge(60)
                         .build();
                 HttpHeaders responseHeaders = new HttpHeaders();
@@ -105,7 +105,7 @@ public class UserController {
 
         User foundUser = userRepository.findByEmail(email);
         if (foundUser != null && foundUser.getPassword().equals(password)) {
-            ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(foundUser.getId()))
+            ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(foundUser.getEmail()))
                     .maxAge(60)
                     .build();
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -141,13 +141,13 @@ public class UserController {
 
         logger.info("[PUT /users] Cookie: " + userId);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || user.getId() == Integer.parseInt(userId))) {
+        if (isValidUserId(userId) && (isAdmin(userId) || user.getEmail().equals(userId))) {
             if (user == null) {
                 logger.warn("[PUT /users] User not provided");
                 response.put("message", "No user provided");
             } else {
                 userRepository.save(user);
-                logger.info("[PUT /users] User " + user.getName() + " modified by " + userRepository.findById(Integer.parseInt(userId)).getEmail());
+                logger.info("[PUT /users] User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
             }
         } else {
@@ -158,9 +158,9 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/earnings/{earningsId}")
-    String assignEarningsToUser(@PathVariable int userId, @PathVariable int earningsId) {
+    String assignEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
         Response<String> response = new Response<>();
-        User user = userRepository.findById(userId);
+        User user = userRepository.findByEmail(userId);
         Earnings earnings = earningsRepository.findById(earningsId);
         if (user == null || earnings == null) {
             response.put("message", "Failed to assign earnings");
@@ -174,11 +174,11 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Response<String>> deleteUser(@PathVariable int id,
+    public ResponseEntity<Response<String>> deleteUser(@PathVariable String id,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
         Response<String> response = new Response<>();
-        if (isValidUserId(userId) && (isAdmin(userId) || id == Integer.parseInt(userId))) {
-            userRepository.deleteById(id);
+        if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
+            userRepository.deleteByEmail(id);
             logger.info("[DELETE /users] Entry for userId " + id + " deleted by userId " + userId);
             response.put("message", "User deleted");
         } else {
@@ -189,9 +189,9 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/networth/{netWorthId}")
-    public ResponseEntity<Response<String>> attachNetWorthToUser(@PathVariable int userId, @PathVariable int netWorthId) {
+    public ResponseEntity<Response<String>> attachNetWorthToUser(@PathVariable String userId, @PathVariable int netWorthId) {
         Response<String> response = new Response<>();
-        User user = userRepository.findById(userId);
+        User user = userRepository.findByEmail(userId);
         NetWorth netWorth = netWorthRepository.findById(netWorthId);
         if (user == null || netWorth == null) {
             response.put("message", "Failed to assign net worth");
@@ -206,9 +206,9 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/expenses/{expensesId}")
-    String attachExpensesToUser(@PathVariable int userId, @PathVariable int expensesId) {
+    String attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
         Response<String> response = new Response<>();
-        User user = userRepository.findById(userId);
+        User user = userRepository.findByEmail(userId);
         Expenses expenses = expensesRepository.findById(expensesId);
         if (user == null || expenses == null) {
             response.put("message", "Failed to assign expenses");
@@ -226,10 +226,10 @@ public class UserController {
     }
 
     private boolean isValidUserId(String userId) {
-        return isValidId(userId) && userRepository.findById(Integer.parseInt(userId)) != null;
+        return isValidId(userId) && userRepository.findByEmail(userId) != null;
     }
 
     private boolean isAdmin(String userId) {
-        return userRepository.findById(Integer.parseInt(userId)).getRole().equals("admin");
+        return userRepository.findByEmail(userId).getRole().equals("admin");
     }
 }
