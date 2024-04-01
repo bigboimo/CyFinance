@@ -9,7 +9,7 @@
     android:background="#2A2A2A"
     android:layout_gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".HomeActivity">
 
 
     <!-- You can adjust the style here -->

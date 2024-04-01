@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,16 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.java_websocket.handshake.ServerHandshake;
-import org.w3c.dom.Text;
 
-import com.example.cyfinance.MainActivity;
+import com.example.cyfinance.HomeActivity;
 import com.example.cyfinance.R;
-import com.example.cyfinance.ui.home.HomeFragment;
+import com.example.cyfinance.ui.Earnings.EarningsDActivity;
+import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.google.android.material.navigation.NavigationBarView;
 
-import java.util.Objects;
-
-public class AdminFragment extends AppCompatActivity implements WebSocketListener {
+public class AdminActivity extends AppCompatActivity implements WebSocketListener {
     private String BASE_URL = "ws://10.0.2.2:8080/chat/Admin";
 
     TextView adminMessage;
@@ -31,7 +27,7 @@ public class AdminFragment extends AppCompatActivity implements WebSocketListene
     public void onCreate(Bundle savedInstanceState) {
         String serverURL = BASE_URL;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_admin);
+        setContentView(R.layout.activity_admin);
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_admin);
 
@@ -44,6 +40,30 @@ public class AdminFragment extends AppCompatActivity implements WebSocketListene
         WebSocketManager.getInstance().connectWebSocket(serverURL);
         WebSocketManager.getInstance().setWebSocketListener(this);
 
+        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.navigation_earnings:
+                        startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_admin:
+                        return true;
+                    case R.id.navigation_home:
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_expenses:
+                        startActivity(new Intent(getApplicationContext(), ExpensesDActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                }
+                return false;
+            }
+        });
+
         sendAlert.setOnClickListener(view -> {
 
             try {
@@ -53,26 +73,6 @@ public class AdminFragment extends AppCompatActivity implements WebSocketListene
             }
 
 
-        });
-
-        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                switch (item.getItemId()) {
-                    case R.id.navigation_dashboard:
-                        startActivity(new Intent(getApplicationContext(), HomeFragment.class));
-                        overridePendingTransition(0, 0);
-                        return true;
-                    case R.id.navigation_home:
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        overridePendingTransition(0, 0);
-                        return true;
-                    case R.id.navigation_admin:
-                        return true;
-                }
-                return false;
-            }
         });
     }
 

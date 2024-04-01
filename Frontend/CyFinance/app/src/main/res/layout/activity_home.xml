@@ -4,52 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Admin.AdminFragment">
+    tools:context=".ui.Earnings.EarningsDActivity"
+    android:background="#2A2A2A">
 
-    <Button
-        android:id="@+id/alert_button"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#C8102E"
-        android:text="Send"
-        android:textColor="#FFFFFF"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.67" />
-
-    <EditText
-        android:id="@+id/text_notifications"
-        android:inputType="text"
-        android:layout_width="297dp"
+    <TextView
+        android:id="@+id/text_home"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:hint="Enter Message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/text_alert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.151" />
+<!--    <Button-->
+<!--        android:id="@+id/test_btn"-->
+<!--        android:layout_width="180dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="#F1BE48"-->
+<!--        android:text="GET USERS"-->
+<!--        android:textColor="#ffffff"-->
+<!--        tools:layout_editor_absoluteX="115dp"-->
+<!--        tools:layout_editor_absoluteY="528dp">-->
+
+<!--    </Button>-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"

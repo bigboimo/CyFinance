@@ -1,62 +1,33 @@
-package com.example.cyfinance.ui.home;
+package com.example.cyfinance.ui.Earnings;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.cyfinance.R;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.example.cyfinance.LoginActivity;
-import com.example.cyfinance.MainActivity;
-import com.example.cyfinance.VolleySingleton;
-import com.example.cyfinance.ui.Admin.AdminFragment;
-import com.example.cyfinance.util.Constants;
-import com.example.cyfinance.util.JsonRequest;
-import com.example.cyfinance.util.SessionManager;
+import com.example.cyfinance.HomeActivity;
+import com.example.cyfinance.ui.Admin.AdminActivity;
 
 import android.view.MenuItem;
 
-import android.view.MenuItem;
-
-import androidx.annotation.NonNull;
-
+import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.google.android.material.navigation.NavigationBarView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-
-public class HomeFragment extends AppCompatActivity {
+public class EarningsDActivity extends AppCompatActivity {
 
     private Button testButton;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_dashboard);
+        setContentView(R.layout.activity_earningsd);
 
         NavigationBarView navView = findViewById(R.id.nav_view);
 
-        navView.setSelectedItemId(R.id.navigation_dashboard);
+        navView.setSelectedItemId(R.id.navigation_earnings);
 
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -64,14 +35,18 @@ public class HomeFragment extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 switch (item.getItemId()) {
-                    case R.id.navigation_dashboard:
+                    case R.id.navigation_earnings:
                         return true;
                     case R.id.navigation_home:
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_admin:
-                        startActivity(new Intent(getApplicationContext(), AdminFragment.class));
+                        startActivity(new Intent(getApplicationContext(), AdminActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_expenses:
+                        startActivity(new Intent(getApplicationContext(), ExpensesDActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                 }

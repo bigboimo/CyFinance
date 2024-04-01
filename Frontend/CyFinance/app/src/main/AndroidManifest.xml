@@ -10,7 +10,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="CyFinance"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CyFinance"
@@ -25,11 +25,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name=".HomeActivity"
             android:exported="true"></activity>
-        <activity android:name=".ui.home.HomeFragment"
+        <activity android:name=".ui.Earnings.EarningsDActivity"
             android:exported="true"></activity>
-        <activity android:name=".ui.dashboard.DashboardFragment"
+        <activity android:name=".ui.Expenses.ExpensesDActivity"
+            android:exported="true"></activity>
+        <activity android:name=".ui.Admin.AdminActivity"
             android:exported="true"></activity>
         <activity android:name=".SignupActivity"
             android:exported="true"></activity>
