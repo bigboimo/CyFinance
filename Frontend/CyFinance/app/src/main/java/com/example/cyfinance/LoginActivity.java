@@ -1,6 +1,5 @@
 package com.example.cyfinance;
 
-import static java.lang.Thread.sleep;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +30,6 @@ LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText;  // define username edittext variable
     private EditText passwordEditText;  // define password edittext variable
-    private Button loginButton;         // define login button variable
-    private Button signupButton;        // define signup button variable
 
     String username;
     String password;
@@ -56,8 +52,10 @@ LoginActivity extends AppCompatActivity {
         /* initialize UI elements */
         usernameEditText = findViewById(R.id.login_username_edt);
         passwordEditText = findViewById(R.id.login_password_edt);
-        loginButton = findViewById(R.id.login_btn);    // link to login button in the Login activity XML
-        signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
+        // define login button variable
+        Button loginButton = findViewById(R.id.login_btn);    // link to login button in the Login activity XML
+        // define signup button variable
+        Button signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
 
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -110,17 +108,16 @@ LoginActivity extends AppCompatActivity {
                             System.out.println("[login] Response message: " + Response);
 
                             // Go to main activity if login success
-                            if(Response != null && Response.equals("success")) {
+                            if (Response != null && Response.equals("success")) {
                                 // Set the session for the user
                                 session = new SessionManager(getApplicationContext());
                                 session.createLoginSession(userId);
 
                                 // Go to the main activity
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 startActivity(intent);
                             }
-                        }
-                        catch(JSONException e) {
+                        } catch (JSONException e) {
                             System.out.println(e);
                         }
                     }
