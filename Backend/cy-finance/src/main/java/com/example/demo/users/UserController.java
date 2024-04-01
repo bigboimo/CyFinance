@@ -4,6 +4,8 @@ import com.example.demo.earnings.Earnings;
 import com.example.demo.earnings.EarningsRepository;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.expenses.ExpensesRepository;
+import com.example.demo.userGroups.Groups;
+import com.example.demo.userGroups.GroupsRepository;
 import com.example.demo.netWorth.NetWorth;
 import com.example.demo.netWorth.NetWorthRepository;
 import com.example.demo.util.Response;
@@ -13,12 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
 public class UserController {
-
-    Response<User> users = new Response<>();
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -33,6 +34,9 @@ public class UserController {
 
     @Autowired
     ExpensesRepository expensesRepository;
+
+    @Autowired
+    GroupsRepository groupsRepository;
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(
@@ -77,6 +81,9 @@ public class UserController {
             if (user == null) {
                 logger.warn("[POST /users] No user provided");
                 response.put("message", "No user provided");
+            } else if (userRepository.findByEmail(user.getEmail()) != null) {
+                logger.warn("[POST /users] User: " + user.getEmail() + " already exists");
+                response.put("message", "User already exists");
             } else {
                 userRepository.save(user);
                 createdUser = userRepository.findByEmail(user.getEmail());
@@ -219,6 +226,22 @@ public class UserController {
             response.put("message", "Expenses assigned");
         }
         return response.toString();
+    }
+
+    @PostMapping("/users/{userId}/groups/{groupId}")
+    public ResponseEntity<Response<String>> attachGroupsToUser(@PathVariable int userId, @PathVariable int groupId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findById(userId);
+        Groups group = groupsRepository.findById(groupId);
+        if (user == null || group == null) {
+            response.put("message", "Failed to assign group");
+        } else {
+            group.addUser(user);
+            user.addGroups(group);
+            userRepository.save(user);
+            response.put("message", "Expenses assigned");
+        }
+        return ResponseEntity.ok(response);
     }
 
     private boolean isValidId(String userId) {
