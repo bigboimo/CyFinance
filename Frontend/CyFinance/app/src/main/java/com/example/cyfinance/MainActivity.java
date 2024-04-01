@@ -2,6 +2,7 @@ package com.example.cyfinance;
 
 import android.os.Bundle;
 
+import com.example.cyfinance.ui.Admin.AdminFragment;
 import com.example.cyfinance.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_home);
 
         NavigationBarView navView = findViewById(R.id.nav_view);
 
@@ -47,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.navigation_home:
                         return true;
-//                    case R.id.about:
-//                        startActivity(new Intent(getApplicationContext(), About.class));
-//                        overridePendingTransition(0, 0);
-//                        return true;
+                    case R.id.navigation_admin:
+                        startActivity(new Intent(getApplicationContext(), AdminFragment.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                 }
                 return false;
             }

@@ -1,8 +1,9 @@
 package com.example.cyfinance.ui.Admin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -10,35 +11,35 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.w3c.dom.Text;
 
 import com.example.cyfinance.MainActivity;
-import com.example.cyfinance.databinding.FragmentAdminBinding;
+import com.example.cyfinance.R;
+import com.example.cyfinance.ui.home.HomeFragment;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.Objects;
 
-public class AdminFragment extends Fragment implements WebSocketListener {
-
-    private static final Object CHANNEL_ID = 1;
-    private FragmentAdminBinding binding;
+public class AdminFragment extends AppCompatActivity implements WebSocketListener {
     private String BASE_URL = "ws://10.0.2.2:8080/chat/Admin";
-    private TextView adminMessage;
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        AdminViewModel adminViewModel = new ViewModelProvider(this).get(AdminViewModel.class);
+    TextView adminMessage;
+
+    public void onCreate(Bundle savedInstanceState) {
         String serverURL = BASE_URL;
-        binding = FragmentAdminBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_admin);
+        NavigationBarView navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_admin);
 
-        adminMessage = binding.textAlert;
+        adminMessage = findViewById(R.id.text_alert);
 
-        Button sendAlert = binding.alertButton;
+        EditText messageText = findViewById(R.id.text_notifications);
 
-        final EditText notification = binding.textNotifications;
+        Button sendAlert = findViewById(R.id.alert_button);
 
         WebSocketManager.getInstance().connectWebSocket(serverURL);
         WebSocketManager.getInstance().setWebSocketListener(this);
@@ -46,7 +47,7 @@ public class AdminFragment extends Fragment implements WebSocketListener {
         sendAlert.setOnClickListener(view -> {
 
             try {
-                WebSocketManager.getInstance().sendMessage(notification.getText().toString());
+                WebSocketManager.getInstance().sendMessage(messageText.getText().toString());
             } catch (Exception e) {
                 Log.d("ExceptionSendMessage:", e.getMessage().toString());
             }
@@ -54,20 +55,27 @@ public class AdminFragment extends Fragment implements WebSocketListener {
 
         });
 
+        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        adminViewModel.getText().observe(getViewLifecycleOwner(), notification::setText);
-        //adminViewModel.getText().observe(getViewLifecycleOwner(), adminMessage::setText);
-
-
-        return root;
+                switch (item.getItemId()) {
+                    case R.id.navigation_dashboard:
+                        startActivity(new Intent(getApplicationContext(), HomeFragment.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_admin:
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
 
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
@@ -75,7 +83,7 @@ public class AdminFragment extends Fragment implements WebSocketListener {
 
     @Override
     public void onWebSocketMessage(String message) {
-        getActivity().runOnUiThread(() -> {
+        runOnUiThread(() -> {
             String s = adminMessage.getText().toString();
             adminMessage.setText(message);
         });
@@ -84,7 +92,7 @@ public class AdminFragment extends Fragment implements WebSocketListener {
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
         String closedBy = remote ? "server" : "local";
-        getActivity().runOnUiThread(() ->{
+        runOnUiThread(() -> {
             String s = adminMessage.getText().toString();
             adminMessage.setText(s + " " + closedBy + reason);
         });

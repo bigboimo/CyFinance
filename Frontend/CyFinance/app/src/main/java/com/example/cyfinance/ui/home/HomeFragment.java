@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.example.cyfinance.R;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -21,14 +23,17 @@ import com.android.volley.VolleyError;
 import com.example.cyfinance.LoginActivity;
 import com.example.cyfinance.MainActivity;
 import com.example.cyfinance.VolleySingleton;
+import com.example.cyfinance.ui.Admin.AdminFragment;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
+
 import android.view.MenuItem;
 
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+
 import com.google.android.material.navigation.NavigationBarView;
 
 import android.content.Intent;
@@ -47,12 +52,32 @@ public class HomeFragment extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_home);
+        setContentView(R.layout.fragment_dashboard);
 
         NavigationBarView navView = findViewById(R.id.nav_view);
 
-        navView.setSelectedItemId(R.id.navigation_home);
+        navView.setSelectedItemId(R.id.navigation_dashboard);
 
+
+        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.navigation_dashboard:
+                        return true;
+                    case R.id.navigation_home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_admin:
+                        startActivity(new Intent(getApplicationContext(), AdminFragment.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                }
+                return false;
+            }
+        });
 
 
 //        if (getActivity() != null) {
@@ -112,5 +137,4 @@ public class HomeFragment extends AppCompatActivity {
 
 //        return root;
     }
-
 }
