@@ -2,8 +2,11 @@ package com.example.demo.users;
 
 import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
+import com.example.demo.userGroups.Groups;
 import com.example.demo.netWorth.NetWorth;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -27,6 +30,13 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "expenses_id")
     private Expenses expenses;
+
+    @ManyToMany
+    @JoinTable(
+            name = "course_like",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
+    private Set<Groups> groups;
 
     public User(String name, String email, String password, String role) {
         this.name = name;
@@ -92,6 +102,16 @@ public class User {
     public void setExpenses(Expenses expenses) {
         this.expenses = expenses;
     }
+
+    public Set<Groups> getGroups() {
+        return groups;
+    }
+
+    public void addGroups(Groups group) {
+        this.groups.add(group);
+    }
+
+    public void removeGroups(Groups group) { this.groups.remove(group); }
 
     @Override
     public String toString() {
