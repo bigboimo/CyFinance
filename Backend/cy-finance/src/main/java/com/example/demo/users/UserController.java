@@ -229,9 +229,9 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/groups/{groupId}")
-    public ResponseEntity<Response<String>> attachGroupsToUser(@PathVariable int userId, @PathVariable int groupId) {
+    public ResponseEntity<Response<String>> attachGroupsToUser(@PathVariable String userId, @PathVariable int groupId) {
         Response<String> response = new Response<>();
-        User user = userRepository.findById(userId);
+        User user = userRepository.findByEmail(userId);
         Groups group = groupsRepository.findById(groupId);
         if (user == null || group == null) {
             response.put("message", "Failed to assign group");
