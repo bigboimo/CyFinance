@@ -6,16 +6,13 @@ import com.example.demo.netWorth.NetWorth;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String email;
 
     private String name;
-    @Column(unique = true, nullable = false)
-    private String email;
     private String password;
     private String role;
 
@@ -39,14 +36,6 @@ public class User {
     }
 
     public User() {}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Earnings getEarnings() {
         return earnings;
@@ -107,7 +96,6 @@ public class User {
     @Override
     public String toString() {
         return "{" +
-                "\"id\":" + id +
                 "\"name\":\"" + name + '\"' +
                 ", \"email\":\"" + email + '\"' +
                 ", \"password\":\"" + password + '\"' +
