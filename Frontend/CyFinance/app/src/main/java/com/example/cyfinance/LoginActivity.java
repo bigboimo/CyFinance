@@ -56,7 +56,7 @@ LoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.login_btn);    // link to login button in the Login activity XML
         // define signup button variable
         Button signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
-
+        Button chatButton = findViewById(R.id.chat_btn); //link to chat button within the xml
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +72,8 @@ LoginActivity extends AppCompatActivity {
         });
 
 
+
+
         /* click listener on signup button pressed */
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,10 +82,23 @@ LoginActivity extends AppCompatActivity {
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);  // go to SignupActivity
-
             }
+
         });
-    }
+
+        chatButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                /* grab strings from user inputs */
+                Intent intent = new Intent(LoginActivity.this, ChatConnect.class);
+                startActivity(intent);  // go to SignupActivity
+            }
+
+
+
+    });
 
     private void postRequest() {
 
@@ -114,7 +129,7 @@ LoginActivity extends AppCompatActivity {
                                 session.createLoginSession(userId);
 
                                 // Go to the main activity
-                                Intent intent = new Intent(LoginActivity.this, ExpensesActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 startActivity(intent);
                             }
                         } catch (JSONException e) {
@@ -152,4 +167,5 @@ LoginActivity extends AppCompatActivity {
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
+
 }

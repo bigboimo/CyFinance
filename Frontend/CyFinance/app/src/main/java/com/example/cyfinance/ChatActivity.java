@@ -51,6 +51,8 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
                 Log.d("ExceptionSendMessage:", e.getMessage().toString());
 
             }
+            Intent intent = new Intent(ChatActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
 
         /* back button listener */

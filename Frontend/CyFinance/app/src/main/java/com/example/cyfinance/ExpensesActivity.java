@@ -93,6 +93,15 @@ public class ExpensesActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        System.out.println(response);
+                        if(Response.equals("success")){
+                            System.out.println("Data saved");
+                            Intent intent = new Intent(ExpensesActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                        }
+                        else{
+                            System.out.println("Failed to set earnings");
+                        }
                     }
                 },
                 new Response.ErrorListener() {
