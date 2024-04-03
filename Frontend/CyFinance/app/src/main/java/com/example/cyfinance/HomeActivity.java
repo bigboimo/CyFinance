@@ -9,6 +9,8 @@ import com.android.volley.VolleyError;
 import com.example.cyfinance.ui.Admin.AdminActivity;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,15 +40,20 @@ public class HomeActivity extends AppCompatActivity {
     TextView totalAssets;
     TextView totalLiabilities;
     String Response;
+    SessionManager session;
+    String AssetResponse;
+    String LiabilitiesResponse;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        session = new SessionManager(getApplicationContext());
 
-
-        TextView totals = findViewById(R.id.text_totals);
         totalNetworth = findViewById(R.id.text_networth);
+
+        Button refresh = findViewById(R.id.button_refresh);
 
         totalAssets = findViewById(R.id.text_assets);
 
@@ -55,7 +62,12 @@ public class HomeActivity extends AppCompatActivity {
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_home);
 
-
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getRequest();
+            }
+        });
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -79,54 +91,67 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
-        private void getRequest() {
+    }
 
-            // Convert input to JSONObject
-            JSONObject postBody = null;
+    private void getRequest() {
 
-            JsonRequest request = new JsonRequest(
-                    Request.Method.GET,
-                    Constants.URL + "/networth",
-                    postBody,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
+        // Convert input to JSONObject
+        JSONObject postBody = null;
 
-                            } catch (JSONException e) {
-                                System.out.println(e);
+        JsonRequest request = new JsonRequest(
+                Request.Method.GET,
+                Constants.URL + "/networth/" + session.getUserDetails().get("id"),
+                postBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            System.out.println("[Login] HTTP Response: " + response);
+                            JSONArray data = response.getJSONArray("data");
+                            JSONObject headers = response.getJSONObject("headers");
+
+                            AssetResponse = data.getJSONObject(0).getString("assets");
+                            LiabilitiesResponse = data.getJSONObject(0).getString("liabilities");
+
+                            if (Response != null && Response.equals("success")) {
+                                totalAssets.setText(AssetResponse);
+                                totalLiabilities.setText(LiabilitiesResponse);
+                                int total = Integer.parseInt(AssetResponse) + Integer.parseInt(LiabilitiesResponse);
+                                totalNetworth.setText(String.valueOf(total));
                             }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //Response = error.getMessage();
-                            Response = error.toString();
-                            System.out.println(error);
-
+                        } catch (JSONException e) {
+                            System.out.println(e);
                         }
                     }
-            ) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    //                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
-                    //                headers.put("Content-Type", "application/json");
-                    return headers;
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Response = error.getMessage();
+                        Response = error.toString();
+                        System.out.println(error);
+
+                    }
                 }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+                //                headers.put("Content-Type", "application/json");
+                return headers;
+            }
 
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
-                    //params.put();
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                //params.put();
+                //params.put();
+                return params;
+            }
+        };
 
-                    return params;
-                }
-            };
-
-            // Adding request to request queue
-            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
-        }
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 }
