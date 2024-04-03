@@ -18,6 +18,8 @@ public class User {
     private String name;
     private String password;
     private String role;
+    private int assetsTotal;
+    private int liabilitiesTotal;
     private int netWorth;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -127,6 +129,22 @@ public class User {
 
     public void setGroups(Set<Groups> groups) {
         this.groups = groups;
+    }
+
+    public int getAssetsTotal() {
+        return assetsTotal;
+    }
+
+    public void setAssetsTotal(int assetsTotal) {
+        this.assetsTotal = assetsTotal;
+    }
+
+    public int getLiabilitiesTotal() {
+        return liabilitiesTotal;
+    }
+
+    public void setLiabilitiesTotal(int liabilitiesTotal) {
+        this.liabilitiesTotal = liabilitiesTotal;
     }
 
     @Override
