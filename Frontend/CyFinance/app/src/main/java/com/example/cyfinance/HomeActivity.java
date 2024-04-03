@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity {
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_expenses:
-                        startActivity(new Intent(getApplicationContext(), ExpensesDActivity.class));
+                        startActivity(new Intent(getApplicationContext(), ExpensesActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                 }

@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.cyfinance.MainActivity;
 import com.example.cyfinance.WebSocketManager;
 
 import org.java_websocket.handshake.ServerHandshake;

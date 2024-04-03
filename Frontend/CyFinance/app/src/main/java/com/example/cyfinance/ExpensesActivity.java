@@ -46,7 +46,7 @@ public class ExpensesActivity extends AppCompatActivity {
         SchoolEditText = findViewById(R.id.school);
         OtherNecessitiesEditText = findViewById(R.id.OtherNecessities);
         Extras = findViewById(R.id.Extras);
-        submitbutton = findViewById(R.id.Submit);
+        submitbutton = findViewById(R.id.submit);
 
         submitbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +83,7 @@ public class ExpensesActivity extends AppCompatActivity {
                             Response = response.getString("message");
                             Log.d("Response", Response);
                             if (Response != null && Response.equals("success")) {
-                                Intent intent = new Intent(ExpensesActivity.this, MainActivity.class);
+                                Intent intent = new Intent(ExpensesActivity.this, HomeActivity.class);
                                 intent.putExtra("Food", Food);
                                 intent.putExtra("Rent/Bills", RentBills1);
                                 intent.putExtra("School", School);

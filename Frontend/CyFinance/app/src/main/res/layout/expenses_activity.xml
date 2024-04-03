@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#2A2A2A"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".ExpensesActivity">
 
 <!--    <LinearLayout-->
 <!--        android:layout_width="wrap_content"-->
@@ -14,12 +14,12 @@
 <!--        android:orientation="vertical">-->
 
         <TextView
-            android:id="@+id/earnings"
+            android:id="@+id/expenses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
-            android:hint="Earnings"
+            android:hint="Expenses"
             android:textColorHint="#F1BE48"
             android:textSize="40dp" />
 
@@ -83,7 +83,7 @@
 <!--    </LinearLayout>-->
 
     <Button
-        android:id="@+id/Submit"
+        android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"

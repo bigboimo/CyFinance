@@ -37,6 +37,10 @@
             android:exported="true"></activity>
         <activity android:name=".NetworthActivity"
             android:exported="true"></activity>
+        <activity android:name=".ExpensesActivity"
+            android:exported="true"></activity>
+        <activity android:name=".EarningsActivity"
+            android:exported="true"></activity>
 
     </application>
 

@@ -114,7 +114,7 @@ LoginActivity extends AppCompatActivity {
                                 session.createLoginSession(userId);
 
                                 // Go to the main activity
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, ExpensesActivity.class);
                                 startActivity(intent);
                             }
                         } catch (JSONException e) {
