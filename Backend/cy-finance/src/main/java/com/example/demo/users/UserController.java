@@ -1,13 +1,13 @@
 package com.example.demo.users;
 
+import com.example.demo.assets.AssetsRepository;
 import com.example.demo.earnings.Earnings;
 import com.example.demo.earnings.EarningsRepository;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.expenses.ExpensesRepository;
+import com.example.demo.assets.Assets;
 import com.example.demo.userGroups.Groups;
 import com.example.demo.userGroups.GroupsRepository;
-import com.example.demo.netWorth.NetWorth;
-import com.example.demo.netWorth.NetWorthRepository;
 import com.example.demo.util.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -30,7 +29,7 @@ public class UserController {
     UserRepository userRepository;
 
     @Autowired
-    NetWorthRepository netWorthRepository;
+    AssetsRepository assetsRepository;
 
     @Autowired
     ExpensesRepository expensesRepository;
@@ -164,22 +163,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/users/{userId}/earnings/{earningsId}")
-    String assignEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
-        Response<String> response = new Response<>();
-        User user = userRepository.findByEmail(userId);
-        Earnings earnings = earningsRepository.findById(earningsId);
-        if (user == null || earnings == null) {
-            response.put("message", "Failed to assign earnings");
-        } else {
-            earnings.setUser(user);
-            user.setEarnings(earnings);
-            userRepository.save(user);
-            response.put("message", "Earnings assigned to user");
-        }
-        return response.toString();
-    }
-
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Response<String>> deleteUser(@PathVariable String id,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
@@ -195,21 +178,75 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/users/{userId}/networth/{netWorthId}")
-    public ResponseEntity<Response<String>> attachNetWorthToUser(@PathVariable String userId, @PathVariable int netWorthId) {
+    @PostMapping("/users/{userId}/assets")
+    public ResponseEntity<Response<String>> addUserAssets(@PathVariable String userId, @RequestBody Assets assets) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
-        NetWorth netWorth = netWorthRepository.findById(netWorthId);
-        if (user == null || netWorth == null) {
-            response.put("message", "Failed to assign net worth");
+        if (user == null) {
+            response.put("message", "Failed to assign asset");
             return ResponseEntity.ok(response);
         } else {
-            netWorth.setUser(user);
-            user.setNetWorth(netWorth);
+            assets.setUser(user);
+            assetsRepository.save(assets);
+            user.addAsset(assets);
+            user.setNetWorth(user.getNetWorth() + assets.getAmount());
             userRepository.save(user);
-            response.put("message", "Net-worth assigned to user");
+            response.put("message", "Asset assigned to user");
             return ResponseEntity.ok(response);
         }
+    }
+
+    @PutMapping("/users/{userId}/assets")
+    public ResponseEntity<Response<String>> editUserAssets(@PathVariable String userId,
+                                                          @RequestBody Assets assets) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Assets originalAsset = assetsRepository.findAssetsById(assets.getId());
+        if (user == null || (!userId.equals(originalAsset.getUser().getEmail()))) {
+            response.put("message", "Failed to edit asset");
+            return ResponseEntity.ok(response);
+        } else {
+            user.setNetWorth(user.getNetWorth() - originalAsset.getAmount() + assets.getAmount());
+            assets.setUser(user);
+            assetsRepository.save(assets);
+            userRepository.save(user);
+            response.put("message", "Asset updated");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @DeleteMapping("/users/{userId}/assets/{assetId}")
+    public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Assets asset = assetsRepository.findAssetsById(assetId);
+        if (user == null || asset == null) {
+            response.put("message", "Failed to delete asset");
+            return ResponseEntity.ok(response);
+        } else {
+            assetsRepository.deleteAssetsById(assetId);
+            user.removeAsset(asset);
+            user.setNetWorth(user.getNetWorth() - asset.getAmount());
+            userRepository.save(user);
+            response.put("message", "Asset deleted");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping("/users/{userId}/earnings/{earningsId}")
+    String assignEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Earnings earnings = earningsRepository.findById(earningsId);
+        if (user == null || earnings == null) {
+            response.put("message", "Failed to assign earnings");
+        } else {
+            earnings.setUser(user);
+            user.setEarnings(earnings);
+            userRepository.save(user);
+            response.put("message", "Earnings assigned to user");
+        }
+        return response.toString();
     }
 
     @PostMapping("/users/{userId}/expenses/{expensesId}")
