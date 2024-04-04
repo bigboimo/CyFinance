@@ -1,9 +1,9 @@
 package com.example.demo.users;
 
+import com.example.demo.assets.Assets;
 import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.userGroups.Groups;
-import com.example.demo.netWorth.NetWorth;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -18,10 +18,15 @@ public class User {
     private String name;
     private String password;
     private String role;
+    @Column(columnDefinition = "integer default 0")
+    private int assetsTotal;
+    @Column(columnDefinition = "integer default 0")
+    private int liabilitiesTotal;
+    @Column(columnDefinition = "integer default 0")
+    private int netWorth;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "net_worth_id")
-    private NetWorth netWorth;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Assets> assets;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "earnings_id")
@@ -33,9 +38,9 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "course_like",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
+            name = "users_groups",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Groups> groups;
 
     public User(String name, String email, String password, String role) {
@@ -87,13 +92,25 @@ public class User {
         this.role = role;
     }
 
-    public NetWorth getNetWorth() {
+    public int getNetWorth() {
         return netWorth;
     }
 
-    public void setNetWorth(NetWorth netWorth) {
+    public void setNetWorth(int netWorth) {
         this.netWorth = netWorth;
     }
+
+    public Set<Assets> getAssets() {
+        return assets;
+    }
+
+    public void addAsset(Assets asset) {
+        this.assets.add(asset);
+    }
+
+    public void removeAsset(Assets asset) { this.assets.remove(asset); }
+
+    public void setAssets(Set<Assets> assets) { this.assets = assets; }
 
     public Expenses getExpenses() {
         return expenses;
@@ -112,6 +129,26 @@ public class User {
     }
 
     public void removeGroups(Groups group) { this.groups.remove(group); }
+
+    public void setGroups(Set<Groups> groups) {
+        this.groups = groups;
+    }
+
+    public int getAssetsTotal() {
+        return assetsTotal;
+    }
+
+    public void setAssetsTotal(int assetsTotal) {
+        this.assetsTotal = assetsTotal;
+    }
+
+    public int getLiabilitiesTotal() {
+        return liabilitiesTotal;
+    }
+
+    public void setLiabilitiesTotal(int liabilitiesTotal) {
+        this.liabilitiesTotal = liabilitiesTotal;
+    }
 
     @Override
     public String toString() {
