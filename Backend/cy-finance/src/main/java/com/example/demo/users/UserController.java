@@ -166,8 +166,8 @@ public class UserController {
     }
 
     @PutMapping("/users/{userEmail}/assettotal/{newTotal}")
-    public ResponseEntity<Response<String>> changeUserAssetTotal(@RequestParam String userEmail,
-                                                       @RequestParam int newTotal,
+    public ResponseEntity<Response<String>> changeUserAssetTotal(@PathVariable String userEmail,
+                                                       @PathVariable int newTotal,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
         Response<String> response = new Response<>();
 
@@ -192,8 +192,8 @@ public class UserController {
     }
 
     @PutMapping("/users/{userEmail}/liabilitiestotal/{newTotal}")
-    public ResponseEntity<Response<String>> changeUserLiabilitiesTotal(@RequestParam String userEmail,
-                                                                 @RequestParam int newTotal,
+    public ResponseEntity<Response<String>> changeUserLiabilitiesTotal(@PathVariable String userEmail,
+                                                                 @PathVariable int newTotal,
                                                                  @CookieValue(name = "user-id", required = false) String userId) {
         Response<String> response = new Response<>();
 
