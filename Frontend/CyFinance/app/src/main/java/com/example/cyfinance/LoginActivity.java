@@ -25,8 +25,7 @@ import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
 
-public class
-LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText;  // define username edittext variable
     private EditText passwordEditText;  // define password edittext variable
@@ -71,9 +70,6 @@ LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         /* click listener on signup button pressed */
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,8 +93,9 @@ LoginActivity extends AppCompatActivity {
             }
 
 
+        });
 
-    });
+    }
 
     private void postRequest() {
 
@@ -169,3 +166,5 @@ LoginActivity extends AppCompatActivity {
     }
 
 }
+
+

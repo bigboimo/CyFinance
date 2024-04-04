@@ -30,35 +30,39 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
         /* initialize UI elements */
         sendBtn = (Button) findViewById(R.id.sendBtn);
         msgEtx = (EditText) findViewById(R.id.msgEdt);
-        msgTv = (TextView) findViewById(R.id.tx1);
         msg = (TextView) findViewById(R.id.txt);
+        Button backLoginBtn = findViewById(R.id.backLoginBtn); // Reference to the back to login button
 
         /* connect this activity to the websocket instance */
         WebSocketManager.getInstance().setWebSocketListener(ChatActivity.this);
 
         /* send button listener */
         sendBtn.setOnClickListener(v -> {
-
             try {
                 // send message
                 WebSocketManager.getInstance().sendMessage(msgEtx.getText().toString());
-                //after getting the message typed in string  form:
-                //1. you need to send it to the backend to save it
-                //2. you need to make a request to get the saved string from the backend
-                //3. once you call the saved string, you need to set it in the text view similarly to:
+                // Set the message in the TextView
                 msg.setText(msgEtx.getText().toString());
             } catch (Exception e) {
-                Log.d("ExceptionSendMessage:", e.getMessage().toString());
-
+                Log.d("ExceptionSendMessage:", e.getMessage());
             }
-            Intent intent = new Intent(ChatActivity.this, HomeActivity.class);
+        });
+
+        /* back to login button listener */
+        backLoginBtn.setOnClickListener(v -> {
+            // Navigate back to LoginActivity
+            Intent intent = new Intent(ChatActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 
         /* back button listener */
-
+        // Your code for any other back button if you have one
     }
 
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {}
+    //Handles WebSocket open event
 
     @Override
     public void onWebSocketMessage(String message) {
@@ -74,9 +78,9 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
         });
     }
 
-
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
+        //Handle Websocket close event
         String closedBy = remote ? "server" : "local";
         runOnUiThread(() -> {
             String s = msgTv.getText().toString();
@@ -84,10 +88,11 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
         });
     }
 
-    @Override
-    public void onWebSocketOpen(ServerHandshake handshakedata) {}
+
 
     @Override
-    public void onWebSocketError(Exception ex) {}
+    public void onWebSocketError(Exception ex) {
+        //Handle WebSocket error event
+    }
 }
 

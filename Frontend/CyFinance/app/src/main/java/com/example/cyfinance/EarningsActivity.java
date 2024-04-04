@@ -40,8 +40,10 @@ public class EarningsActivity extends AppCompatActivity {
 
         PrimaryMonthlyIncome = findViewById(R.id.primary);
         SecondaryMonthlyIncome = findViewById(R.id.secondary);
-        Submit = findViewById(R.id.submit);
-
+        Button Submit = findViewById(R.id.submit); //links between submit in java code and then to submitin xml
+        // (actual id of the submit button)
+        //Then I need the clickListener which is needed to callback if the button(which is
+        //the specific example of view in this case
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,8 +51,11 @@ public class EarningsActivity extends AppCompatActivity {
                 getSecondary = SecondaryMonthlyIncome.getText().toString();
                 getConfirm = Submit.getText().toString();
                 postRequest();
+                Intent intent = new Intent(EarningsActivity.this, ExpensesActivity.class);
+                startActivity(intent);
             }
         });
+
     }
 
     private void postRequest() {

@@ -8,6 +8,81 @@
     android:background="#2A2A2A">
 
 
+    <TextView
+        android:id="@+id/expenses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:hint="Expenses"
+        android:textColorHint="#F1BE48"
+        android:textSize="40dp"
+        tools:layout_editor_absoluteX="99dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:hint="Food"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="146dp"
+        tools:layout_editor_absoluteY="102dp"></EditText>
+
+    <EditText
+        android:id="@+id/Rent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:hint="Rent/Bills"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="184dp"></EditText>
+
+    <EditText
+        android:id="@+id/school"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:hint="School"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="138dp"
+        tools:layout_editor_absoluteY="270dp"></EditText>
+
+    <EditText
+        android:id="@+id/OtherNecessities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:hint="OtherNecessities"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="30sp"
+        tools:layout_editor_absoluteX="76dp"
+        tools:layout_editor_absoluteY="370dp"></EditText>
+
+    <EditText
+        android:id="@+id/Extras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:hint="Extras"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="30sp"
+        tools:layout_editor_absoluteX="146dp"
+        tools:layout_editor_absoluteY="484dp"></EditText>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"

@@ -41,6 +41,10 @@
             android:exported="true"></activity>
         <activity android:name=".EarningsActivity"
             android:exported="true"></activity>
+        <activity android:name=".ChatConnect"
+            android:exported="true"></activity>
+        <activity android:name=".ChatActivity"
+            android:exported="true"></activity>
 
     </application>
 

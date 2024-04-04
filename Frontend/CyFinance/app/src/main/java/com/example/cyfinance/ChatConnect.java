@@ -15,7 +15,7 @@ public class ChatConnect extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chatconnect);
+        setContentView(R.layout.chatconnect1);
         WebSocketManager.getInstance().init(this);
         /* initialize UI elements */
         connectBtn = (Button) findViewById(R.id.connectBtn);
@@ -42,3 +42,4 @@ public class ChatConnect extends AppCompatActivity{
 
     }
 }
+

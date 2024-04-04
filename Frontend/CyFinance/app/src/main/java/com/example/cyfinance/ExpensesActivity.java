@@ -39,8 +39,11 @@ public class ExpensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //The line below basically connects this java file to its
+        //relevant xml file
         setContentView(R.layout.expenses_activity);
-
+       //In each of the lines below: basically the edit text declared
+       //connects to its relevant xml id
         FoodEditText = findViewById(R.id.food);
         RentBillsEditText = findViewById(R.id.Rent);
         SchoolEditText = findViewById(R.id.school);
@@ -57,6 +60,7 @@ public class ExpensesActivity extends AppCompatActivity {
                 OtherNecessities = OtherNecessitiesEditText.getText().toString();
 
                 postRequest();
+
             }
         });
     }
