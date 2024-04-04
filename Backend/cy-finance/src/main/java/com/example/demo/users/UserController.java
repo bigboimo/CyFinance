@@ -163,6 +163,58 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/users/{userEmail}/assettotal/{newTotal}")
+    public ResponseEntity<Response<String>> changeUserAssetTotal(@RequestParam String userEmail,
+                                                       @RequestParam int newTotal,
+                                                       @CookieValue(name = "user-id", required = false) String userId) {
+        Response<String> response = new Response<>();
+
+        logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] Cookie: " + userId);
+        User user = userRepository.findByEmail(userEmail);
+        // Only edit user if the cookie is set and the user is either an admin or the requested user
+        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            if (user == null) {
+                logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] User not provided");
+                response.put("message", "No user provided");
+            } else {
+                user.setAssetsTotal(newTotal);
+                userRepository.save(user);
+                logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] User " + user.getName() + " modified by " + userId);
+                response.put("message", "User modified");
+            }
+        } else {
+            logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] Attempted access from invalid user");
+            response.put("message", "User not allowed to perform this action");
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/users/{userEmail}/liabilitiestotal/{newTotal}")
+    public ResponseEntity<Response<String>> changeUserLiabilitiesTotal(@RequestParam String userEmail,
+                                                                 @RequestParam int newTotal,
+                                                                 @CookieValue(name = "user-id", required = false) String userId) {
+        Response<String> response = new Response<>();
+
+        logger.info("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] Cookie: " + userId);
+        User user = userRepository.findByEmail(userEmail);
+        // Only edit user if the cookie is set and the user is either an admin or the requested user
+        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            if (user == null) {
+                logger.warn("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] User not provided");
+                response.put("message", "No user provided");
+            } else {
+                user.setLiabilitiesTotal(newTotal);
+                userRepository.save(user);
+                logger.info("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] User " + user.getName() + " modified by " + userId);
+                response.put("message", "User modified");
+            }
+        } else {
+            logger.warn("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] Attempted access from invalid user");
+            response.put("message", "User not allowed to perform this action");
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Response<String>> deleteUser(@PathVariable String id,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
