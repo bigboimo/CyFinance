@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class UserController {
                 logger.warn("[POST /users] User: " + user.getEmail() + " already exists");
                 response.put("message", "User already exists");
             } else {
+                user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
                 userRepository.save(user);
                 createdUser = userRepository.findByEmail(user.getEmail());
                 logger.info("[POST /users] User created: " + user);
@@ -110,7 +112,7 @@ public class UserController {
         Response<String> response = new Response<>();
 
         User foundUser = userRepository.findByEmail(email);
-        if (foundUser != null && foundUser.getPassword().equals(password)) {
+        if (foundUser != null && BCrypt.checkpw(password, foundUser.getPassword())) {
             ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(foundUser.getEmail()))
                     .maxAge(60)
                     .build();

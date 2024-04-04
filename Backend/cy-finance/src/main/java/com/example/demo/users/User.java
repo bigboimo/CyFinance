@@ -18,8 +18,11 @@ public class User {
     private String name;
     private String password;
     private String role;
+    @Column(columnDefinition = "integer default 0")
     private int assetsTotal;
+    @Column(columnDefinition = "integer default 0")
     private int liabilitiesTotal;
+    @Column(columnDefinition = "integer default 0")
     private int netWorth;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
