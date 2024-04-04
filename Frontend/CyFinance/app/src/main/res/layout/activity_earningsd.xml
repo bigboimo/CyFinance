@@ -7,6 +7,42 @@
     tools:context=".ui.Earnings.EarningsDActivity"
     android:background="#2A2A2A">
 
+
+    <TextView
+        android:id="@+id/earnings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Earnings"
+        android:textColor="#F1BE48"
+        android:textSize="50dp"
+        android:textStyle="bold|italic"
+        tools:layout_editor_absoluteX="93dp"
+        tools:layout_editor_absoluteY="16dp"></TextView>
+
+    <EditText
+        android:id="@+id/primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Primary Monthly Income"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="205dp"></EditText>
+
+
+    <EditText
+        android:id="@+id/secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:hint="Secondary Montlhy Income"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="30dp"
+        tools:layout_editor_absoluteY="356dp"></EditText>
+
     <TextView
         android:id="@+id/text_dashboard"
         android:layout_width="match_parent"

@@ -59,8 +59,8 @@ public class NetworthActivity extends AppCompatActivity {
 
                 if(Response != null && Response.equals("Net worth created")) {
                     System.out.println("Hello");
-                    //Intent intent = new Intent(SignupActivity.this, EarningsActivity.class);
-                    //startActivity(intent);
+                    Intent intent = new Intent(NetworthActivity.this, EarningsActivity.class);
+                    startActivity(intent);
                 }
             }
         });

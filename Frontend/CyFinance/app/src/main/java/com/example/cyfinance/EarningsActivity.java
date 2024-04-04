@@ -1,5 +1,6 @@
 package com.example.cyfinance;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,9 +25,12 @@ public class EarningsActivity extends AppCompatActivity {
     private EditText SecondaryMonthlyIncome;
     private Button Submit;
 
-    private String primary = "value1";
-    private String secondary = "value2";
+    private String primary = "primaryMonthlyIncome";
+    private String secondary = "secondaryMonthlyIncome";
     private String Response;
+    private String getPrimary;
+    private String getSecondary;
+    private String getConfirm;
     private String url = "https://coms-309-038.class.las.iastate.edu/earnings";
 
     @Override
@@ -36,21 +40,29 @@ public class EarningsActivity extends AppCompatActivity {
 
         PrimaryMonthlyIncome = findViewById(R.id.primary);
         SecondaryMonthlyIncome = findViewById(R.id.secondary);
-        Submit = findViewById(R.id.submit);
-
+        Button Submit = findViewById(R.id.submit); //links between submit in java code and then to submitin xml
+        // (actual id of the submit button)
+        //Then I need the clickListener which is needed to callback if the button(which is
+        //the specific example of view in this case
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getPrimary = PrimaryMonthlyIncome.getText().toString();
+                getSecondary = SecondaryMonthlyIncome.getText().toString();
+                getConfirm = Submit.getText().toString();
                 postRequest();
+                Intent intent = new Intent(EarningsActivity.this, ExpensesActivity.class);
+                startActivity(intent);
             }
         });
+
     }
 
     private void postRequest() {
         JSONObject postBody = new JSONObject();
         try {
-            postBody.put("key1", "value1");
-            postBody.put("key2", "value2");
+            postBody.put("primaryMonthlyIncome", primary);
+            postBody.put("secondaryMonthlyIncome", secondary);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -65,17 +77,28 @@ public class EarningsActivity extends AppCompatActivity {
                         try {
                             Response = response.getString("message");
                             System.out.println(Response);
+
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            e.printStackTrace();//if the JSON is malformed like if the data didn't have
                         }
                         System.out.println(response);
+                        if(Response.equals("success")){
+                            System.out.println("Data saved");
+                            Intent intent = new Intent(EarningsActivity.this, ExpensesActivity.class);
+                            startActivity(intent);
+                        }
+                        else{
+                            System.out.println("Failed to set earnings");
+                        }
+
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Response = error.toString();
-                        System.out.println(error);
+                        System.out.println(error);//if authentication fails/or any other issue
                     }
                 }
         ) {

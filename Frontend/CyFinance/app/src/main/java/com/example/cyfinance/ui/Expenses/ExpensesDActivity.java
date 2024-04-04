@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.cyfinance.ExpensesActivity;
 import com.example.cyfinance.HomeActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.ui.Admin.AdminActivity;

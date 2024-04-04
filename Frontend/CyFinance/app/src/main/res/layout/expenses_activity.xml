@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#2A2A2A"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".ExpensesActivity">
 
 <!--    <LinearLayout-->
 <!--        android:layout_width="wrap_content"-->
@@ -14,12 +14,12 @@
 <!--        android:orientation="vertical">-->
 
         <TextView
-            android:id="@+id/earnings"
+            android:id="@+id/expenses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
-            android:hint="Earnings"
+            android:hint="Expenses"
             android:textColorHint="#F1BE48"
             android:textSize="40dp" />
 
@@ -31,7 +31,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="75dp"
             android:hint="Food"
-            android:textColorHint="#FFFFFF"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:textSize="30dp"></EditText>
 
         <EditText
@@ -42,7 +43,8 @@
             android:layout_marginTop="7dp"
             android:gravity="center"
             android:hint="Rent/Bills"
-            android:textColorHint="#FFFFFF"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:textSize="30dp"></EditText>
 
 
@@ -55,7 +57,8 @@
             android:gravity="center"
             android:hint="School"
             android:inputType="textPassword"
-            android:textColorHint="#FFFFFF"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:textSize="30dp"></EditText>
 
 
@@ -64,9 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="OtherNecessities"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#808080"
+            android:hint="OtherNecessities"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:textSize="30sp"></EditText>
 
         <EditText
@@ -75,15 +78,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Extras"
-            android:textColor="#FFFFFF"
+            android:hint="Extras"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:layout_marginTop="7dp"
             android:textSize="30sp"></EditText>
 
 <!--    </LinearLayout>-->
 
     <Button
-        android:id="@+id/Submit"
+        android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"

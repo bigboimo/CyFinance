@@ -39,14 +39,17 @@ public class ExpensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //The line below basically connects this java file to its
+        //relevant xml file
         setContentView(R.layout.expenses_activity);
-
+       //In each of the lines below: basically the edit text declared
+       //connects to its relevant xml id
         FoodEditText = findViewById(R.id.food);
         RentBillsEditText = findViewById(R.id.Rent);
         SchoolEditText = findViewById(R.id.school);
         OtherNecessitiesEditText = findViewById(R.id.OtherNecessities);
         Extras = findViewById(R.id.Extras);
-        submitbutton = findViewById(R.id.Submit);
+        submitbutton = findViewById(R.id.submit);
 
         submitbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +60,7 @@ public class ExpensesActivity extends AppCompatActivity {
                 OtherNecessities = OtherNecessitiesEditText.getText().toString();
 
                 postRequest();
+
             }
         });
     }
@@ -83,7 +87,7 @@ public class ExpensesActivity extends AppCompatActivity {
                             Response = response.getString("message");
                             Log.d("Response", Response);
                             if (Response != null && Response.equals("success")) {
-                                Intent intent = new Intent(ExpensesActivity.this, MainActivity.class);
+                                Intent intent = new Intent(ExpensesActivity.this, HomeActivity.class);
                                 intent.putExtra("Food", Food);
                                 intent.putExtra("Rent/Bills", RentBills1);
                                 intent.putExtra("School", School);
@@ -92,6 +96,15 @@ public class ExpensesActivity extends AppCompatActivity {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        }
+                        System.out.println(response);
+                        if(Response.equals("success")){
+                            System.out.println("Data saved");
+                            Intent intent = new Intent(ExpensesActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                        }
+                        else{
+                            System.out.println("Failed to set earnings");
                         }
                     }
                 },
