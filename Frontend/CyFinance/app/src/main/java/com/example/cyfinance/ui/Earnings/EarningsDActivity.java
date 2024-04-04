@@ -35,9 +35,6 @@ import java.util.Map;
 public class EarningsDActivity extends AppCompatActivity {
 
     private Button testButton;
-    private EditText
-
-    private EditText
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,70 +68,70 @@ public class EarningsDActivity extends AppCompatActivity {
                 return false;
             }
         });
-        private void postRequest() {
-            JSONObject postBody = new JSONObject();
-            try {
-                postBody.put("primaryMonthlyIncome", );
-                postBody.put("secondaryMonthlyIncome", );
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//        private void postRequest() {
+//            JSONObject postBody = new JSONObject();
+//            try {
+//                postBody.put("primaryMonthlyIncome", );
+//                postBody.put("secondaryMonthlyIncome", );
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            JsonObjectRequest request = new JsonObjectRequest(
+//                    Request.Method.POST,
+//                    url,
+//                    postBody,
+//                    new Response.Listener<JSONObject>() {
+//                        @Override
+//                        public void onResponse(JSONObject response) {
+//                            try {
+//                                Response = response.getString("message");
+//                                System.out.println(Response);
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();//if the JSON is malformed like if the data didn't have
+//                            }
+//                            System.out.println(response);
+//                            if(Response.equals("success")){
+//                                System.out.println("Data saved");
+//                                Intent intent = new Intent(EarningsActivity.this, ExpensesActivity.class);
+//                                startActivity(intent);
+//                            }
+//                            else{
+//                                System.out.println("Failed to set earnings");
+//                            }
+//
+//
+//                        }
+//                    },
+//                    new Response.ErrorListener() {
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+//                            Response = error.toString();
+//                            System.out.println(error);//if authentication fails/or any other issue
+//                        }
+//                    }
+//            ) {
+//                @Override
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    HashMap<String, String> headers = new HashMap<String, String>();
+//                    // headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+//                    // headers.put("Content-Type", "application/json");
+//                    return headers;
+//                }
+//
+//                @Override
+//                protected Map<String, String> getParams() {
+//                    Map<String, String> params = new HashMap<String, String>();
+//                    params.put("PrimaryMonthlyIncome", primary);
+//                    params.put("SecondaryMonthlyIncome", secondary);
+//                    return params;
+//                }
+//            };
+//
+//            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
+//        }
 
-            JsonObjectRequest request = new JsonObjectRequest(
-                    Request.Method.POST,
-                    url,
-                    postBody,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                Response = response.getString("message");
-                                System.out.println(Response);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();//if the JSON is malformed like if the data didn't have
-                            }
-                            System.out.println(response);
-                            if(Response.equals("success")){
-                                System.out.println("Data saved");
-                                Intent intent = new Intent(EarningsActivity.this, ExpensesActivity.class);
-                                startActivity(intent);
-                            }
-                            else{
-                                System.out.println("Failed to set earnings");
-                            }
-
-
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Response = error.toString();
-                            System.out.println(error);//if authentication fails/or any other issue
-                        }
-                    }
-            ) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    // headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
-                    // headers.put("Content-Type", "application/json");
-                    return headers;
-                }
-
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("PrimaryMonthlyIncome", primary);
-                    params.put("SecondaryMonthlyIncome", secondary);
-                    return params;
-                }
-            };
-
-            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
-        }
-    }
 
 
 //        if (getActivity() != null) {
