@@ -7,6 +7,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.cyfinance.ui.Admin.AdminActivity;
+import com.example.cyfinance.ui.Change.AssetChange;
+import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 
 import android.view.ContextMenu;
@@ -58,7 +60,6 @@ public class HomeActivity extends AppCompatActivity {
         totalNetworth = findViewById(R.id.text_networth);
 
         Button refresh = findViewById(R.id.button_refresh);
-
 
         totalAssets = findViewById(R.id.text_assets);
 
@@ -113,10 +114,12 @@ public class HomeActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.change_assets:
-                //editNote(info.id);
+                startActivity(new Intent(getApplicationContext(), AssetChange.class));
+                overridePendingTransition(0, 0);
                 return true;
             case R.id.change_liability:
-                //deleteNote(info.id);
+                startActivity(new Intent(getApplicationContext(), LiabilityChange.class));
+                overridePendingTransition(0, 0);
                 return true;
             default:
                 return super.onContextItemSelected(item);
