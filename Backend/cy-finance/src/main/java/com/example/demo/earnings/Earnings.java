@@ -4,7 +4,15 @@ import com.example.demo.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+/**
+ * The Earnings entity represents the earnings information of a user.
+ * It is linked to the User entity in a many-to-one relationship,
+ * meaning a user can have multiple earnings records.
+ */
+
+
 @Entity
+@Table(name = "earnings")
 public class Earnings {
 
 
@@ -18,8 +26,10 @@ public class Earnings {
 
 
 
-    @OneToOne
-    @JsonIgnore
+    // Many-to-One relationship with User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_email", nullable = false)
+    @JsonIgnore // Prevents recursion in JSON serialization
     private User user;
 
     public Earnings(float first, float second){

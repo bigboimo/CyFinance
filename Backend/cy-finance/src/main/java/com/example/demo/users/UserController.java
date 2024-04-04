@@ -15,8 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
+import java.util.Optional;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @RestController
 public class UserController {
@@ -288,20 +294,46 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/earnings/{earningsId}")
-    String assignEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
-        Response<String> response = new Response<>();
+    public ResponseEntity<?> assignEarningsToUser(@PathVariable String userId, @PathVariable Long earningsId) {
+        // Attempt to retrieve a User entity by their email. The findByEmail method is expected to
+        // search the database for a User with the specified email (userId in the path variable).
         User user = userRepository.findByEmail(userId);
-        Earnings earnings = earningsRepository.findById(earningsId);
-        if (user == null || earnings == null) {
-            response.put("message", "Failed to assign earnings");
-        } else {
-            earnings.setUser(user);
-            user.setEarnings(earnings);
-            userRepository.save(user);
-            response.put("message", "Earnings assigned to user");
+
+        // Check if the user was not found. If the user variable is null, it means there is no
+        // user in the database with the provided email. In such a case, prepare an error response.
+        if (user == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            // Populate the error response with a message indicating the user was not found.
+            errorResponse.put("message", "User not found with email: " + userId);
+            // Return a ResponseEntity with a 400 Bad Request status, including the error message.
+            return ResponseEntity.badRequest().body(errorResponse);
         }
-        return response.toString();
+
+        // Attempt to retrieve an Earnings entity by its ID. The findById method returns an Optional,
+        // which will be empty if no Earnings entity matches the provided ID. The use of orElseThrow
+        // here means that if the Earnings entity is not found, a ResponseStatusException will be
+        // thrown automatically, which Spring will handle by returning a 404 Not Found response.
+        Earnings earnings = earningsRepository.findById(earningsId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Earnings not found with id: " + earningsId));
+
+        // Associate the found User entity with the Earnings entity. This operation links the Earnings
+        // to the User, establishing the many-to-one relationship from Earnings to User.
+        earnings.setUser(user);
+
+        // Save the updated Earnings entity to the database. This persist operation includes saving
+        // the modification made to the Earnings entity (setting the user). As a result of this save,
+        // the association between the User and Earnings entities will be reflected in the database.
+        earningsRepository.save(earnings);
+
+        // Prepare a success response indicating the earnings have been successfully assigned to the user.
+        Map<String, String> successResponse = new HashMap<>();
+        successResponse.put("message", "Earnings assigned to user successfully.");
+
+        // Return a ResponseEntity with a 200 OK status, including the success message.
+        return ResponseEntity.ok(successResponse);
     }
+
+
 
     @PostMapping("/users/{userId}/expenses/{expensesId}")
     String attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {

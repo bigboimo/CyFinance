@@ -8,6 +8,17 @@ import jakarta.persistence.*;
 
 import java.util.Set;
 
+
+/**
+ * The User entity represents a user in the system.
+ * It has relationships with several other entities:
+ * - One-to-Many with Assets: A user can own multiple assets.
+ * - One-to-Many with Earnings: A user can have multiple earnings records.
+ * - One-to-Many with Expenses: A user has a single record of expenses.
+ * - Many-to-Many with Groups: A user can belong to multiple groups.
+ */
+
+
 @Entity
 @Table(name="users")
 public class User {
@@ -28,9 +39,8 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Assets> assets;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "earnings_id")
-    private Earnings earnings;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Earnings> earnings;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "expenses_id")
@@ -52,13 +62,24 @@ public class User {
 
     public User() {}
 
-    public Earnings getEarnings() {
+    public Set<Earnings> getEarnings() {
         return earnings;
     }
 
-    public void setEarnings(Earnings earnings) {
+    public void setEarnings(Set<Earnings> earnings) {
         this.earnings = earnings;
     }
+
+    public void addEarnings(Earnings earning) {
+        this.earnings.add(earning);
+        earning.setUser(this);
+    }
+
+    public void removeEarnings(Earnings earning) {
+        this.earnings.remove(earning);
+        earning.setUser(null);
+    }
+
 
     public String getName() {
         return name;
