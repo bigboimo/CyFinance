@@ -31,7 +31,6 @@ public class LiabilityChange extends AppCompatActivity {
 
     String Response;
     SessionManager session;
-
     String liabilityChange;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,7 @@ public class LiabilityChange extends AppCompatActivity {
 
         JsonRequest request = new JsonRequest(
                 Request.Method.PUT,
-                Constants.URL + "/users/" + session.getUserDetails().get("id"),
+                Constants.URL + "/users/" + session.getUserDetails().get("id") + "/liabilitiestotal/" + liabilityChange,
                 postBody,
                 new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
@@ -69,6 +68,7 @@ public class LiabilityChange extends AppCompatActivity {
                             System.out.println("[Login] HTTP Response: " + response);
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
+                            Response = data.getJSONObject(0).getString("message");
 
                             if (Response != null && Response.equals("User modified")) {
                                 Intent intent = new Intent(LiabilityChange.this, HomeActivity.class);
@@ -99,7 +99,7 @@ public class LiabilityChange extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("liabiltiestotal", liabilityChange);
+                //params.put("liabiltiestotal", liabilityChange);
                 //params.put();
                 return params;
             }

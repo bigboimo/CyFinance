@@ -26,17 +26,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity android:name=".ui.Earnings.EarningsDActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity android:name=".ui.Expenses.ExpensesDActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity android:name=".ui.Admin.AdminActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity android:name=".SignupActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
         <activity android:name=".NetworthActivity"
-            android:exported="true"></activity>
+            android:exported="true"/>
+        <activity android:name=".ui.Change.LiabilityChange"
+            android:exported="true"/>
+        <activity android:name=".ui.Change.AssetChange"
+            android:exported="true"/>
 
     </application>
 

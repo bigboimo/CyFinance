@@ -30,6 +30,7 @@ import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.json.JSONArray;
@@ -47,7 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     String Response;
     SessionManager session;
     String AssetResponse;
-    String NetworthResponse;
+    int NetworthResponse;
     String LiabilitiesResponse;
 
 
@@ -61,6 +62,8 @@ public class HomeActivity extends AppCompatActivity {
 
         Button refresh = findViewById(R.id.button_refresh);
 
+        FloatingActionButton change = findViewById(R.id.change_options);
+
         totalAssets = findViewById(R.id.text_assets);
 
         totalLiabilities = findViewById(R.id.text_liabilities);
@@ -69,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         navView.setSelectedItemId(R.id.navigation_home);
 
         registerForContextMenu(findViewById(R.id.change_options));
+
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,10 +147,9 @@ public class HomeActivity extends AppCompatActivity {
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
 
-                            NetworthResponse = Integer.toString(data.getJSONObject(0).getInt("netWorth"));
                             LiabilitiesResponse = Integer.toString(data.getJSONObject(0).getInt("liabilitiesTotal"));
                             AssetResponse = Integer.toString(data.getJSONObject(0).getInt("assetsTotal"));
-
+                            NetworthResponse = (data.getJSONObject(0).getInt("assetsTotal") - data.getJSONObject(0).getInt("liabilitiesTotal"));
 
                             totalAssets.setText("$" + AssetResponse);
                             totalLiabilities.setText("$" + LiabilitiesResponse);

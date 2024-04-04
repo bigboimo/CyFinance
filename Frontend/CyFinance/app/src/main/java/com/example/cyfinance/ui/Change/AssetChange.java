@@ -61,7 +61,7 @@ public class AssetChange extends AppCompatActivity {
 
         JsonRequest request = new JsonRequest(
                 Request.Method.PUT,
-                Constants.URL + "/users/" + session.getUserDetails().get("id"),
+                Constants.URL + "/users/" + session.getUserDetails().get("id") + "/assettotal/" + assetChange,
                 postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -70,6 +70,7 @@ public class AssetChange extends AppCompatActivity {
                             System.out.println("[Login] HTTP Response: " + response);
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
+                            Response = data.getJSONObject(0).getString("message");
 
                             if (Response != null && Response.equals("User modified")) {
                                 Intent intent = new Intent(AssetChange.this, HomeActivity.class);
@@ -97,13 +98,6 @@ public class AssetChange extends AppCompatActivity {
                 return headers;
             }
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("assetttotal", assetChange);
-                //params.put();
-                return params;
-            }
         };
 
         // Adding request to request queue
