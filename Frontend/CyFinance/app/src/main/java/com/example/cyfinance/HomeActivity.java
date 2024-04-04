@@ -9,7 +9,10 @@ import com.android.volley.VolleyError;
 import com.example.cyfinance.ui.Admin.AdminActivity;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 
+import android.view.ContextMenu;
+import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -42,6 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     String Response;
     SessionManager session;
     String AssetResponse;
+    String NetworthResponse;
     String LiabilitiesResponse;
 
 
@@ -55,12 +59,15 @@ public class HomeActivity extends AppCompatActivity {
 
         Button refresh = findViewById(R.id.button_refresh);
 
+
         totalAssets = findViewById(R.id.text_assets);
 
         totalLiabilities = findViewById(R.id.text_liabilities);
 
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_home);
+
+        registerForContextMenu(findViewById(R.id.change_options));
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +100,29 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_options, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.change_assets:
+                //editNote(info.id);
+                return true;
+            case R.id.change_liability:
+                //deleteNote(info.id);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
     private void getRequest() {
 
         // Convert input to JSONObject
@@ -100,7 +130,7 @@ public class HomeActivity extends AppCompatActivity {
 
         JsonRequest request = new JsonRequest(
                 Request.Method.GET,
-                Constants.URL + "/networth/" + session.getUserDetails().get("id"),
+                Constants.URL + "/users/" + session.getUserDetails().get("id"),
                 postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -110,15 +140,15 @@ public class HomeActivity extends AppCompatActivity {
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
 
-                            AssetResponse = data.getJSONObject(0).getString("assets");
-                            LiabilitiesResponse = data.getJSONObject(0).getString("liabilities");
+                            NetworthResponse = Integer.toString(data.getJSONObject(0).getInt("netWorth"));
+                            LiabilitiesResponse = Integer.toString(data.getJSONObject(0).getInt("liabilitiesTotal"));
+                            AssetResponse = Integer.toString(data.getJSONObject(0).getInt("assetsTotal"));
 
-                            if (Response != null && Response.equals("success")) {
-                                totalAssets.setText(AssetResponse);
-                                totalLiabilities.setText(LiabilitiesResponse);
-                                int total = Integer.parseInt(AssetResponse) + Integer.parseInt(LiabilitiesResponse);
-                                totalNetworth.setText(String.valueOf(total));
-                            }
+
+                            totalAssets.setText("$" + AssetResponse);
+                            totalLiabilities.setText("$" + LiabilitiesResponse);
+                            totalNetworth.setText("$" + NetworthResponse);
+
                         } catch (JSONException e) {
                             System.out.println(e);
                         }
@@ -137,8 +167,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                //                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
-                //                headers.put("Content-Type", "application/json");
+                headers.put("Cookie", "user-id=" + session.getUserDetails().get("id"));
                 return headers;
             }
 
