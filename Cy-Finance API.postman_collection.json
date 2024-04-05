@@ -1,11 +1,10 @@
 {
 	"info": {
-		"_postman_id": "1a723154-44e9-44ea-bde4-27b0cad77961",
+		"_postman_id": "142d08f5-62b0-4706-bdef-19f198ab8cfc",
 		"name": "Cy-Finance API",
 		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) in \"Tests\" to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "32868455",
-		"_collection_link": "https://blue-resonance-823495.postman.co/workspace/My-Workspace~daa15e3d-ba71-4666-865e-0f26de2aa2f2/collection/32868455-1a723154-44e9-44ea-bde4-27b0cad77961?action=share&source=collection_link&creator=32868455"
+		"_exporter_id": "32932910"
 	},
 	"item": [
 		{
@@ -74,8 +73,8 @@
 									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
+							"_postman_previewlanguage": "Text",
+							"header": [],
 							"cookie": [],
 							"body": "{\"message\": \"success\"}"
 						},
@@ -104,8 +103,8 @@
 									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
+							"_postman_previewlanguage": "Text",
+							"header": [],
 							"cookie": [],
 							"body": "{\"message\": \"failure\"}"
 						}
@@ -150,13 +149,7 @@
 					"name": "Get users",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "user-id=test@email.com",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "{{base_url}}/users",
 							"host": [
@@ -174,9 +167,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/users",
+									"raw": "coms-309-038.class.las.iastate.edu/users",
 									"host": [
-										"{{base_url}}"
+										"coms-309-038",
+										"class",
+										"las",
+										"iastate",
+										"edu"
 									],
 									"path": [
 										"users"
@@ -217,21 +214,15 @@
 					"name": "Get users by id",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "user-id=test@email.com",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{base_url}}/users/test@email.com",
+							"raw": "{{base_url}}/users/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"users",
-								"test@email.com"
+								"1"
 							]
 						}
 					},
@@ -242,9 +233,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/users/1",
+									"raw": "coms-309-038.class.las.iastate.edu/users/1",
 									"host": [
-										"{{base_url}}"
+										"coms-309-038",
+										"class",
+										"las",
+										"iastate",
+										"edu"
 									],
 									"path": [
 										"users",
@@ -286,16 +281,10 @@
 					"name": "Add user",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "user-id=test@email.com",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"Test User 2\", \"email\":\"test2@email.com\", \"password\":\"password\", \"role\":\"user\"}",
+							"raw": "{\"name\":\"Test User\", \"email\":\"test@email.com\", \"password\":\"password\", \"role\":\"admin\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -312,75 +301,16 @@
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Add user",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"name\":\"Test User\", \"email\":\"test@email.com\", \"password\":\"password\", \"role\":\"admin\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/users",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"users"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "plain",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain;charset=UTF-8"
-								},
-								{
-									"key": "Content-Length",
-									"value": "26"
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 29 Feb 2024 18:49:38 GMT"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=60"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\"message\":\"User created\"}"
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Edit user",
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "user-id=test@email.com",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"Test User2\", \"email\":\"test@email.com\", \"password\":\"password123\", \"role\":\"admin\"}",
+							"raw": "{\"id\":2, \"name\":\"Test User2\", \"email\":\"test@email.com\", \"password\":\"password\", \"role\":\"admin\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -403,21 +333,15 @@
 					"name": "Delete user",
 					"request": {
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "user-id=test1@email.com",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{base_url}}/users/test1@email.com",
+							"raw": "{{base_url}}/users/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"users",
-								"test1@email.com"
+								"1"
 							]
 						}
 					},
@@ -429,75 +353,165 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/users/test@email.com/earnings/1",
+							"raw": "{{base_url}}/users/1/earnings/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"users",
-								"test@email.com",
+								"1",
 								"earnings",
 								"1"
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Net-Worth",
+			"item": [
 				{
-					"name": "Set Net Worth",
+					"name": "Get Net-Worth",
 					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/test@email.com/networth/4",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"test@email.com",
-								"networth",
-								"4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Set Group",
-					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/users/test@email.com/groups/3",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"users",
-								"test@email.com",
-								"groups",
-								"3"
+								"networth"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get Net-Worth",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "coms-309-038.class.las.iastate.edu/networth",
+									"host": [
+										"coms-309-038",
+										"class",
+										"las",
+										"iastate",
+										"edu"
+									],
+									"path": [
+										"networth"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 27 Feb 2024 16:14:57 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"assets\": 1235,\n        \"liabilities\": 0,\n        \"user\": null\n    },\n    {\n        \"id\": 2,\n        \"assets\": 1000.23,\n        \"liabilities\": 246.5,\n        \"user\": null\n    }\n]"
+						}
+					]
 				},
 				{
-					"name": "Add Asset",
+					"name": "Get Net-Worth by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Basic",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "coms-309-038.class.las.iastate.edu/networth/",
+									"host": [
+										"coms-309-038",
+										"class",
+										"las",
+										"iastate",
+										"edu"
+									],
+									"path": [
+										"networth",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 27 Feb 2024 16:15:52 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"assets\": 1235,\n    \"liabilities\": 0,\n    \"user\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Net-Worth",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"label\": \"Student Loans\", \"amount\": -100000}",
+							"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -505,27 +519,25 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/users/test@email.com/assets",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"users",
-								"test@email.com",
-								"assets"
+								"networth"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Edit Asset",
+					"name": "Edit Net-Worth",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\": 1, \"label\": \"Student Loans\", \"amount\": -80000}",
+							"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -533,33 +545,29 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/users/test@email.com/assets",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"users",
-								"test@email.com",
-								"assets"
+								"networth"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Asset",
+					"name": "Remove Net-Worth",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/users/test@email.com/assets/1",
+							"raw": "{{base_url}}/networth/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"users",
-								"test@email.com",
-								"assets",
+								"networth",
 								"1"
 							]
 						}
@@ -572,30 +580,91 @@
 			"name": "Earnings",
 			"item": [
 				{
-					"name": "Get earnings",
+					"name": "Get Earnings",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/earnings",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"earnings"
+								"networth"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get Earnings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
 				},
 				{
-					"name": "Add earning",
+					"name": "Get Earnings by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Earnings by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Add Earnings",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"primaryMonthlyIncome\": 1234, \"secondaryMonthlyIncome\": 4576}",
+							"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -603,12 +672,56 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/earnings",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"earnings"
+								"networth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Earnings by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/networth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Earnings by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
 							]
 						}
 					},
@@ -620,30 +733,91 @@
 			"name": "Expenses",
 			"item": [
 				{
-					"name": "Get expenses",
+					"name": "Get Expenses",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/expenses",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"expenses"
+								"networth"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get Expenses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
 				},
 				{
-					"name": "Add expenses",
+					"name": "Get Expenses by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/networth/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"networth",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Expenses by ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/networth/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"networth",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Add Expenses",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"food\": 500, \"rentandBills\": 1200, \"school\": 5000, \"otherNeeds\": 300, \"misc\": 0}",
+							"raw": "{\"assets\":1000.23, \"liabilities\": 246.5}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -651,73 +825,25 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/expenses",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"expenses"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Groups",
-			"item": [
-				{
-					"name": "Get Groups",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/groups",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"groups"
+								"networth"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add Group",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"name\": \"family1\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/groups",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"groups"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Edit Group",
+					"name": "Edit Expenses by ID",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\": 3, \"name\": \"family1\"}",
+							"raw": "{\"id\": 1, \"assets\": 1235, \"liabilities\": -1}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -725,30 +851,30 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/groups",
+							"raw": "{{base_url}}/networth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"groups"
+								"networth"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Group",
+					"name": "Delete Expenses by ID",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/groups/3",
+							"raw": "{{base_url}}/networth/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"groups",
-								"3"
+								"networth",
+								"1"
 							]
 						}
 					},
@@ -785,7 +911,7 @@
 		},
 		{
 			"key": "local",
-			"value": "localhost:808",
+			"value": "localhost:8080",
 			"type": "string"
 		}
 	]
