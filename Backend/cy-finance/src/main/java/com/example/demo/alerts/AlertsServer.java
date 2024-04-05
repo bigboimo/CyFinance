@@ -9,13 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 
-@ServerEndpoint("/alerts/{username}")
-@Component
+@ServerEndpoint(value = "/alerts/{username}")
+@Controller
 public class AlertsServer {
     // Store all socket session and their corresponding username
     // Two maps for the ease of retrieval by key
