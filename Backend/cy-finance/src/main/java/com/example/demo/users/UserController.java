@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
@@ -336,20 +333,36 @@ public class UserController {
 
 
     @PostMapping("/users/{userId}/expenses/{expensesId}")
-    String attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
-        Response<String> response = new Response<>();
+    public ResponseEntity<?> attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
+        // Assuming userRepository and expensesRepository have been appropriately autowired
         User user = userRepository.findByEmail(userId);
-        Expenses expenses = expensesRepository.findById(expensesId);
-        if (user == null || expenses == null) {
-            response.put("message", "Failed to assign expenses");
-        } else {
-            expenses.setUser(user);
-            user.setExpenses(expenses);
-            userRepository.save(user);
-            response.put("message", "Expenses assigned");
+        if (user == null) {
+            // Handle case where the user is not found
+            return ResponseEntity.badRequest().body("User not found with ID: " + userId);
         }
-        return response.toString();
+
+        Expenses expenses = expensesRepository.findById(expensesId);
+        if (expenses == null) {
+            // Handle case where the expenses are not found
+            return ResponseEntity.badRequest().body("Expenses not found with ID: " + expensesId);
+        }
+
+        // Ensure the user's expenses collection is initialized
+        if (user.getExpenses() == null) {
+            user.setExpenses(new HashSet<>());
+        }
+
+        // Add the expense to the user's collection of expenses and set the back reference
+        expenses.setUser(user);
+        user.getExpenses().add(expenses);
+
+        // Assuming there's cascading or explicit saving necessary
+        expensesRepository.save(expenses); // Save the expenses entity to update its user reference
+
+        return ResponseEntity.ok("Expenses assigned successfully to user.");
     }
+
+
 
     @PostMapping("/users/{userId}/groups/{groupId}")
     public ResponseEntity<Response<String>> attachGroupsToUser(@PathVariable String userId, @PathVariable int groupId) {
