@@ -1,11 +1,15 @@
 package com.example.cyfinance.ui.Admin;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +32,8 @@ import org.w3c.dom.Text;
 import com.example.cyfinance.HomeActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.VolleySingleton;
+import com.example.cyfinance.ui.Change.AssetChange;
+import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
@@ -49,21 +55,26 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
     String Response;
     ConstraintLayout adminLayout;
     public void onCreate(Bundle savedInstanceState) {
-        session = new SessionManager(getApplicationContext());
-        String serverURL = BASE_URL + session.getUserDetails().get("id");
         super.onCreate(savedInstanceState);
+
+        //Layout and navigation declarations
         setContentView(R.layout.activity_admin);
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_admin);
+        registerForContextMenu(findViewById(R.id.change_user1));
+        registerForContextMenu(findViewById(R.id.change_user2));
 
+        //Session Declaration and Websocket URL
+        session = new SessionManager(getApplicationContext());
+        String serverURL = BASE_URL + session.getUserDetails().get("id");
+
+        //Layout Elements
         adminMessage = findViewById(R.id.text_alert);
-
         EditText messageText = findViewById(R.id.text_notifications);
-
         Button sendAlert = findViewById(R.id.alert_button);
-
         Button refresh = findViewById(R.id.button_refresh);
 
+        //Websocket
         WebSocketManager.getInstance().connectWebSocket(serverURL);
         WebSocketManager.getInstance().setWebSocketListener(this);
 
@@ -123,21 +134,27 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
                             System.out.println("[Login] HTTP Response: " + response);
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
-
+                            TextView user1 = findViewById(R.id.text_user1);
+                            TextView user2 = findViewById(R.id.text_user2);
 
                             adminLayout = findViewById(R.id.admin_layout);
-                            for(int i = 0; i < data.length(); i++) {
-                                String user = data.getJSONObject(i).getString("email");
-                                TextView newUser = new TextView(AdminActivity.this);
 
-                                newUser.setLayoutParams(new ConstraintLayout.LayoutParams(
-                                        ConstraintLayout.LayoutParams.MATCH_PARENT,
-                                        ConstraintLayout.LayoutParams.MATCH_PARENT
-                                ));
-
-                                newUser.setText(user);
-                                adminLayout.addView(newUser);
-                            }
+                            user1.setText(data.getJSONObject(0).getString("email"));
+                            user2.setText(data.getJSONObject(1).getString("email"));
+//                            for(int i = 0; i < data.length(); i++) {
+//                                String user = data.getJSONObject(i).getString("email");
+//                                TextView newUser = new TextView(AdminActivity.this);
+//
+//                                newUser.setLayoutParams(new ConstraintLayout.LayoutParams(
+//                                        ConstraintLayout.LayoutParams.MATCH_PARENT,
+//                                        ConstraintLayout.LayoutParams.MATCH_PARENT
+//                                ));
+//
+//                                newUser.setText(user);
+//                                newUser.setTextColor(Color.WHITE);
+//                                newUser.setTextSize(25);
+//                                adminLayout.addView(newUser);
+//                            }
 
                         } catch (JSONException e) {
                             System.out.println(e);
@@ -175,6 +192,86 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
     }
 
 
+    /*
+        Methods that generate floating context menu
+     */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.admin_changes, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.change_password:
+                startActivity(new Intent(getApplicationContext(), AssetChange.class));
+                overridePendingTransition(0, 0);
+                return true;
+            case R.id.delete_networth:
+                delRequest();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+
+
+    private void delRequest() {
+        JSONObject postBody = null;
+
+        JsonRequest request = new JsonRequest(
+                Request.Method.DELETE,
+                Constants.URL + "/users",
+                postBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            System.out.println("[Login] HTTP Response: " + response);
+                            JSONArray data = response.getJSONArray("data");
+                            JSONObject headers = response.getJSONObject("headers");
+
+
+
+                        } catch (JSONException e) {
+                            System.out.println(e);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Response = error.getMessage();
+                        Response = error.toString();
+                        System.out.println(error);
+
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Cookie", "user-id=" + session.getUserDetails().get("id"));
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                //params.put();
+                //params.put();
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
+    }
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
     }
