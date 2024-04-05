@@ -38,17 +38,20 @@ public class EarningsDActivity extends AppCompatActivity {
     private EditText primaryIncomeEditText;  // define username edittext variable
     private EditText secondaryIncomeEditText;  // define password edittext variable
 
-    String primary;
-    String secondary;
+    private String primary;
 
-    String primary1;
+    private String income1;
 
-    String secondary1;
-    String id;
-    String Response;
-    String Earnings;
+    private String income2;
+    private String secondary;
+    private String primary1;
+
+    private String secondary1;
+    private String id;
+    private String Response;
+    private String Earnings;
     // user Id set by cookie on login
-    String userId;
+    private String userId;
     Button Submit;
 
     // User session for other classes to track
@@ -145,7 +148,33 @@ public class EarningsDActivity extends AppCompatActivity {
         };
 
     }
+        private void getRequest() {
 
+            // Convert input to JSONObject
+            JSONObject postBody = null;
+
+            JsonRequest request = new JsonRequest(
+                    Request.Method.GET,
+                    Constants.URL + "/users/" + session.getUserDetails().get("id"),
+                    postBody,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                System.out.println("[Login] HTTP Response: " + response);
+                                JSONArray data = response.getJSONArray("data");
+                                JSONObject headers = response.getJSONObject("headers");
+
+                                income1 = Integer.toString(data.getJSONObject(0).getInt("primaryIncomeEditText"));
+                                income2 = (data.getJSONObject(0).getInt("secondaryMonthlyIncome");
+
+                                primaryIncomeEditText.setText("$" + income1);
+                                secondaryIncomeEditText.setText("$" + income2);
+                            } catch (JSONException e) {
+                                System.out.println(e);
+                            }
+                        }
+                    },
 
     private void putRequest() {
 
@@ -154,7 +183,7 @@ public class EarningsDActivity extends AppCompatActivity {
 
         JsonRequest request = new JsonRequest(
                 Request.Method.PUT,
-                Constants.URL + "/earnings/" +   primary1 + secondary1,
+                Constants.URL + "/earnings/" +  ,
                 postBody,
                 new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
