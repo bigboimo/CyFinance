@@ -32,9 +32,9 @@ public class Earnings {
     @JsonIgnore // Prevents recursion in JSON serialization
     private User user;
 
-    public Earnings(float first, float second){
-        this.primaryMonthlyIncome = first;
-        this.secondaryMonthlyIncome = second;
+    public Earnings(float primaryMonthlyIncome, float secondaryMonthlyIncome){
+        this.primaryMonthlyIncome = primaryMonthlyIncome;
+        this.secondaryMonthlyIncome = secondaryMonthlyIncome;
     }
 
     public Earnings() {
@@ -75,8 +75,8 @@ public class Earnings {
     @Override
     public String toString() {
         return "Earnings{" + "\"id\":" + id +
-                ", \"food\":" + primaryMonthlyIncome +
-                ", \"rantandBills\":" + secondaryMonthlyIncome +
+                ", \"primaryMonthlyIncome\":" + primaryMonthlyIncome +
+                ", \"secondaryMonthlyIncome\":" + secondaryMonthlyIncome +
                 '}';
     }
 }
