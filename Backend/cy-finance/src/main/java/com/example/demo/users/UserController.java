@@ -291,44 +291,35 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/earnings/{earningsId}")
-    public ResponseEntity<?> assignEarningsToUser(@PathVariable String userId, @PathVariable Long earningsId) {
-        // Attempt to retrieve a User entity by their email. The findByEmail method is expected to
-        // search the database for a User with the specified email (userId in the path variable).
+    public ResponseEntity<?> attachEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
+        // Assuming userRepository and earningsRepository have been appropriately autowired
         User user = userRepository.findByEmail(userId);
-
-        // Check if the user was not found. If the user variable is null, it means there is no
-        // user in the database with the provided email. In such a case, prepare an error response.
         if (user == null) {
-            Map<String, String> errorResponse = new HashMap<>();
-            // Populate the error response with a message indicating the user was not found.
-            errorResponse.put("message", "User not found with email: " + userId);
-            // Return a ResponseEntity with a 400 Bad Request status, including the error message.
-            return ResponseEntity.badRequest().body(errorResponse);
+            // Handle case where the user is not found
+            return ResponseEntity.badRequest().body("User not found with ID: " + userId);
         }
 
-        // Attempt to retrieve an Earnings entity by its ID. The findById method returns an Optional,
-        // which will be empty if no Earnings entity matches the provided ID. The use of orElseThrow
-        // here means that if the Earnings entity is not found, a ResponseStatusException will be
-        // thrown automatically, which Spring will handle by returning a 404 Not Found response.
-        Earnings earnings = earningsRepository.findById(earningsId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Earnings not found with id: " + earningsId));
+        Earnings earnings = earningsRepository.findById(earningsId);
+        if (earnings == null) {
+            // Handle case where the earnings are not found
+            return ResponseEntity.badRequest().body("Earnings not found with ID: " + earningsId);
+        }
 
-        // Associate the found User entity with the Earnings entity. This operation links the Earnings
-        // to the User, establishing the many-to-one relationship from Earnings to User.
+        // Ensure the user's earnings collection is initialized
+        if (user.getEarnings() == null) {
+            user.setEarnings(new HashSet<>());
+        }
+
+        // Add the earnings to the user's collection of earnings and set the back reference
         earnings.setUser(user);
+        user.getEarnings().add(earnings);
 
-        // Save the updated Earnings entity to the database. This persist operation includes saving
-        // the modification made to the Earnings entity (setting the user). As a result of this save,
-        // the association between the User and Earnings entities will be reflected in the database.
-        earningsRepository.save(earnings);
+        // Assuming there's cascading or explicit saving necessary
+        earningsRepository.save(earnings); // Save the earnings entity to update its user reference
 
-        // Prepare a success response indicating the earnings have been successfully assigned to the user.
-        Map<String, String> successResponse = new HashMap<>();
-        successResponse.put("message", "Earnings assigned to user successfully.");
-
-        // Return a ResponseEntity with a 200 OK status, including the success message.
-        return ResponseEntity.ok(successResponse);
+        return ResponseEntity.ok("Earnings assigned successfully to user.");
     }
+
 
 
 
