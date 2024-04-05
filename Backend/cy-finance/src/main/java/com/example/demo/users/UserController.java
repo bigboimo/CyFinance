@@ -157,6 +157,19 @@ public class UserController {
                 logger.warn("[PUT /users] User not provided");
                 response.put("message", "No user provided");
             } else {
+                User originalUser = userRepository.findByEmail(user.getEmail());
+                // TODO: Check if user cookie is admin before allowing change to admin role
+                // Check fields
+                if (user.getName() == null) user.setName(originalUser.getName());
+                if (user.getRole() == null) user.setRole(originalUser.getRole());
+                if (user.getPassword() == null) {
+                    user.setPassword(originalUser.getPassword());
+                } else {
+                    user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+                }
+                user.setLiabilitiesTotal(originalUser.getLiabilitiesTotal());
+                user.setAssetsTotal(originalUser.getAssetsTotal());
+                user.setNetWorth(originalUser.getNetWorth());
                 userRepository.save(user);
                 logger.info("[PUT /users] User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
