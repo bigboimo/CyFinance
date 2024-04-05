@@ -42,9 +42,9 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Earnings> earnings;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "expenses_id")
-    private Expenses expenses;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Expenses> expenses;
+
 
     @ManyToMany
     @JoinTable(
@@ -133,13 +133,24 @@ public class User {
 
     public void setAssets(Set<Assets> assets) { this.assets = assets; }
 
-    public Expenses getExpenses() {
+    public Set<Expenses> getExpenses() {
         return expenses;
     }
 
-    public void setExpenses(Expenses expenses) {
+    public void setExpenses(Set<Expenses> expenses) {
         this.expenses = expenses;
     }
+
+    public void addExpense(Expenses expense) {
+        this.expenses.add(expense);
+        expense.setUser(this); // Assuming `Expenses` has a `setUser(User user)` method for the back-reference.
+    }
+
+    public void removeExpense(Expenses expense) {
+        this.expenses.remove(expense);
+        expense.setUser(null); // This disassociates the expense from the user.
+    }
+
 
     public Set<Groups> getGroups() {
         return groups;
