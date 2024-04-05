@@ -32,7 +32,6 @@ public class AssetChange extends AppCompatActivity {
 
     String Response;
     SessionManager session;
-
     String assetChange;
 
     protected void onCreate(Bundle savedInstanceState) {
