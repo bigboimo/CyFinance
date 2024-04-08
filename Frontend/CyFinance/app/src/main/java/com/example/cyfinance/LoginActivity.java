@@ -67,8 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
 
                 postRequest();
-                Intent intent = new Intent(LoginActivity.this, EarningsDActivity.class);
-                startActivity(intent);  // go to SignupActivity
+                //Intent intent = new Intent(LoginActivity.this, EarningsDActivity.class);
+                //startActivity(intent);  // go to SignupActivity
             }
         });
 

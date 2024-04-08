@@ -7,8 +7,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.example.cyfinance.ChatConnect;
@@ -30,6 +32,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +42,7 @@ public class EarningsDActivity extends AppCompatActivity {
     private EditText secondaryIncomeEditText;  // define password edittext variable
 
     private String primary;
-
+    private String url = "https://coms-309-038.class.las.iastate.edu/earnings";
     private String income1;
 
     private String income2;
@@ -85,23 +88,18 @@ public class EarningsDActivity extends AppCompatActivity {
         });
 
         /* click listener on signup button pressed */
-
-
-
-
-
-    private void postRequest() {
-//
-//        try {
+        private void postRequest () {
+            JSONObject postBody = new JSONObject();
+            try {
+                postBody.put("primaryMonthlyIncome", primary);
+                postBody.put("secondaryMonthlyIncome", secondary);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 //            // Assuming 'userId' is already set. Ensure it's the correct user ID for which earnings are to be fetched.
 //            postParams.put("id", userId);
 //            // Optionally, add primaryMonthlyIncome and secondaryMonthlyIncome if required by the backend, though it seems unusual for a fetch operation.
-//        } catch (JSONException e) {
-//            Toast.makeText(EarningsDActivity.this, "Error creating request payload.", Toast.LENGTH_SHORT).show();
-//            e.printStackTrace();
-//            return;
-//        }
-            JSONObject postBody = null;
+
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,
                     Constants.URL + "/earnings",
@@ -117,12 +115,11 @@ public class EarningsDActivity extends AppCompatActivity {
                                 e.printStackTrace();//if the JSON is malformed like if the data didn't have
                             }
                             System.out.println(response);
-                            if(Response.equals("success")){
+                            if (Response.equals("success")) {
                                 System.out.println("Data saved");
                                 Intent intent = new Intent(EarningsDActivity.this, ExpensesDActivity.class);
                                 startActivity(intent);
-                            }
-                            else{
+                            } else {
                                 System.out.println("Failed to set earnings");
                             }
 
@@ -145,10 +142,11 @@ public class EarningsDActivity extends AppCompatActivity {
                     return headers;
                 }
 
-        };
+            });
 
-    }
-        private void getRequest() {
+        }
+
+        private void getRequest () {
 
             // Convert input to JSONObject
             JSONObject postBody = null;
@@ -174,57 +172,9 @@ public class EarningsDActivity extends AppCompatActivity {
                                 System.out.println(e);
                             }
                         }
-                    },
-
-    private void putRequest() {
-
-        // Convert input to JSONObject
-        JSONObject postBody = null;
-
-        JsonRequest request = new JsonRequest(
-                Request.Method.PUT,
-                Constants.URL + "/earnings/" +  ,
-                postBody,
-                new com.android.volley.Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            System.out.println("[Login] HTTP Response: " + response);
-                            JSONArray data = response.getJSONArray("data");
-                            JSONObject headers = response.getJSONObject("headers");
-                            Response = data.getJSONObject(0).getString("message");
-
-                            if (Response != null && Response.equals("User modified")) {
-                                Intent intent = new Intent(EarningsDActivity.this, ExpensesDActivity.class);
-                                startActivity(intent);
-                            }
-                        } catch (JSONException e) {
-                            System.out.println(e);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //Response = error.getMessage();
-                        Response = error.toString();
-                        System.out.println(error);
-
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("", "" + session.getUserDetails().get("id"));
-                return headers;
-            }
+                    });
+        }
 
 
-
-    };
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
-        // Adding request to request queue
-
-}
+    }
 }
