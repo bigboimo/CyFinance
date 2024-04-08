@@ -4,7 +4,6 @@ import com.example.demo.assets.Assets;
 import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.liabilities.Liabilities;
-import com.example.demo.liabilities.LiabilitiesRepository;
 import com.example.demo.userGroups.Groups;
 import jakarta.persistence.*;
 
@@ -130,11 +129,11 @@ public class User {
         return assets;
     }
 
-    public void addAsset(Assets asset) {
-        this.assets.add(asset);
+    public void addAssets(Assets assets) {
+        this.assets.add(assets);
     }
 
-    public void removeAsset(Assets asset) { this.assets.remove(asset); }
+    public void removeAssets(Assets assets) { this.assets.remove(assets); }
 
     public Set<Liabilities> getLiabilities() {
         return liabilities;

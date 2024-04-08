@@ -17,11 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @RestController
 public class UserController {
@@ -285,15 +282,15 @@ public class UserController {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         if (user == null) {
-            response.put("message", "Failed to assign asset");
+            response.put("message", "Failed to assign assets");
             return ResponseEntity.ok(response);
         } else {
             assets.setUser(user);
             assetsRepository.save(assets);
-            user.addAsset(assets);
+            user.addAssets(assets);
             user.setNetWorth(user.getNetWorth() + assets.getAmount());
             userRepository.save(user);
-            response.put("message", "Asset assigned to user");
+            response.put("message", "Assets assigned to user");
             return ResponseEntity.ok(response);
         }
     }
@@ -303,34 +300,34 @@ public class UserController {
                                                           @RequestBody Assets assets) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
-        Assets originalAsset = assetsRepository.findAssetsById(assets.getId());
-        if (user == null || (!userId.equals(originalAsset.getUser().getEmail()))) {
-            response.put("message", "Failed to edit asset");
+        Assets originalAssets = assetsRepository.findAssetsById(assets.getId());
+        if (user == null || (!userId.equals(originalAssets.getUser().getEmail()))) {
+            response.put("message", "Failed to edit assets");
             return ResponseEntity.ok(response);
         } else {
-            user.setNetWorth(user.getNetWorth() - originalAsset.getAmount() + assets.getAmount());
+            user.setNetWorth(user.getNetWorth() - originalAssets.getAmount() + assets.getAmount());
             assets.setUser(user);
             assetsRepository.save(assets);
             userRepository.save(user);
-            response.put("message", "Asset updated");
+            response.put("message", "Assets updated");
             return ResponseEntity.ok(response);
         }
     }
 
     @DeleteMapping("/users/{userId}/assets/{assetId}")
-    public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetId) {
+    public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetsId) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
-        Assets asset = assetsRepository.findAssetsById(assetId);
-        if (user == null || asset == null) {
-            response.put("message", "Failed to delete asset");
+        Assets assets = assetsRepository.findAssetsById(assetsId);
+        if (user == null || assets == null) {
+            response.put("message", "Failed to delete assets");
             return ResponseEntity.ok(response);
         } else {
-            assetsRepository.deleteAssetsById(assetId);
-            user.removeAsset(asset);
-            user.setNetWorth(user.getNetWorth() - asset.getAmount());
+            assetsRepository.deleteAssetsById(assetsId);
+            user.removeAssets(assets);
+            user.setNetWorth(user.getNetWorth() - assets.getAmount());
             userRepository.save(user);
-            response.put("message", "Asset deleted");
+            response.put("message", "Assets deleted");
             return ResponseEntity.ok(response);
         }
     }
