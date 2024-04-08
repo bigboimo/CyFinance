@@ -6,6 +6,8 @@ import com.example.demo.earnings.EarningsRepository;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.expenses.ExpensesRepository;
 import com.example.demo.assets.Assets;
+import com.example.demo.liabilities.Liabilities;
+import com.example.demo.liabilities.LiabilitiesRepository;
 import com.example.demo.userGroups.Groups;
 import com.example.demo.userGroups.GroupsRepository;
 import com.example.demo.util.Response;
@@ -34,6 +36,9 @@ public class UserController {
 
     @Autowired
     AssetsRepository assetsRepository;
+
+    @Autowired
+    LiabilitiesRepository liabilitiesRepository;
 
     @Autowired
     ExpensesRepository expensesRepository;
@@ -275,7 +280,8 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/assets")
-    public ResponseEntity<Response<String>> addUserAssets(@PathVariable String userId, @RequestBody Assets assets) {
+    public ResponseEntity<Response<String>> addUserAssets(@PathVariable String userId,
+                                                          @RequestBody Assets assets) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         if (user == null) {
@@ -325,6 +331,62 @@ public class UserController {
             user.setNetWorth(user.getNetWorth() - asset.getAmount());
             userRepository.save(user);
             response.put("message", "Asset deleted");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping("/users/{userId}/liabilities")
+    public ResponseEntity<Response<String>> addUserLiabilities(@PathVariable String userId,
+                                                               @RequestBody Liabilities liabilities) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        if (user == null) {
+            response.put("message", "Failed to assign liabilities");
+            return ResponseEntity.ok(response);
+        } else {
+            liabilities.setUser(user);
+            liabilitiesRepository.save(liabilities);
+            user.addLiabilities(liabilities);
+            user.setNetWorth(user.getNetWorth() - liabilities.getAmount());
+            userRepository.save(user);
+            response.put("message", "Liabilities assigned to user");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PutMapping("/users/{userId}/liabilities")
+    public ResponseEntity<Response<String>> editUserLiabilities(@PathVariable String userId,
+                                                           @RequestBody Liabilities liabilities) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Liabilities originalLiabilities = liabilitiesRepository.findLiabilitiesById(liabilities.getId());
+        if (user == null || (!userId.equals(originalLiabilities.getUser().getEmail()))) {
+            response.put("message", "Failed to edit liabilities");
+            return ResponseEntity.ok(response);
+        } else {
+            user.setNetWorth(user.getNetWorth() + originalLiabilities.getAmount() - liabilities.getAmount());
+            liabilities.setUser(user);
+            liabilitiesRepository.save(liabilities);
+            userRepository.save(user);
+            response.put("message", "Liabilities updated");
+            return ResponseEntity.ok(response);
+        }
+    }
+    @DeleteMapping("/users/{userId}/liabilities/{liabilitiesId}")
+    public ResponseEntity<Response<String>> removeUserLiabilities(@PathVariable String userId,
+                                                                  @PathVariable int liabilitiesId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Liabilities liabilities = liabilitiesRepository.findLiabilitiesById(liabilitiesId);
+        if (user == null || liabilities == null) {
+            response.put("message", "Failed to delete liabilities");
+            return ResponseEntity.ok(response);
+        } else {
+            user.removeLiabilities(liabilities);
+            user.setNetWorth(user.getNetWorth() + liabilities.getAmount());
+            liabilitiesRepository.deleteLiabilitiesById(liabilitiesId);
+            userRepository.save(user);
+            response.put("message", "Liabilities deleted");
             return ResponseEntity.ok(response);
         }
     }
