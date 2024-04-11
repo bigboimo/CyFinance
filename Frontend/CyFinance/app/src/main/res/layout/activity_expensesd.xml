@@ -4,109 +4,92 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Expenses.ExpensesDActivity"
-    android:background="#2A2A2A">
+    android:layout_marginTop="0dp"
+    android:background="#2A2A2A"
+    tools:context=".ui.Expenses.ExpensesDActivity">
 
 
     <TextView
         android:id="@+id/expenses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="604dp"
-        android:hint="Expenses"
-        android:textColorHint="#F1BE48"
+        android:text="Expenses"
+        android:textColor="#F1BE48"
         android:textSize="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.454"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/food"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="504dp"
+        android:layout_marginTop="20dp"
         android:hint="Food"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.432"
-        app:layout_constraintStart_toStartOf="parent"></EditText>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expenses" />
 
     <EditText
         android:id="@+id/Rent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="408dp"
-        android:gravity="center"
+        android:layout_marginTop="20dp"
         android:hint="Rent/Bills"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.399"
-        app:layout_constraintStart_toStartOf="parent"></EditText>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/food" />
 
     <EditText
         android:id="@+id/school"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="316dp"
-        android:gravity="center"
+        android:layout_marginTop="20dp"
         android:hint="School"
-        android:inputType="textPassword"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.426"
-        app:layout_constraintStart_toStartOf="parent"></EditText>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/Rent" />
 
     <EditText
         android:id="@+id/OtherNecessities"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="224dp"
-        android:hint="OtherNecessities"
+        android:layout_marginTop="20dp"
+        android:hint="Other Necessities"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.327"
-        app:layout_constraintStart_toStartOf="parent"></EditText>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/school" />
 
     <EditText
         android:id="@+id/Extras"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="124dp"
-        android:gravity="center"
+        android:layout_marginTop="20dp"
         android:hint="Extras"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
-        app:layout_constraintStart_toStartOf="parent"></EditText>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/OtherNecessities" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+
+     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -83,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+            //overpending:closes an activity without a transaction
                 switch (item.getItemId()) {
                     case R.id.navigation_earnings:
                         startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
@@ -193,3 +193,4 @@ public class HomeActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 }
+

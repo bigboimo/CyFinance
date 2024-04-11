@@ -29,6 +29,22 @@
             android:layout_height="wrap_content"
             android:text="Send"
             android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnImageReq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Image"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/message1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+        <!-- Existing message sending UI components here -->
     </LinearLayout>
 
     <ScrollView
@@ -56,5 +72,7 @@
         android:layout_marginBottom="10dp"
         android:text="Back to Login"
         android:textColor="#FFFF" />
+
+
 
 </RelativeLayout>

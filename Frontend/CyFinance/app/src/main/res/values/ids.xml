@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="message1" type="id" />
+    <item name="update_btn" type="id" />
+    <item name="buttonupdate_btn" type="id" />
+</resources>
