@@ -94,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);  // go to SignupActivity
             }
 
-
         });
 
     }
