@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,21 +29,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PasswordChange extends AppCompatActivity {
-
     SessionManager session;
     String Response;
+    EditText nPassword;
     String password;
+    String username;
+    Bundle extras;
+
 
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passwordchange);
+
+        extras = getIntent().getExtras();
+
+        if(extras != null) {
+            username = extras.getString("username");
+        }
 
         session = new SessionManager(getApplicationContext());
 
         Button next = findViewById(R.id.next_button);
 
-        EditText nPassword = findViewById(R.id.pass_edt_txt);
+        nPassword = findViewById(R.id.pass_edt_txt);
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,11 +64,21 @@ public class PasswordChange extends AppCompatActivity {
     private void putRequest() {
 
         // Convert input to JSONObject
-        JSONObject postBody = null;
+        JSONObject postBody = new JSONObject();
+        try {
 
+            // This is handled by the server. IDs should not be set by the client
+            // adduser.put("id", 1);
+            postBody.put("email", username);
+            postBody.put("password", password);
+            System.out.println(postBody);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
         JsonRequest request = new JsonRequest(
                 Request.Method.PUT,
-                Constants.URL + "/users/" + session.getUserDetails().get("id"),
+                Constants.URL + "/users",
                 postBody,
                 new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
@@ -68,12 +87,11 @@ public class PasswordChange extends AppCompatActivity {
                             System.out.println("[Login] HTTP Response: " + response);
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
-                            Response = data.getJSONObject(0).getString("password");
-
-
+                            Response = data.getJSONObject(0).getString("message");
 
                             if (Response != null && Response.equals("User modified")) {
                                 Intent intent = new Intent(PasswordChange.this, AdminActivity.class);
+                                //Toast.makeText(PasswordChange.this, "Password Change");
                                 startActivity(intent);
                             }
                         } catch (JSONException e) {
@@ -96,14 +114,6 @@ public class PasswordChange extends AppCompatActivity {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Cookie", "user-id=" + session.getUserDetails().get("id"));
                 return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                //params.put("liabiltiestotal", liabilityChange);
-                //params.put();
-                return params;
             }
         };
 

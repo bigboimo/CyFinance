@@ -1,9 +1,7 @@
 package com.example.cyfinance.ui.Admin;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -27,18 +25,17 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import com.example.cyfinance.HomeActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.VolleySingleton;
-import com.example.cyfinance.ui.Change.AssetChange;
-import com.example.cyfinance.ui.Change.LiabilityChange;
+import com.example.cyfinance.ui.Change.PasswordChange;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.HashMap;
@@ -54,6 +51,8 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
     SessionManager session;
     String Response;
     ConstraintLayout adminLayout;
+    String user1S;
+    String user2S;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -62,7 +61,7 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_admin);
         registerForContextMenu(findViewById(R.id.change_user1));
-        registerForContextMenu(findViewById(R.id.change_user2));
+        //registerForContextMenu(findViewById(R.id.change_user2));
 
         //Session Declaration and Websocket URL
         session = new SessionManager(getApplicationContext());
@@ -136,11 +135,15 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
                             JSONObject headers = response.getJSONObject("headers");
                             TextView user1 = findViewById(R.id.text_user1);
                             TextView user2 = findViewById(R.id.text_user2);
+                            //adminLayout = findViewById(R.id.admin_layout);
 
-                            adminLayout = findViewById(R.id.admin_layout);
+                            user1S = data.getJSONObject(0).getString("email");
+                            user2S = data.getJSONObject(1).getString("email");
 
                             user1.setText(data.getJSONObject(0).getString("email"));
                             user2.setText(data.getJSONObject(1).getString("email"));
+
+                            //Loop that dynamically adds elements based on data array length
 //                            for(int i = 0; i < data.length(); i++) {
 //                                String user = data.getJSONObject(i).getString("email");
 //                                TextView newUser = new TextView(AdminActivity.this);
@@ -208,11 +211,14 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.change_password:
-                startActivity(new Intent(getApplicationContext(), AssetChange.class));
+                Intent passChange = new Intent(AdminActivity.this, PasswordChange.class);
+                passChange.putExtra("username", user1S);
+                startActivity(passChange);
                 overridePendingTransition(0, 0);
                 return true;
             case R.id.delete_networth:
                 delRequest();
+                overridePendingTransition(0, 0);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -226,7 +232,7 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
 
         JsonRequest request = new JsonRequest(
                 Request.Method.DELETE,
-                Constants.URL + "/users",
+                Constants.URL + "/users/" + user1S,
                 postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -272,6 +278,7 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
+
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
     }
@@ -296,4 +303,5 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
     @Override
     public void onWebSocketError(Exception ex) {
     }
+
 }
