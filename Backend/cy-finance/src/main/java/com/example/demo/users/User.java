@@ -3,6 +3,7 @@ package com.example.demo.users;
 import com.example.demo.assets.Assets;
 import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
+import com.example.demo.liabilities.Liabilities;
 import com.example.demo.userGroups.Groups;
 import jakarta.persistence.*;
 
@@ -38,6 +39,9 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Assets> assets;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Liabilities> liabilities;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Earnings> earnings;
@@ -125,11 +129,21 @@ public class User {
         return assets;
     }
 
-    public void addAsset(Assets asset) {
-        this.assets.add(asset);
+    public void addAssets(Assets assets) {
+        this.assets.add(assets);
     }
 
-    public void removeAsset(Assets asset) { this.assets.remove(asset); }
+    public void removeAssets(Assets assets) { this.assets.remove(assets); }
+
+    public Set<Liabilities> getLiabilities() {
+        return liabilities;
+    }
+
+    public void addLiabilities(Liabilities liabilities) {
+        this.liabilities.add(liabilities);
+    }
+
+    public void removeLiabilities(Liabilities liabilities) { this.liabilities.remove(liabilities); }
 
     public void setAssets(Set<Assets> assets) { this.assets = assets; }
 
