@@ -89,7 +89,7 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
 
                 switch (item.getItemId()) {
                     case R.id.navigation_earnings:
-                        startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
+                        //startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_admin:

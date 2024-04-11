@@ -170,6 +170,8 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 }
         ) {
+            //the map and getHeaders get th information that I need
+            //with the format that I need from the backend
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
@@ -187,6 +189,7 @@ public class HomeActivity extends AppCompatActivity {
         };
 
         // Adding request to request queue
+        //the line below executes the request by adding it to the queue that the program runs through
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 }

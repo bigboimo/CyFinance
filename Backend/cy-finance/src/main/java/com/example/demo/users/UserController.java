@@ -6,6 +6,8 @@ import com.example.demo.earnings.EarningsRepository;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.expenses.ExpensesRepository;
 import com.example.demo.assets.Assets;
+import com.example.demo.liabilities.Liabilities;
+import com.example.demo.liabilities.LiabilitiesRepository;
 import com.example.demo.userGroups.Groups;
 import com.example.demo.userGroups.GroupsRepository;
 import com.example.demo.util.Response;
@@ -16,7 +18,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -31,6 +33,9 @@ public class UserController {
 
     @Autowired
     AssetsRepository assetsRepository;
+
+    @Autowired
+    LiabilitiesRepository liabilitiesRepository;
 
     @Autowired
     ExpensesRepository expensesRepository;
@@ -154,6 +159,19 @@ public class UserController {
                 logger.warn("[PUT /users] User not provided");
                 response.put("message", "No user provided");
             } else {
+                User originalUser = userRepository.findByEmail(user.getEmail());
+                // TODO: Check if user cookie is admin before allowing change to admin role
+                // Check fields
+                if (user.getName() == null) user.setName(originalUser.getName());
+                if (user.getRole() == null) user.setRole(originalUser.getRole());
+                if (user.getPassword() == null) {
+                    user.setPassword(originalUser.getPassword());
+                } else {
+                    user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+                }
+                user.setLiabilitiesTotal(originalUser.getLiabilitiesTotal());
+                user.setAssetsTotal(originalUser.getAssetsTotal());
+                user.setNetWorth(originalUser.getNetWorth());
                 userRepository.save(user);
                 logger.info("[PUT /users] User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
@@ -217,6 +235,32 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/users/{userEmail}/networth/{newTotal}")
+    public ResponseEntity<Response<String>> changeUserNetWorth(@PathVariable String userEmail,
+                                                                       @PathVariable int newTotal,
+                                                                       @CookieValue(name = "user-id", required = false) String userId) {
+        Response<String> response = new Response<>();
+
+        logger.info("[PUT /users/{userEmail}/networth/{newTotal}] Cookie: " + userId);
+        User user = userRepository.findByEmail(userEmail);
+        // Only edit user if the cookie is set and the user is either an admin or the requested user
+        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            if (user == null) {
+                logger.warn("[PUT /users/{userEmail}/networth/{newTotal}] User not provided");
+                response.put("message", "No user provided");
+            } else {
+                user.setNetWorth(newTotal);
+                userRepository.save(user);
+                logger.info("[PUT /users/{userEmail}/networth/{newTotal}] User " + user.getName() + " modified by " + userId);
+                response.put("message", "User modified");
+            }
+        } else {
+            logger.warn("[PUT /users/{userEmail}/networth/{newTotal}] Attempted access from invalid user");
+            response.put("message", "User not allowed to perform this action");
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Response<String>> deleteUser(@PathVariable String id,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
@@ -233,19 +277,20 @@ public class UserController {
     }
 
     @PostMapping("/users/{userId}/assets")
-    public ResponseEntity<Response<String>> addUserAssets(@PathVariable String userId, @RequestBody Assets assets) {
+    public ResponseEntity<Response<String>> addUserAssets(@PathVariable String userId,
+                                                          @RequestBody Assets assets) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         if (user == null) {
-            response.put("message", "Failed to assign asset");
+            response.put("message", "Failed to assign assets");
             return ResponseEntity.ok(response);
         } else {
             assets.setUser(user);
             assetsRepository.save(assets);
-            user.addAsset(assets);
+            user.addAssets(assets);
             user.setNetWorth(user.getNetWorth() + assets.getAmount());
             userRepository.save(user);
-            response.put("message", "Asset assigned to user");
+            response.put("message", "Assets assigned to user");
             return ResponseEntity.ok(response);
         }
     }
@@ -255,69 +300,158 @@ public class UserController {
                                                           @RequestBody Assets assets) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
-        Assets originalAsset = assetsRepository.findAssetsById(assets.getId());
-        if (user == null || (!userId.equals(originalAsset.getUser().getEmail()))) {
-            response.put("message", "Failed to edit asset");
+        Assets originalAssets = assetsRepository.findAssetsById(assets.getId());
+        if (user == null || (!userId.equals(originalAssets.getUser().getEmail()))) {
+            response.put("message", "Failed to edit assets");
             return ResponseEntity.ok(response);
         } else {
-            user.setNetWorth(user.getNetWorth() - originalAsset.getAmount() + assets.getAmount());
+            user.setNetWorth(user.getNetWorth() - originalAssets.getAmount() + assets.getAmount());
             assets.setUser(user);
             assetsRepository.save(assets);
             userRepository.save(user);
-            response.put("message", "Asset updated");
+            response.put("message", "Assets updated");
             return ResponseEntity.ok(response);
         }
     }
 
     @DeleteMapping("/users/{userId}/assets/{assetId}")
-    public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetId) {
+    public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetsId) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
-        Assets asset = assetsRepository.findAssetsById(assetId);
-        if (user == null || asset == null) {
-            response.put("message", "Failed to delete asset");
+        Assets assets = assetsRepository.findAssetsById(assetsId);
+        if (user == null || assets == null) {
+            response.put("message", "Failed to delete assets");
             return ResponseEntity.ok(response);
         } else {
-            assetsRepository.deleteAssetsById(assetId);
-            user.removeAsset(asset);
-            user.setNetWorth(user.getNetWorth() - asset.getAmount());
+            assetsRepository.deleteAssetsById(assetsId);
+            user.removeAssets(assets);
+            user.setNetWorth(user.getNetWorth() - assets.getAmount());
             userRepository.save(user);
-            response.put("message", "Asset deleted");
+            response.put("message", "Assets deleted");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping("/users/{userId}/liabilities")
+    public ResponseEntity<Response<String>> addUserLiabilities(@PathVariable String userId,
+                                                               @RequestBody Liabilities liabilities) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        if (user == null) {
+            response.put("message", "Failed to assign liabilities");
+            return ResponseEntity.ok(response);
+        } else {
+            liabilities.setUser(user);
+            liabilitiesRepository.save(liabilities);
+            user.addLiabilities(liabilities);
+            user.setNetWorth(user.getNetWorth() - liabilities.getAmount());
+            userRepository.save(user);
+            response.put("message", "Liabilities assigned to user");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PutMapping("/users/{userId}/liabilities")
+    public ResponseEntity<Response<String>> editUserLiabilities(@PathVariable String userId,
+                                                           @RequestBody Liabilities liabilities) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Liabilities originalLiabilities = liabilitiesRepository.findLiabilitiesById(liabilities.getId());
+        if (user == null || (!userId.equals(originalLiabilities.getUser().getEmail()))) {
+            response.put("message", "Failed to edit liabilities");
+            return ResponseEntity.ok(response);
+        } else {
+            user.setNetWorth(user.getNetWorth() + originalLiabilities.getAmount() - liabilities.getAmount());
+            liabilities.setUser(user);
+            liabilitiesRepository.save(liabilities);
+            userRepository.save(user);
+            response.put("message", "Liabilities updated");
+            return ResponseEntity.ok(response);
+        }
+    }
+    @DeleteMapping("/users/{userId}/liabilities/{liabilitiesId}")
+    public ResponseEntity<Response<String>> removeUserLiabilities(@PathVariable String userId,
+                                                                  @PathVariable int liabilitiesId) {
+        Response<String> response = new Response<>();
+        User user = userRepository.findByEmail(userId);
+        Liabilities liabilities = liabilitiesRepository.findLiabilitiesById(liabilitiesId);
+        if (user == null || liabilities == null) {
+            response.put("message", "Failed to delete liabilities");
+            return ResponseEntity.ok(response);
+        } else {
+            user.removeLiabilities(liabilities);
+            user.setNetWorth(user.getNetWorth() + liabilities.getAmount());
+            liabilitiesRepository.deleteLiabilitiesById(liabilitiesId);
+            userRepository.save(user);
+            response.put("message", "Liabilities deleted");
             return ResponseEntity.ok(response);
         }
     }
 
     @PostMapping("/users/{userId}/earnings/{earningsId}")
-    String assignEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
-        Response<String> response = new Response<>();
+    public ResponseEntity<?> attachEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
+        // Assuming userRepository and earningsRepository have been appropriately autowired
         User user = userRepository.findByEmail(userId);
-        Earnings earnings = earningsRepository.findById(earningsId);
-        if (user == null || earnings == null) {
-            response.put("message", "Failed to assign earnings");
-        } else {
-            earnings.setUser(user);
-            user.setEarnings(earnings);
-            userRepository.save(user);
-            response.put("message", "Earnings assigned to user");
+        if (user == null) {
+            // Handle case where the user is not found
+            return ResponseEntity.badRequest().body("User not found with ID: " + userId);
         }
-        return response.toString();
+
+        Earnings earnings = earningsRepository.findById(earningsId);
+        if (earnings == null) {
+            // Handle case where the earnings are not found
+            return ResponseEntity.badRequest().body("Earnings not found with ID: " + earningsId);
+        }
+
+        // Ensure the user's earnings collection is initialized
+        if (user.getEarnings() == null) {
+            user.setEarnings(new HashSet<>());
+        }
+
+        // Add the earnings to the user's collection of earnings and set the back reference
+        earnings.setUser(user);
+        user.getEarnings().add(earnings);
+
+        // Assuming there's cascading or explicit saving necessary
+        earningsRepository.save(earnings); // Save the earnings entity to update its user reference
+
+        return ResponseEntity.ok("Earnings assigned successfully to user.");
     }
 
+
+
+
     @PostMapping("/users/{userId}/expenses/{expensesId}")
-    String attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
-        Response<String> response = new Response<>();
+    public ResponseEntity<?> attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
+        // Assuming userRepository and expensesRepository have been appropriately autowired
         User user = userRepository.findByEmail(userId);
-        Expenses expenses = expensesRepository.findById(expensesId);
-        if (user == null || expenses == null) {
-            response.put("message", "Failed to assign expenses");
-        } else {
-            expenses.setUser(user);
-            user.setExpenses(expenses);
-            userRepository.save(user);
-            response.put("message", "Expenses assigned");
+        if (user == null) {
+            // Handle case where the user is not found
+            return ResponseEntity.badRequest().body("User not found with ID: " + userId);
         }
-        return response.toString();
+
+        Expenses expenses = expensesRepository.findById(expensesId);
+        if (expenses == null) {
+            // Handle case where the expenses are not found
+            return ResponseEntity.badRequest().body("Expenses not found with ID: " + expensesId);
+        }
+
+        // Ensure the user's expenses collection is initialized
+        if (user.getExpenses() == null) {
+            user.setExpenses(new HashSet<>());
+        }
+
+        // Add the expense to the user's collection of expenses and set the back reference
+        expenses.setUser(user);
+        user.getExpenses().add(expenses);
+
+        // Assuming there's cascading or explicit saving necessary
+        expensesRepository.save(expenses); // Save the expenses entity to update its user reference
+
+        return ResponseEntity.ok("Expenses assigned successfully to user.");
     }
+
+
 
     @PostMapping("/users/{userId}/groups/{groupId}")
     public ResponseEntity<Response<String>> attachGroupsToUser(@PathVariable String userId, @PathVariable int groupId) {
