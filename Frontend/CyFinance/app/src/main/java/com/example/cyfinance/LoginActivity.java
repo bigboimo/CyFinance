@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
@@ -66,7 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
 
                 postRequest();
-
+                //Intent intent = new Intent(LoginActivity.this, EarningsDActivity.class);
+                //startActivity(intent);  // go to SignupActivity
             }
         });
 
@@ -91,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, ChatConnect.class);
                 startActivity(intent);  // go to SignupActivity
             }
-
 
         });
 

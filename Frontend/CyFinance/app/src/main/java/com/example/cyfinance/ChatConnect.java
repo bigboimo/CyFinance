@@ -31,7 +31,7 @@ public class ChatConnect extends AppCompatActivity{
             WebSocketManager.getInstance().connectWebSocket(url);
 
             // got to chat activity
-            Intent intent = new Intent(this, ChatActivity.class);
+            Intent intent = new Intent(ChatConnect.this, ChatActivity.class);
             startActivity(intent);
         });
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,9 +14,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.cyfinance.HomeActivity;
-import com.example.cyfinance.LoginActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.VolleySingleton;
+import com.example.cyfinance.ui.Admin.AdminActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
@@ -27,42 +28,59 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AssetChange extends AppCompatActivity {
-
-
-    String Response;
+public class PasswordChange extends AppCompatActivity {
     SessionManager session;
-    String assetChange;
+    String Response;
+    EditText nPassword;
+    String password;
+    String username;
+    Bundle extras;
+
 
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_assetchange);
+        setContentView(R.layout.activity_passwordchange);
+
+        extras = getIntent().getExtras();
+
+        if(extras != null) {
+            username = extras.getString("username");
+        }
 
         session = new SessionManager(getApplicationContext());
+
         Button next = findViewById(R.id.next_button);
 
-        EditText asset = findViewById(R.id.asset_edt_txt);
+        nPassword = findViewById(R.id.pass_edt_txt);
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                assetChange = asset.getText().toString();
+                password = nPassword.getText().toString();
                 putRequest();
             }
         });
     }
-
     private void putRequest() {
 
         // Convert input to JSONObject
-        JSONObject postBody = null;
+        JSONObject postBody = new JSONObject();
+        try {
 
+            // This is handled by the server. IDs should not be set by the client
+            // adduser.put("id", 1);
+            postBody.put("email", username);
+            postBody.put("password", password);
+            System.out.println(postBody);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
         JsonRequest request = new JsonRequest(
                 Request.Method.PUT,
-                Constants.URL + "/users/" + session.getUserDetails().get("id") + "/assettotal/" + assetChange,
+                Constants.URL + "/users",
                 postBody,
-                new Response.Listener<JSONObject>() {
+                new com.android.volley.Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -72,7 +90,8 @@ public class AssetChange extends AppCompatActivity {
                             Response = data.getJSONObject(0).getString("message");
 
                             if (Response != null && Response.equals("User modified")) {
-                                Intent intent = new Intent(AssetChange.this, HomeActivity.class);
+                                Intent intent = new Intent(PasswordChange.this, AdminActivity.class);
+                                //Toast.makeText(PasswordChange.this, "Password Change");
                                 startActivity(intent);
                             }
                         } catch (JSONException e) {
@@ -96,7 +115,6 @@ public class AssetChange extends AppCompatActivity {
                 headers.put("Cookie", "user-id=" + session.getUserDetails().get("id"));
                 return headers;
             }
-
         };
 
         // Adding request to request queue

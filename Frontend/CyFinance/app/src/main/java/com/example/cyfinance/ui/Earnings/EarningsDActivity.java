@@ -13,18 +13,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.example.cyfinance.ChatConnect;
+import com.example.cyfinance.HomeActivity;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.cyfinance.HomeActivity;
+import com.example.cyfinance.LoginActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.VolleySingleton;
 import com.example.cyfinance.ui.Admin.AdminActivity;
+import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
+import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
 import com.google.android.material.navigation.NavigationBarView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -196,6 +201,9 @@ public class EarningsDActivity extends AppCompatActivity {
                 headers.put("Authorization", "Bearer " + session.getUserDetails().get("token"));
                 return headers;
             }
+//            // Assuming 'userId' is already set. Ensure it's the correct user ID for which earnings are to be fetched.
+//            postParams.put("id", userId);
+//            // Optionally, add primaryMonthlyIncome and secondaryMonthlyIncome if required by the backend, though it seems unusual for a fetch operation.
 
             @Override
             public int getMethod() {

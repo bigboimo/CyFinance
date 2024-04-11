@@ -3,10 +3,22 @@ package com.example.demo.users;
 import com.example.demo.assets.Assets;
 import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
+import com.example.demo.liabilities.Liabilities;
 import com.example.demo.userGroups.Groups;
 import jakarta.persistence.*;
 
 import java.util.Set;
+
+
+/**
+ * The User entity represents a user in the system.
+ * It has relationships with several other entities:
+ * - One-to-Many with Assets: A user can own multiple assets.
+ * - One-to-Many with Earnings: A user can have multiple earnings records.
+ * - One-to-Many with Expenses: A user has a single record of expenses.
+ * - Many-to-Many with Groups: A user can belong to multiple groups.
+ */
+
 
 @Entity
 @Table(name="users")
@@ -28,13 +40,15 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Assets> assets;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "earnings_id")
-    private Earnings earnings;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Liabilities> liabilities;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "expenses_id")
-    private Expenses expenses;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Earnings> earnings;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Expenses> expenses;
+
 
     @ManyToMany
     @JoinTable(
@@ -52,13 +66,24 @@ public class User {
 
     public User() {}
 
-    public Earnings getEarnings() {
+    public Set<Earnings> getEarnings() {
         return earnings;
     }
 
-    public void setEarnings(Earnings earnings) {
+    public void setEarnings(Set<Earnings> earnings) {
         this.earnings = earnings;
     }
+
+    public void addEarnings(Earnings earning) {
+        this.earnings.add(earning);
+        earning.setUser(this);
+    }
+
+    public void removeEarnings(Earnings earning) {
+        this.earnings.remove(earning);
+        earning.setUser(null);
+    }
+
 
     public String getName() {
         return name;
@@ -104,21 +129,42 @@ public class User {
         return assets;
     }
 
-    public void addAsset(Assets asset) {
-        this.assets.add(asset);
+    public void addAssets(Assets assets) {
+        this.assets.add(assets);
     }
 
-    public void removeAsset(Assets asset) { this.assets.remove(asset); }
+    public void removeAssets(Assets assets) { this.assets.remove(assets); }
+
+    public Set<Liabilities> getLiabilities() {
+        return liabilities;
+    }
+
+    public void addLiabilities(Liabilities liabilities) {
+        this.liabilities.add(liabilities);
+    }
+
+    public void removeLiabilities(Liabilities liabilities) { this.liabilities.remove(liabilities); }
 
     public void setAssets(Set<Assets> assets) { this.assets = assets; }
 
-    public Expenses getExpenses() {
+    public Set<Expenses> getExpenses() {
         return expenses;
     }
 
-    public void setExpenses(Expenses expenses) {
+    public void setExpenses(Set<Expenses> expenses) {
         this.expenses = expenses;
     }
+
+    public void addExpense(Expenses expense) {
+        this.expenses.add(expense);
+        expense.setUser(this); // Assuming `Expenses` has a `setUser(User user)` method for the back-reference.
+    }
+
+    public void removeExpense(Expenses expense) {
+        this.expenses.remove(expense);
+        expense.setUser(null); // This disassociates the expense from the user.
+    }
+
 
     public Set<Groups> getGroups() {
         return groups;
