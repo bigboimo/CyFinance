@@ -41,6 +41,11 @@
             android:exported="true"/>
         <activity android:name=".ui.Change.AssetChange"
             android:exported="true"/>
+        <activity android:name=".ChatActivity"
+            android:exported="true"/>
+        <activity android:name=".ChatConnect"
+            android:exported="true"/>
+
 
     </application>
 

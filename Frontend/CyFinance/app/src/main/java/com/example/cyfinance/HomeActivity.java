@@ -83,10 +83,10 @@ public class HomeActivity extends AppCompatActivity {
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+            //overpending:closes an activity without a transaction
                 switch (item.getItemId()) {
                     case R.id.navigation_earnings:
-                        startActivity(new Intent(getApplicationContext(), EarningsActivity.class));
+                        startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_home:
@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity {
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_expenses:
-                        startActivity(new Intent(getApplicationContext(), ExpensesActivity.class));
+                        startActivity(new Intent(getApplicationContext(), ExpensesDActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                 }
@@ -190,3 +190,4 @@ public class HomeActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 }
+

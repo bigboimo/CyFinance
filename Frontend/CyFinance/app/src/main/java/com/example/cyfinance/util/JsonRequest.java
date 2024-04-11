@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-
+//This class helps get the JSON data from the backend
 public class JsonRequest extends JsonObjectRequest {
 
     public JsonRequest(int method, String url, JSONObject jsonRequest, Response.Listener
@@ -41,3 +41,4 @@ public class JsonRequest extends JsonObjectRequest {
         }
     }
 }
+//This call helps us get to the JSON requests

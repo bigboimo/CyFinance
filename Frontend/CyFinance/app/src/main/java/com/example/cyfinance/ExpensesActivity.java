@@ -50,10 +50,12 @@ public class ExpensesActivity extends AppCompatActivity {
         OtherNecessitiesEditText = findViewById(R.id.OtherNecessities);
         Extras = findViewById(R.id.Extras);
         submitbutton = findViewById(R.id.submit);
-
+        //Set OnclickListener on the submit button
         submitbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //This basically gets the text from the EditText
+                // and converts it to a string
                 Food = FoodEditText.getText().toString();
                 RentBills1 = RentBillsEditText.getText().toString();
                 School = SchoolEditText.getText().toString();
@@ -64,18 +66,21 @@ public class ExpensesActivity extends AppCompatActivity {
             }
         });
     }
-
+   //this does 2 things: create and send the postRequest
     private void postRequest() {
+        //This JSON below holds the data we'll send
         JSONObject postBody = new JSONObject();
         try {
+            //These key value pairs correspond to the user input
             postBody.put("food", Food);
             postBody.put("Rent/Bills", RentBills1);
             postBody.put("school", School);
             postBody.put("Other Necessities", OtherNecessities);
         } catch (JSONException e) {
+            //This prints a list of active method calls when the error is thrown
             e.printStackTrace();
         }
-
+        //Request that gets in return a JSON response
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -83,10 +88,13 @@ public class ExpensesActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        //This is when the server responds to the post request
                         try {
+                            //parses the message from the response
                             Response = response.getString("message");
                             Log.d("Response", Response);
                             if (Response != null && Response.equals("success")) {
+                                //if we do get a response we'll be taken to the homeactivity
                                 Intent intent = new Intent(ExpensesActivity.this, HomeActivity.class);
                                 intent.putExtra("Food", Food);
                                 intent.putExtra("Rent/Bills", RentBills1);
@@ -95,6 +103,7 @@ public class ExpensesActivity extends AppCompatActivity {
                                 startActivity(intent);
                             }
                         } catch (JSONException e) {
+                            //when parsing the JSON and we get an error, print the methods that were running
                             e.printStackTrace();
                         }
                         System.out.println(response);
@@ -111,12 +120,14 @@ public class ExpensesActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        //This is called when there's error with network request(helps narrow down the issue)
                         String errorMessage = error.toString();
                         Log.e("Error", errorMessage);
+                        //This makes the error show up in logcat
                     }
                 }
         );
-
+        //in this context the JSON object request is added to volley queue for execution
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 }

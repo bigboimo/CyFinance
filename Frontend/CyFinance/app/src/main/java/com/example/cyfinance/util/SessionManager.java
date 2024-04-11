@@ -9,7 +9,7 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import com.example.cyfinance.LoginActivity;
-
+//This is to
 public class SessionManager {
     // Shared Preferences
     SharedPreferences pref;

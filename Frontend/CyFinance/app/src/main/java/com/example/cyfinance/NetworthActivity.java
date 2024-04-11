@@ -127,3 +127,4 @@ public class NetworthActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(createUser);
     }
 }
+

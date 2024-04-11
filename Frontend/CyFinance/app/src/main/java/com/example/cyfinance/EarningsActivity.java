@@ -122,3 +122,4 @@ public class EarningsActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 }
+
