@@ -96,3 +96,4 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
     }
 }
 
+

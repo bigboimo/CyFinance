@@ -28,7 +28,7 @@ public class Earnings {
 
     // Many-to-One relationship with User
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_email", nullable = false)
+    @JoinColumn(name = "user_email")
     @JsonIgnore // Prevents recursion in JSON serialization
     private User user;
 

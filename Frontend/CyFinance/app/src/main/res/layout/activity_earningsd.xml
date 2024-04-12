@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Earnings.EarningsDActivity"
-    android:background="#2A2A2A">
+    android:background="#2A2A2A"
+    tools:context=".ui.Earnings.EarningsDActivity">
 
 
     <TextView
@@ -17,8 +17,13 @@
         android:textColor="#F1BE48"
         android:textSize="50dp"
         android:textStyle="bold|italic"
-        tools:layout_editor_absoluteX="93dp"
-        tools:layout_editor_absoluteY="16dp"></TextView>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.054"></TextView>
+
 
     <EditText
         android:id="@+id/primary"
@@ -28,9 +33,12 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="30dp"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="205dp"></EditText>
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.618"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.332"></EditText>
 
     <EditText
         android:id="@+id/secondary"
@@ -40,22 +48,25 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="30dp"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="356dp"></EditText>
-
-    <TextView
-        android:id="@+id/text_dashboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.578"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.517"></EditText>
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#C8102E"
+        android:text="Submit"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/secondary"></Button>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
