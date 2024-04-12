@@ -40,7 +40,7 @@ auto-deploy:
   - backend_tag      # change to your runner's tag
   script:               # script to run the deployment service you created
     - cd Backend/cy-finance        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-    - sudo mv target/*.jar /var/www/cyfinance/CyFinance.jar 
+    - mv target/*.jar /var/www/cyfinance/CyFinance.jar 
     - sudo systemctl stop cyfinance
     - sudo systemctl start cyfinance
   only:
