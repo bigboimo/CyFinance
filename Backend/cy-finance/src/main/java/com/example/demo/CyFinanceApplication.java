@@ -16,7 +16,7 @@ public class CyFinanceApplication {
 		SpringApplication.run(CyFinanceApplication.class, args);
 	}
 
-	// Create Initial admin user
+	// Create Initial admin user and create normal user
 	/**
 	 *
 	 * @param userRepository repository for the User entity
