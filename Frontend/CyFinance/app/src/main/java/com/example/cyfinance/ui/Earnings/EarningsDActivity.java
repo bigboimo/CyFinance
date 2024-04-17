@@ -76,12 +76,17 @@ public class EarningsDActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_admin:
                         startActivity(new Intent(getApplicationContext(), AdminActivity.class));
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_expenses:
                         startActivity(new Intent(getApplicationContext(), ExpensesDActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_earnings:
                         return true;
                 }
                 return false;
