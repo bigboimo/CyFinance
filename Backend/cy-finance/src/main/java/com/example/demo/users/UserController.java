@@ -320,7 +320,7 @@ public class UserController {
         if (user == null) {
             logger.info(endpointString + "User not found");
             response.put("message", "Failed to assign assets");
-            return ResponseEntity.badRequest(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             assets.setUser(user);
             assetsRepository.save(assets);
