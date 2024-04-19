@@ -18,6 +18,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.net.URI;
 import java.util.*;
 
 @RestController
@@ -56,7 +57,7 @@ public class UserController {
             if (isValidUserId(userId))
                 logger.info(endpointString + "Role: " + userRepository.findByEmail(userId).getRole());
             logger.warn(endpointString + "Attempted access from invalid user");
-            return ResponseEntity.ok(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
@@ -73,7 +74,7 @@ public class UserController {
             return ResponseEntity.ok(userRepository.findByEmail(id));
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
-            return ResponseEntity.ok(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
@@ -99,7 +100,7 @@ public class UserController {
                 user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
                 userRepository.save(user);
                 createdUser = userRepository.findByEmail(user.getEmail());
-                logger.info(endpointString + "User created: " + user);
+                logger.info(endpointString + "User created: " + createdUser);
 
                 ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(createdUser.getEmail()))
                         .maxAge(60)
@@ -109,13 +110,14 @@ public class UserController {
 
                 response.put("message", "User created");
 
-                return ResponseEntity.ok().headers(responseHeaders).body(response);
+                return ResponseEntity.created(URI.create("/users/" + createdUser.getEmail())).headers(responseHeaders).body(response);
             }
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User creation not allowed");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @PostMapping("/login")
@@ -173,6 +175,7 @@ public class UserController {
             if (user == null) {
                 logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 User originalUser = userRepository.findByEmail(user.getEmail());
                 // TODO: Check if user cookie is admin before allowing change to admin role
@@ -190,12 +193,13 @@ public class UserController {
                 userRepository.save(user);
                 logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
+                return ResponseEntity.ok(response);
             }
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/users/{userEmail}/assettotal/{newTotal}")
@@ -213,17 +217,19 @@ public class UserController {
             if (user == null) {
                 logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 user.setAssetsTotal(newTotal);
                 userRepository.save(user);
                 logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
+                return ResponseEntity.ok(response);
             }
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/users/{userEmail}/liabilitiestotal/{newTotal}")
@@ -241,17 +247,19 @@ public class UserController {
             if (user == null) {
                 logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 user.setLiabilitiesTotal(newTotal);
                 userRepository.save(user);
                 logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
+                return ResponseEntity.ok(response);
             }
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/users/{userEmail}/networth/{newTotal}")
@@ -269,17 +277,19 @@ public class UserController {
             if (user == null) {
                 logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 user.setNetWorth(newTotal);
                 userRepository.save(user);
                 logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
+                return ResponseEntity.ok(response);
             }
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/users/{id}")
@@ -295,6 +305,7 @@ public class UserController {
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         return ResponseEntity.ok(response);
     }
@@ -309,7 +320,7 @@ public class UserController {
         if (user == null) {
             logger.info(endpointString + "User not found");
             response.put("message", "Failed to assign assets");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest(response);
         } else {
             assets.setUser(user);
             assetsRepository.save(assets);
@@ -333,7 +344,7 @@ public class UserController {
         if (user == null || (!userId.equals(originalAssets.getUser().getEmail()))) {
             logger.info(endpointString + "Failed to edit asset on user");
             response.put("message", "Failed to edit assets");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             user.setNetWorth(user.getNetWorth() - originalAssets.getAmount() + assets.getAmount());
             assets.setUser(user);
@@ -355,7 +366,7 @@ public class UserController {
         if (user == null || assets == null) {
             logger.warn(endpointString + "Failed to delete asset for user");
             response.put("message", "Failed to delete assets");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             assetsRepository.deleteAssetsById(assetsId);
             user.removeAssets(assets);
@@ -377,7 +388,7 @@ public class UserController {
         if (user == null) {
             logger.warn(endpointString + "Failed to assign liability for user");
             response.put("message", "Failed to assign liabilities");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             liabilities.setUser(user);
             liabilitiesRepository.save(liabilities);
@@ -401,7 +412,7 @@ public class UserController {
         if (user == null || (!userId.equals(originalLiabilities.getUser().getEmail()))) {
             logger.warn(endpointString + "Failed to edit liability for user");
             response.put("message", "Failed to edit liabilities");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             user.setNetWorth(user.getNetWorth() + originalLiabilities.getAmount() - liabilities.getAmount());
             liabilities.setUser(user);
