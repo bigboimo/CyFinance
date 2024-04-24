@@ -192,16 +192,15 @@ public class UserController {
         logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-            if (user == null) {
-                logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] User not provided");
-                response.put("message", "No user provided");
-            } else {
-                user.setAssetsTotal(newTotal);
-                userRepository.save(user);
-                logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] User " + user.getName() + " modified by " + userId);
-                response.put("message", "User modified");
-            }
+
+        if (user == null) {
+            logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] User not provided");
+            response.put("message", "No user provided");
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            user.setAssetsTotal(newTotal);
+            userRepository.save(user);
+            logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] User " + user.getName() + " modified by " + userId);
+            response.put("message", "User modified");
         } else {
             logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
@@ -314,7 +313,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/users/{userId}/assets/{assetId}")
+    @DeleteMapping("/users/{userId}/assets/{assetsId}")
     public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetsId) {
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
