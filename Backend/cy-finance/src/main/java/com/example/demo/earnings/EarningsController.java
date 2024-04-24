@@ -42,17 +42,17 @@ public class EarningsController {
     /**
      * Create a new earnings record.
      * Validates the request body as an Earnings object.
-     * If the object is valid, it saves it and returns a success response.
+     * Saves the object to the database and returns a ResponseEntity with the created status and object.
      * @param earnings the earnings to create
-     * @return ResponseEntity with a success message
+     * @return ResponseEntity containing the created earnings and HTTP status
      */
     @PostMapping
-    public ResponseEntity<String> createEarnings(@RequestBody Earnings earnings) {
+    public ResponseEntity<Earnings> createEarnings(@RequestBody Earnings earnings) {
         if (earnings == null) {
-            return ResponseEntity.badRequest().body(FAILURE);
+            return ResponseEntity.badRequest().body(null);  // Return 400 Bad Request if the body is null
         }
-        earningsRepository.save(earnings);
-        return ResponseEntity.ok(SUCCESS);
+        Earnings savedEarnings = earningsRepository.save(earnings);
+        return ResponseEntity.ok(savedEarnings);  // Return 200 OK with the saved earnings
     }
 
     /**
