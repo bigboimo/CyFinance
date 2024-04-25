@@ -1,6 +1,18 @@
 package com.example.cyfinance;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -10,22 +22,6 @@ import com.example.cyfinance.ui.Admin.AdminActivity;
 import com.example.cyfinance.ui.Change.AssetChange;
 import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
-
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.view.MenuItem;
-
-import androidx.annotation.NonNull;
-
-
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
@@ -80,10 +76,22 @@ public class HomeActivity extends AppCompatActivity {
                 getRequest();
             }
         });
+
+        // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when
+        // the user performs a swipe-to-refresh gesture.
+
+//        SwipeRefreshLayout mySwipeRefreshLayout = findViewById(R.id.swipeRefresh);
+//        mySwipeRefreshLayout.setOnRefreshListener(() -> {
+//                    //Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+//
+//                    getRequest();
+//                }
+//        );
+
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            //overpending:closes an activity without a transaction
+                //overpending:closes an activity without a transaction
                 switch (item.getItemId()) {
                     case R.id.navigation_earnings:
                         startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
@@ -177,14 +185,6 @@ public class HomeActivity extends AppCompatActivity {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Cookie", "user-id=" + session.getUserDetails().get("id"));
                 return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                //params.put();
-                //params.put();
-                return params;
             }
         };
 

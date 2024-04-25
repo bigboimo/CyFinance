@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     String username;
     String password;
 
-    String Response;
+    static String Response;
 
     // user Id set by cookie on login
     String userId;
