@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity {
 
         totalNetworth = findViewById(R.id.text_networth);
 
-        Button refresh = findViewById(R.id.button_refresh);
+        Button refresh = findViewById(R.id.refresh_button);
 
         FloatingActionButton change = findViewById(R.id.change_options);
 
