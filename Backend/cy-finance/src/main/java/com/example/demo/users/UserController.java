@@ -213,18 +213,16 @@ public class UserController {
         logger.info(endpointString + "Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-            if (user == null) {
-                logger.warn(endpointString + "User not provided");
-                response.put("message", "No user provided");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            } else {
-                user.setAssetsTotal(newTotal);
-                userRepository.save(user);
-                logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
-                response.put("message", "User modified");
-                return ResponseEntity.ok(response);
-            }
+        if (user == null) {
+            logger.warn(endpointString + "User not provided");
+            response.put("message", "No user provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            user.setAssetsTotal(newTotal);
+            userRepository.save(user);
+            logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
+            response.put("message", "User modified");
+            return ResponseEntity.ok(response);
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
@@ -243,18 +241,16 @@ public class UserController {
         logger.info(endpointString + "Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-            if (user == null) {
-                logger.warn(endpointString + "User not provided");
-                response.put("message", "No user provided");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            } else {
-                user.setLiabilitiesTotal(newTotal);
-                userRepository.save(user);
-                logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
-                response.put("message", "User modified");
-                return ResponseEntity.ok(response);
-            }
+        if (user == null) {
+            logger.warn(endpointString + "User not provided");
+            response.put("message", "No user provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            user.setLiabilitiesTotal(newTotal);
+            userRepository.save(user);
+            logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
+            response.put("message", "User modified");
+            return ResponseEntity.ok(response);
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
