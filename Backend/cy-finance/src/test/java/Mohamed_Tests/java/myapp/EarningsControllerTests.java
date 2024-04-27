@@ -1,4 +1,4 @@
-package myapp;
+package Mohamed_Tests.java.myapp;
 
 import com.example.demo.CyFinanceApplication;
 import io.restassured.RestAssured;

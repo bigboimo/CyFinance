@@ -1,4 +1,4 @@
-package myapp;
+package Mohamed_Tests.java.myapp;
 
 import com.example.demo.earnings.Earnings;
 import com.example.demo.users.User;
