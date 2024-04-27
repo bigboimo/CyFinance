@@ -1,13 +1,13 @@
 package com.example.demo.assets;
 
-import com.example.demo.JamesSystemTest;
+import com.example.demo.CyFinanceApplication;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = CyFinanceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AssetsSystemTest {
-    private final Logger logger = LoggerFactory.getLogger(JamesSystemTest.class);
+    private final Logger logger = LoggerFactory.getLogger(AssetsSystemTest.class);
 
     @LocalServerPort
     int port;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
@@ -43,7 +43,7 @@ public class AssetsSystemTest {
                 post("/users");
 
         // Check status code
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
 
         // Check for success return message and cookie set
         logger.info("[POST /users] Response body " + response.body().print());
@@ -63,7 +63,7 @@ public class AssetsSystemTest {
                 post("/users");
 
         // Check status code
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
 
         // Check for success return message and cookie set
         logger.info("[POST /users] Response body " + response.body().print());
@@ -535,8 +535,13 @@ public class AssetsSystemTest {
             responseObject = new JSONObject(response.body().print());
             assertEquals(originalValue + 10000, responseObject.getInt("netWorth"));
             responseArray = responseObject.getJSONArray("assets");
-            assertEquals(10000, responseArray.getJSONObject(0).getInt("amount"));
-            assertEquals("car2", responseArray.getJSONObject(0).get("label"));
+            if (responseArray.getJSONObject(0).getInt("id") == 2) {
+                assertEquals(10000, responseArray.getJSONObject(0).getInt("amount"));
+                assertEquals("car2", responseArray.getJSONObject(0).get("label"));
+            } else {
+                assertEquals(10000, responseArray.getJSONObject(1).getInt("amount"));
+                assertEquals("car2", responseArray.getJSONObject(1).get("label"));
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -566,7 +571,7 @@ public class AssetsSystemTest {
                 .when()
                 .post("/users/fake_user/assets");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to assign assets", responseObject.get("message"));
@@ -749,7 +754,7 @@ public class AssetsSystemTest {
                 .when()
                 .put("/users/fake_user/assets");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to edit assets", responseObject.get("message"));
@@ -808,7 +813,7 @@ public class AssetsSystemTest {
                 .when()
                 .delete("/users/fake_user/assets/0");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to delete assets", responseObject.get("message"));
@@ -826,7 +831,7 @@ public class AssetsSystemTest {
                 .when()
                 .delete("/users/" + userSessionCookie + "/assets/99");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to delete assets", responseObject.get("message"));

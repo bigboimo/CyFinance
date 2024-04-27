@@ -1,13 +1,13 @@
 package com.example.demo.liabilities;
 
-import com.example.demo.JamesSystemTest;
+import com.example.demo.CyFinanceApplication;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = CyFinanceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class LiabilitiesSystemTest {
-    private final Logger logger = LoggerFactory.getLogger(JamesSystemTest.class);
+    private final Logger logger = LoggerFactory.getLogger(LiabilitiesSystemTest.class);
 
     @LocalServerPort
     int port;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
@@ -43,7 +43,7 @@ public class LiabilitiesSystemTest {
                 post("/users");
 
         // Check status code
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
 
         // Check for success return message and cookie set
         logger.info("[POST /users] Response body " + response.body().print());
@@ -63,7 +63,7 @@ public class LiabilitiesSystemTest {
                 post("/users");
 
         // Check status code
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
 
         // Check for success return message and cookie set
         logger.info("[POST /users] Response body " + response.body().print());
@@ -535,8 +535,13 @@ public class LiabilitiesSystemTest {
             responseObject = new JSONObject(response.body().print());
             assertEquals(originalValue - 10000, responseObject.getInt("netWorth"));
             responseArray = responseObject.getJSONArray("liabilities");
-            assertEquals(10000, responseArray.getJSONObject(1).getInt("amount"));
-            assertEquals("car2", responseArray.getJSONObject(1).get("label"));
+            if (responseArray.getJSONObject(0).getInt("id") == 2) {
+                assertEquals(10000, responseArray.getJSONObject(0).getInt("amount"));
+                assertEquals("car2", responseArray.getJSONObject(0).get("label"));
+            } else {
+                assertEquals(10000, responseArray.getJSONObject(1).getInt("amount"));
+                assertEquals("car2", responseArray.getJSONObject(1).get("label"));
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -566,7 +571,7 @@ public class LiabilitiesSystemTest {
                 .when()
                 .post("/users/fake_user/liabilities");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to assign liabilities", responseObject.get("message"));
@@ -749,7 +754,7 @@ public class LiabilitiesSystemTest {
                 .when()
                 .put("/users/fake_user/liabilities");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to edit liabilities", responseObject.get("message"));
@@ -808,7 +813,7 @@ public class LiabilitiesSystemTest {
                 .when()
                 .delete("/users/fake_user/liabilities/0");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to delete liabilities", responseObject.get("message"));
@@ -826,7 +831,7 @@ public class LiabilitiesSystemTest {
                 .when()
                 .delete("/users/" + userSessionCookie + "/liabilities/99");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to delete liabilities", responseObject.get("message"));
