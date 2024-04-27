@@ -301,7 +301,7 @@ public class UserController {
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
         return ResponseEntity.ok(response);
     }

@@ -1,17 +1,15 @@
 package com.example.demo;
 
-import com.example.demo.users.UserController;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -21,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = CyFinanceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class JamesSystemTest {
     private final Logger logger = LoggerFactory.getLogger(JamesSystemTest.class);
@@ -29,7 +27,7 @@ public class JamesSystemTest {
     @LocalServerPort
     int port;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
@@ -44,7 +42,7 @@ public class JamesSystemTest {
                 post("/users");
 
         // Check status code
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
 
         // Check for success return message and cookie set
         logger.info("[POST /users] Response body " + response.body().print());
@@ -64,7 +62,7 @@ public class JamesSystemTest {
                 post("/users");
 
         // Check status code
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
 
         // Check for success return message and cookie set
         logger.info("[POST /users] Response body " + response.body().print());
@@ -144,8 +142,7 @@ public class JamesSystemTest {
                 .get("/users/testing_admin@email.com");
 
         // Check for response code (uncomment when merged with proper code)
-        // TODO: Uncomment after merge
-        // assertEquals(403, response.getStatusCode());
+        assertEquals(403, response.getStatusCode());
 
         logger.info("[GET /users/{id}] Response: " + response.print());
         assertEquals("", response.body().print());
@@ -202,8 +199,7 @@ public class JamesSystemTest {
                 .put("/users");
 
         // Check for response code
-        // TODO: Uncomment when merged with code
-        // assertEquals(403, response.getStatusCode());
+        assertEquals(403, response.getStatusCode());
 
         logger.info("[PUT /users] Response: " + response.print());
         try {
@@ -241,8 +237,7 @@ public class JamesSystemTest {
                 .when()
                 .delete("/users/testing_admin@email.com");
 
-        // TODO: uncomment after merge
-        // assertEquals(403, response.getStatusCode());
+        assertEquals(403, response.getStatusCode());
 
         logger.info("[DELETE /users] Response: " + response.print());
         try {
@@ -731,8 +726,13 @@ public class JamesSystemTest {
             responseObject = new JSONObject(response.body().print());
             assertEquals(originalValue + 10000, responseObject.getInt("netWorth"));
             responseArray = responseObject.getJSONArray("assets");
-            assertEquals(10000, responseArray.getJSONObject(1).getInt("amount"));
-            assertEquals("car2", responseArray.getJSONObject(1).get("label"));
+            if (responseArray.getJSONObject(0).getInt("id") == 2) {
+                assertEquals(10000, responseArray.getJSONObject(0).getInt("amount"));
+                assertEquals("car2", responseArray.getJSONObject(0).get("label"));
+            } else {
+                assertEquals(10000, responseArray.getJSONObject(1).getInt("amount"));
+                assertEquals("car2", responseArray.getJSONObject(1).get("label"));
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -762,7 +762,7 @@ public class JamesSystemTest {
                 .when()
                 .post("/users/fake_user/assets");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to assign assets", responseObject.get("message"));
@@ -945,7 +945,7 @@ public class JamesSystemTest {
                 .when()
                 .put("/users/fake_user/assets");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to edit assets", responseObject.get("message"));
@@ -1004,7 +1004,7 @@ public class JamesSystemTest {
                 .when()
                 .delete("/users/fake_user/assets/0");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to delete assets", responseObject.get("message"));
@@ -1022,7 +1022,7 @@ public class JamesSystemTest {
                 .when()
                 .delete("/users/" + userSessionCookie + "/assets/99");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         try {
             responseObject = new JSONObject(response.body().print());
             assertEquals("Failed to delete assets", responseObject.get("message"));
