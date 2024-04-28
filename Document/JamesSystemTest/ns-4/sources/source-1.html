@@ -1,0 +1,218 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ChatSocket</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.demo.chat</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatSocket (com.example.demo.chat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChatSocket</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27.3%
+  </span>
+  <span class="absValue">
+    (3/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10.9%
+  </span>
+  <span class="absValue">
+    (5/46)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.demo.chat;
+&nbsp;
+&nbsp;import jakarta.websocket.*;
+&nbsp;import jakarta.websocket.server.PathParam;
+&nbsp;import jakarta.websocket.server.ServerEndpoint;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.concurrent.ConcurrentHashMap;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j // Lombok annotation for simplifying logging; replaces manual logger instantiation</b>
+&nbsp;@Controller
+&nbsp;@ServerEndpoint(value = &quot;/chat/{username}&quot;) // Defines the WebSocket server endpoint URL
+<b class="fc">&nbsp;public class ChatSocket {</b>
+&nbsp;
+&nbsp;	private static MessageRepository msgRepo;
+<b class="fc">&nbsp;	private static Map&lt;Session, String&gt; sessionUsernameMap = new ConcurrentHashMap&lt;&gt;(); // Updated for better concurrency handling</b>
+<b class="fc">&nbsp;	private static Map&lt;String, Session&gt; usernameSessionMap = new ConcurrentHashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;	@Autowired
+&nbsp;	public void setMessageRepository(MessageRepository repo) {
+<b class="fc">&nbsp;		ChatSocket.msgRepo = repo;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@OnOpen
+&nbsp;	public void onOpen(Session session, @PathParam(&quot;username&quot;) String username) throws IOException {
+<b class="nc">&nbsp;		log.info(&quot;Entered into Open&quot;);</b>
+&nbsp;
+&nbsp;		// Check if username is already in use
+<b class="nc">&nbsp;		if (usernameSessionMap.containsKey(username)) {</b>
+&nbsp;			// Username is already in use, so close the new session and send a message to the client
+<b class="nc">&nbsp;			session.getBasicRemote().sendText(&quot;This username is already in use. Please choose a different one.&quot;);</b>
+<b class="nc">&nbsp;			session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, &quot;Username is already in use&quot;));</b>
+&nbsp;			return; // Stop further processing
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		sessionUsernameMap.put(session, username);</b>
+<b class="nc">&nbsp;		usernameSessionMap.put(username, session);</b>
+&nbsp;
+<b class="nc">&nbsp;		sendMessageToParticularUser(username, getChatHistory());</b>
+&nbsp;
+<b class="nc">&nbsp;		String message = &quot;User:&quot; + username + &quot; has Joined the Chat&quot;;</b>
+<b class="nc">&nbsp;		broadcast(message);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;
+&nbsp;	@OnMessage
+&nbsp;	public void onMessage(Session session, String message) throws IOException {
+<b class="nc">&nbsp;		log.info(&quot;Entered into Message: Got Message:&quot; + message);</b>
+<b class="nc">&nbsp;		String username = sessionUsernameMap.get(session);</b>
+&nbsp;
+<b class="nc">&nbsp;		if (message.startsWith(&quot;@&quot;)) {</b>
+<b class="nc">&nbsp;			String destUsername = message.split(&quot; &quot;)[0].substring(1);</b>
+&nbsp;
+<b class="nc">&nbsp;			sendMessageToParticularUser(destUsername, &quot;[DM] &quot; + username + &quot;: &quot; + message);</b>
+<b class="nc">&nbsp;			sendMessageToParticularUser(username, &quot;[DM] &quot; + username + &quot;: &quot; + message);</b>
+<b class="nc">&nbsp;		} else {</b>
+<b class="nc">&nbsp;			broadcast(username + &quot;: &quot; + message);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		msgRepo.save(new Message(username, message));</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@OnClose
+&nbsp;	public void onClose(Session session) throws IOException {
+<b class="nc">&nbsp;		log.info(&quot;Entered into Close&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;		String username = sessionUsernameMap.get(session);</b>
+<b class="nc">&nbsp;		sessionUsernameMap.remove(session);</b>
+<b class="nc">&nbsp;		usernameSessionMap.remove(username);</b>
+&nbsp;
+<b class="nc">&nbsp;		String message = username + &quot; disconnected&quot;;</b>
+<b class="nc">&nbsp;		broadcast(message);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@OnError
+&nbsp;	public void onError(Session session, Throwable throwable) {
+<b class="nc">&nbsp;		log.error(&quot;Entered into Error&quot;, throwable); // Enhanced error logging for better visibility into issues</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	private void sendMessageToParticularUser(String username, String message) {
+&nbsp;		try {
+<b class="nc">&nbsp;			usernameSessionMap.get(username).getBasicRemote().sendText(message);</b>
+<b class="nc">&nbsp;		} catch (IOException e) {</b>
+<b class="nc">&nbsp;			log.error(&quot;Error sending message to user {}: {}&quot;, username, e.getMessage()); // Improved error logging</b>
+<b class="nc">&nbsp;		}</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	private void broadcast(String message) {
+<b class="nc">&nbsp;		sessionUsernameMap.forEach((session, username) -&gt; {</b>
+&nbsp;			try {
+<b class="nc">&nbsp;				session.getBasicRemote().sendText(message);</b>
+<b class="nc">&nbsp;			} catch (IOException e) {</b>
+<b class="nc">&nbsp;				log.error(&quot;Exception in broadcasting message: {}&quot;, e.getMessage()); // Changed from &#39;info&#39; to &#39;error&#39;</b>
+<b class="nc">&nbsp;			}</b>
+&nbsp;		});
+&nbsp;	}
+&nbsp;
+&nbsp;	private String getChatHistory() {
+<b class="nc">&nbsp;		List&lt;Message&gt; messages = msgRepo.findAll();</b>
+&nbsp;
+<b class="nc">&nbsp;		StringBuilder sb = new StringBuilder();</b>
+<b class="nc">&nbsp;		if(messages.size() != 0) {</b>
+<b class="nc">&nbsp;			for (Message message : messages) {</b>
+<b class="nc">&nbsp;				sb.append(message.getUserName()).append(&quot;: &quot;).append(message.getContent()).append(&quot;\n&quot;);</b>
+<b class="nc">&nbsp;			}</b>
+&nbsp;		}
+<b class="nc">&nbsp;		return sb.toString();</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-26 13:49</div>
+</div>
+</body>
+</html>

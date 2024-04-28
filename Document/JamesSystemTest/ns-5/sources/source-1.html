@@ -1,0 +1,229 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Earnings</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.demo.earnings</a>
+</div>
+
+<h1>Coverage Summary for Class: Earnings (com.example.demo.earnings)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Earnings</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Earnings$HibernateInstantiator$BJ7e6qI6</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateInstantiator$CemqYDQk</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateInstantiator$gB4zEBj2</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateInstantiator$h9cCewDr</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateInstantiator$luQET4r7</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateInstantiator$XJKXIhA3</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateProxy$00GEtt4m</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateProxy$9hzgUfZ5</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateProxy$dzsrXjmA</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateProxy$N4C6KPIs</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateProxy$NvvnXkA0</td>
+  </tr>
+  <tr>
+    <td class="name">Earnings$HibernateProxy$XBnsVT5A</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.demo.earnings;
+&nbsp;
+&nbsp;import com.example.demo.users.User;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * The Earnings entity represents the earnings information of a user.
+&nbsp; * It is linked to the User entity in a many-to-one relationship,
+&nbsp; * meaning a user can have multiple earnings records.
+&nbsp; */
+&nbsp;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;earnings&quot;)
+&nbsp;public class Earnings {
+&nbsp;
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private int id;
+&nbsp;
+&nbsp;    private float primaryMonthlyIncome;
+&nbsp;
+&nbsp;    private float secondaryMonthlyIncome;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    // Many-to-One relationship with User
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;user_email&quot;)
+&nbsp;    @JsonIgnore // Prevents recursion in JSON serialization
+&nbsp;    private User user;
+&nbsp;
+<b class="nc">&nbsp;    public Earnings(float primaryMonthlyIncome, float secondaryMonthlyIncome){</b>
+<b class="nc">&nbsp;        this.primaryMonthlyIncome = primaryMonthlyIncome;</b>
+<b class="nc">&nbsp;        this.secondaryMonthlyIncome = secondaryMonthlyIncome;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public Earnings() {</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getUser() {
+<b class="nc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser(User user) {
+<b class="nc">&nbsp;        this.user = user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public float getPrimaryMonthlyIncome() {
+<b class="nc">&nbsp;        return primaryMonthlyIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrimaryMonthlyIncome(float primaryMonthlyIncome) {
+<b class="nc">&nbsp;        this.primaryMonthlyIncome = primaryMonthlyIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public float getSecondaryMonthlyIncome() {
+<b class="nc">&nbsp;        return secondaryMonthlyIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setSecondaryMonthlyIncome(float secondaryMonthlyIncome) {
+<b class="nc">&nbsp;        this.secondaryMonthlyIncome = secondaryMonthlyIncome;</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;Earnings{&quot; + &quot;\&quot;id\&quot;:&quot; + id +</b>
+&nbsp;                &quot;, \&quot;primaryMonthlyIncome\&quot;:&quot; + primaryMonthlyIncome +
+&nbsp;                &quot;, \&quot;secondaryMonthlyIncome\&quot;:&quot; + secondaryMonthlyIncome +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-26 13:49</div>
+</div>
+</body>
+</html>

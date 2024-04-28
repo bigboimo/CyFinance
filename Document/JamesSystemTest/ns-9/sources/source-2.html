@@ -1,0 +1,586 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.demo.users</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (com.example.demo.users)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    56.5%
+  </span>
+  <span class="absValue">
+    (13/23)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45.7%
+  </span>
+  <span class="absValue">
+    (111/243)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.demo.users;
+&nbsp;
+&nbsp;import com.example.demo.assets.AssetsRepository;
+&nbsp;import com.example.demo.earnings.Earnings;
+&nbsp;import com.example.demo.earnings.EarningsRepository;
+&nbsp;import com.example.demo.expenses.Expenses;
+&nbsp;import com.example.demo.expenses.ExpensesRepository;
+&nbsp;import com.example.demo.assets.Assets;
+&nbsp;import com.example.demo.liabilities.Liabilities;
+&nbsp;import com.example.demo.liabilities.LiabilitiesRepository;
+&nbsp;import com.example.demo.userGroups.Groups;
+&nbsp;import com.example.demo.userGroups.GroupsRepository;
+&nbsp;import com.example.demo.util.Response;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.*;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCrypt;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;
+<b class="fc">&nbsp;    private final Logger logger = LoggerFactory.getLogger(UserController.class);</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    EarningsRepository earningsRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    AssetsRepository assetsRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    LiabilitiesRepository liabilitiesRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ExpensesRepository expensesRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    GroupsRepository groupsRepository;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/users&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;User&gt;&gt; getUsers(
+&nbsp;            @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="fc">&nbsp;        logger.info(&quot;[GET /users] Cookie: &quot; + userId);</b>
+<b class="fc">&nbsp;        if (isValidUserId(userId) &amp;&amp; isAdmin(userId)) {</b>
+<b class="nc">&nbsp;            logger.info(&quot;[GET /users] Successfully accessed data by user: &quot; + userRepository.findByEmail(userId).getName());</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(userRepository.findAll());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            if (isValidUserId(userId))</b>
+<b class="fc">&nbsp;                logger.info(&quot;[GET /users] Role: &quot; + userRepository.findByEmail(userId).getRole());</b>
+<b class="fc">&nbsp;            logger.warn(&quot;[GET /users] Attempted access from invalid user&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/users/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;User&gt; getUser(@PathVariable String id,
+&nbsp;                                        @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="fc">&nbsp;        logger.info(&quot;[GET /users/{id}] Cookie: &quot; + userId);</b>
+&nbsp;        // TODO: Find out how to make sure the empty cookie request is only for signup
+&nbsp;        // Only return user if the cookie is set and the user is either an admin or the requested user
+<b class="fc">&nbsp;        if (isValidUserId(userId) &amp;&amp; (isAdmin(userId) || id.equals(userId))) {</b>
+<b class="fc">&nbsp;            logger.info(&quot;[GET /users/{id}] Successfully accessed data by user: &quot; + userId);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(userRepository.findByEmail(id));</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            logger.warn(&quot;[GET /users/{id}] Attempted access from invalid user&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/users&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; setUser(@RequestBody User user,
+&nbsp;                                                    @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+&nbsp;        User createdUser;
+&nbsp;
+<b class="fc">&nbsp;        logger.info(&quot;[POST /users] Cookie: &quot; + userId);</b>
+<b class="fc">&nbsp;        logger.info(&quot;[POST /users] User: &quot; + user);</b>
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+&nbsp;        // Able to create user if not logged in (for signup) or admin
+<b class="fc">&nbsp;        if (userId == null || (isValidUserId(userId) &amp;&amp; isAdmin(userId))) {</b>
+<b class="fc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                logger.warn(&quot;[POST /users] No user provided&quot;);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;No user provided&quot;);</b>
+<b class="fc">&nbsp;            } else if (userRepository.findByEmail(user.getEmail()) != null) {</b>
+<b class="nc">&nbsp;                logger.warn(&quot;[POST /users] User: &quot; + user.getEmail() + &quot; already exists&quot;);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;User already exists&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));</b>
+<b class="fc">&nbsp;                userRepository.save(user);</b>
+<b class="fc">&nbsp;                createdUser = userRepository.findByEmail(user.getEmail());</b>
+<b class="fc">&nbsp;                logger.info(&quot;[POST /users] User created: &quot; + user);</b>
+&nbsp;
+<b class="fc">&nbsp;                ResponseCookie springCookie = ResponseCookie.from(&quot;user-id&quot;, String.valueOf(createdUser.getEmail()))</b>
+<b class="fc">&nbsp;                        .maxAge(60)</b>
+<b class="fc">&nbsp;                        .build();</b>
+<b class="fc">&nbsp;                HttpHeaders responseHeaders = new HttpHeaders();</b>
+<b class="fc">&nbsp;                responseHeaders.set(HttpHeaders.SET_COOKIE, springCookie.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;                response.put(&quot;message&quot;, &quot;User created&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                return ResponseEntity.ok().headers(responseHeaders).body(response);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            logger.warn(&quot;[POST /users] Attempted access from invalid user&quot;);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;User creation not allowed&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; login(@RequestParam String email, @RequestParam String password) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        User foundUser = userRepository.findByEmail(email);</b>
+<b class="nc">&nbsp;        if (foundUser != null &amp;&amp; BCrypt.checkpw(password, foundUser.getPassword())) {</b>
+<b class="nc">&nbsp;            ResponseCookie springCookie = ResponseCookie.from(&quot;user-id&quot;, String.valueOf(foundUser.getEmail()))</b>
+<b class="nc">&nbsp;                    .maxAge(60)</b>
+<b class="nc">&nbsp;                    .build();</b>
+<b class="nc">&nbsp;            HttpHeaders responseHeaders = new HttpHeaders();</b>
+<b class="nc">&nbsp;            responseHeaders.set(HttpHeaders.SET_COOKIE, springCookie.toString());</b>
+&nbsp;
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;success&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok()</b>
+<b class="nc">&nbsp;                    .headers(responseHeaders)</b>
+<b class="nc">&nbsp;                    .body(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;failure&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/logout&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; logout() {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="nc">&nbsp;        response.put(&quot;message&quot;, &quot;Successfully logged out&quot;);</b>
+<b class="nc">&nbsp;        ResponseCookie springCookie = ResponseCookie</b>
+<b class="nc">&nbsp;                .from(&quot;user-id&quot;, null)</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok()</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.SET_COOKIE, springCookie.toString())</b>
+<b class="nc">&nbsp;                .body(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; changeUser(@RequestBody User user,
+&nbsp;                                                       @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        logger.info(&quot;[PUT /users] Cookie: &quot; + userId);</b>
+&nbsp;        // Only edit user if the cookie is set and the user is either an admin or the requested user
+<b class="fc">&nbsp;        if (isValidUserId(userId) &amp;&amp; (isAdmin(userId) || user.getEmail().equals(userId))) {</b>
+<b class="fc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                logger.warn(&quot;[PUT /users] User not provided&quot;);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;No user provided&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                User originalUser = userRepository.findByEmail(user.getEmail());</b>
+&nbsp;                // TODO: Check if user cookie is admin before allowing change to admin role
+&nbsp;                // Check fields
+<b class="fc">&nbsp;                if (user.getName() == null) user.setName(originalUser.getName());</b>
+<b class="fc">&nbsp;                if (user.getRole() == null) user.setRole(originalUser.getRole());</b>
+<b class="fc">&nbsp;                if (user.getPassword() == null) {</b>
+<b class="fc">&nbsp;                    user.setPassword(originalUser.getPassword());</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));</b>
+&nbsp;                }
+<b class="fc">&nbsp;                user.setLiabilitiesTotal(originalUser.getLiabilitiesTotal());</b>
+<b class="fc">&nbsp;                user.setAssetsTotal(originalUser.getAssetsTotal());</b>
+<b class="fc">&nbsp;                user.setNetWorth(originalUser.getNetWorth());</b>
+<b class="fc">&nbsp;                userRepository.save(user);</b>
+<b class="fc">&nbsp;                logger.info(&quot;[PUT /users] User &quot; + user.getName() + &quot; modified by &quot; + userId);</b>
+<b class="fc">&nbsp;                response.put(&quot;message&quot;, &quot;User modified&quot;);</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            logger.warn(&quot;[PUT /users] Attempted access from invalid user&quot;);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;User not allowed to perform this action&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users/{userEmail}/assettotal/{newTotal}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; changeUserAssetTotal(@PathVariable String userEmail,
+&nbsp;                                                       @PathVariable int newTotal,
+&nbsp;                                                       @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        logger.info(&quot;[PUT /users/{userEmail}/assettotal/{newTotal}] Cookie: &quot; + userId);</b>
+<b class="fc">&nbsp;        User user = userRepository.findByEmail(userEmail);</b>
+&nbsp;        // Only edit user if the cookie is set and the user is either an admin or the requested user
+&nbsp;
+<b class="fc">&nbsp;        if (user == null) {</b>
+<b class="fc">&nbsp;            logger.warn(&quot;[PUT /users/{userEmail}/assettotal/{newTotal}] User not provided&quot;);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;No user provided&quot;);</b>
+<b class="fc">&nbsp;        } else if (isValidUserId(userId) &amp;&amp; (isAdmin(userId) || userEmail.equals(userId))) {</b>
+<b class="fc">&nbsp;            user.setAssetsTotal(newTotal);</b>
+<b class="fc">&nbsp;            userRepository.save(user);</b>
+<b class="fc">&nbsp;            logger.info(&quot;[PUT /users/{userEmail}/assettotal/{newTotal}] User &quot; + user.getName() + &quot; modified by &quot; + userId);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;User modified&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            logger.warn(&quot;[PUT /users/{userEmail}/assettotal/{newTotal}] Attempted access from invalid user&quot;);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;User not allowed to perform this action&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users/{userEmail}/liabilitiestotal/{newTotal}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; changeUserLiabilitiesTotal(@PathVariable String userEmail,
+&nbsp;                                                                 @PathVariable int newTotal,
+&nbsp;                                                                 @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] Cookie: &quot; + userId);</b>
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userEmail);</b>
+&nbsp;        // Only edit user if the cookie is set and the user is either an admin or the requested user
+<b class="nc">&nbsp;        if (isValidUserId(userId) &amp;&amp; (isAdmin(userId) || userEmail.equals(userId))) {</b>
+<b class="nc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                logger.warn(&quot;[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] User not provided&quot;);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;No user provided&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                user.setLiabilitiesTotal(newTotal);</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+<b class="nc">&nbsp;                logger.info(&quot;[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] User &quot; + user.getName() + &quot; modified by &quot; + userId);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;User modified&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            logger.warn(&quot;[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] Attempted access from invalid user&quot;);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;User not allowed to perform this action&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users/{userEmail}/networth/{newTotal}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; changeUserNetWorth(@PathVariable String userEmail,
+&nbsp;                                                                       @PathVariable int newTotal,
+&nbsp;                                                                       @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;[PUT /users/{userEmail}/networth/{newTotal}] Cookie: &quot; + userId);</b>
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userEmail);</b>
+&nbsp;        // Only edit user if the cookie is set and the user is either an admin or the requested user
+<b class="nc">&nbsp;        if (isValidUserId(userId) &amp;&amp; (isAdmin(userId) || userEmail.equals(userId))) {</b>
+<b class="nc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                logger.warn(&quot;[PUT /users/{userEmail}/networth/{newTotal}] User not provided&quot;);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;No user provided&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                user.setNetWorth(newTotal);</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+<b class="nc">&nbsp;                logger.info(&quot;[PUT /users/{userEmail}/networth/{newTotal}] User &quot; + user.getName() + &quot; modified by &quot; + userId);</b>
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;User modified&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            logger.warn(&quot;[PUT /users/{userEmail}/networth/{newTotal}] Attempted access from invalid user&quot;);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;User not allowed to perform this action&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/users/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; deleteUser(@PathVariable String id,
+&nbsp;                                                       @CookieValue(name = &quot;user-id&quot;, required = false) String userId) {
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="fc">&nbsp;        if (isValidUserId(userId) &amp;&amp; (isAdmin(userId) || id.equals(userId))) {</b>
+<b class="fc">&nbsp;            userRepository.deleteByEmail(id);</b>
+<b class="fc">&nbsp;            logger.info(&quot;[DELETE /users] Entry for userId &quot; + id + &quot; deleted by userId &quot; + userId);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;User deleted&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            logger.warn(&quot;[DELETE /users] Attempted access from invalid user&quot;);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;User not allowed to perform this action&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/users/{userId}/assets&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; addUserAssets(@PathVariable String userId,
+&nbsp;                                                          @RequestBody Assets assets) {
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="fc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="fc">&nbsp;        if (user == null) {</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to assign assets&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            assets.setUser(user);</b>
+<b class="fc">&nbsp;            assetsRepository.save(assets);</b>
+<b class="fc">&nbsp;            user.addAssets(assets);</b>
+<b class="fc">&nbsp;            user.setNetWorth(user.getNetWorth() + assets.getAmount());</b>
+<b class="fc">&nbsp;            userRepository.save(user);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Assets assigned to user&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users/{userId}/assets&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; editUserAssets(@PathVariable String userId,
+&nbsp;                                                          @RequestBody Assets assets) {
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="fc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="fc">&nbsp;        Assets originalAssets = assetsRepository.findAssetsById(assets.getId());</b>
+<b class="fc">&nbsp;        if (user == null || (!userId.equals(originalAssets.getUser().getEmail()))) {</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to edit assets&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            user.setNetWorth(user.getNetWorth() - originalAssets.getAmount() + assets.getAmount());</b>
+<b class="fc">&nbsp;            assets.setUser(user);</b>
+<b class="fc">&nbsp;            assetsRepository.save(assets);</b>
+<b class="fc">&nbsp;            userRepository.save(user);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Assets updated&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/users/{userId}/assets/{assetsId}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; removeUserAssets(@PathVariable String userId, @PathVariable int assetsId) {
+<b class="fc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="fc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="fc">&nbsp;        Assets assets = assetsRepository.findAssetsById(assetsId);</b>
+<b class="fc">&nbsp;        if (user == null || assets == null) {</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to delete assets&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            assetsRepository.deleteAssetsById(assetsId);</b>
+<b class="fc">&nbsp;            user.removeAssets(assets);</b>
+<b class="fc">&nbsp;            user.setNetWorth(user.getNetWorth() - assets.getAmount());</b>
+<b class="fc">&nbsp;            userRepository.save(user);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Assets deleted&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/users/{userId}/liabilities&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; addUserLiabilities(@PathVariable String userId,
+&nbsp;                                                               @RequestBody Liabilities liabilities) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="nc">&nbsp;        if (user == null) {</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to assign liabilities&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            liabilities.setUser(user);</b>
+<b class="nc">&nbsp;            liabilitiesRepository.save(liabilities);</b>
+<b class="nc">&nbsp;            user.addLiabilities(liabilities);</b>
+<b class="nc">&nbsp;            user.setNetWorth(user.getNetWorth() - liabilities.getAmount());</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Liabilities assigned to user&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users/{userId}/liabilities&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; editUserLiabilities(@PathVariable String userId,
+&nbsp;                                                           @RequestBody Liabilities liabilities) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="nc">&nbsp;        Liabilities originalLiabilities = liabilitiesRepository.findLiabilitiesById(liabilities.getId());</b>
+<b class="nc">&nbsp;        if (user == null || (!userId.equals(originalLiabilities.getUser().getEmail()))) {</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to edit liabilities&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            user.setNetWorth(user.getNetWorth() + originalLiabilities.getAmount() - liabilities.getAmount());</b>
+<b class="nc">&nbsp;            liabilities.setUser(user);</b>
+<b class="nc">&nbsp;            liabilitiesRepository.save(liabilities);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Liabilities updated&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    @DeleteMapping(&quot;/users/{userId}/liabilities/{liabilitiesId}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; removeUserLiabilities(@PathVariable String userId,
+&nbsp;                                                                  @PathVariable int liabilitiesId) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="nc">&nbsp;        Liabilities liabilities = liabilitiesRepository.findLiabilitiesById(liabilitiesId);</b>
+<b class="nc">&nbsp;        if (user == null || liabilities == null) {</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to delete liabilities&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            user.removeLiabilities(liabilities);</b>
+<b class="nc">&nbsp;            user.setNetWorth(user.getNetWorth() + liabilities.getAmount());</b>
+<b class="nc">&nbsp;            liabilitiesRepository.deleteLiabilitiesById(liabilitiesId);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Liabilities deleted&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/users/{userId}/earnings/{earningsId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; attachEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
+&nbsp;        // Assuming userRepository and earningsRepository have been appropriately autowired
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="nc">&nbsp;        if (user == null) {</b>
+&nbsp;            // Handle case where the user is not found
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;User not found with ID: &quot; + userId);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Earnings earnings = earningsRepository.findById(earningsId);</b>
+<b class="nc">&nbsp;        if (earnings == null) {</b>
+&nbsp;            // Handle case where the earnings are not found
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Earnings not found with ID: &quot; + earningsId);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Ensure the user&#39;s earnings collection is initialized
+<b class="nc">&nbsp;        if (user.getEarnings() == null) {</b>
+<b class="nc">&nbsp;            user.setEarnings(new HashSet&lt;&gt;());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Add the earnings to the user&#39;s collection of earnings and set the back reference
+<b class="nc">&nbsp;        earnings.setUser(user);</b>
+<b class="nc">&nbsp;        user.getEarnings().add(earnings);</b>
+&nbsp;
+&nbsp;        // Assuming there&#39;s cascading or explicit saving necessary
+<b class="nc">&nbsp;        earningsRepository.save(earnings); // Save the earnings entity to update its user reference</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(&quot;Earnings assigned successfully to user.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/users/{userId}/expenses/{expensesId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
+&nbsp;        // Assuming userRepository and expensesRepository have been appropriately autowired
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="nc">&nbsp;        if (user == null) {</b>
+&nbsp;            // Handle case where the user is not found
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;User not found with ID: &quot; + userId);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Expenses expenses = expensesRepository.findById(expensesId);</b>
+<b class="nc">&nbsp;        if (expenses == null) {</b>
+&nbsp;            // Handle case where the expenses are not found
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Expenses not found with ID: &quot; + expensesId);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Ensure the user&#39;s expenses collection is initialized
+<b class="nc">&nbsp;        if (user.getExpenses() == null) {</b>
+<b class="nc">&nbsp;            user.setExpenses(new HashSet&lt;&gt;());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Add the expense to the user&#39;s collection of expenses and set the back reference
+<b class="nc">&nbsp;        expenses.setUser(user);</b>
+<b class="nc">&nbsp;        user.getExpenses().add(expenses);</b>
+&nbsp;
+&nbsp;        // Assuming there&#39;s cascading or explicit saving necessary
+<b class="nc">&nbsp;        expensesRepository.save(expenses); // Save the expenses entity to update its user reference</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(&quot;Expenses assigned successfully to user.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/users/{userId}/groups/{groupId}&quot;)
+&nbsp;    public ResponseEntity&lt;Response&lt;String&gt;&gt; attachGroupsToUser(@PathVariable String userId, @PathVariable int groupId) {
+<b class="nc">&nbsp;        Response&lt;String&gt; response = new Response&lt;&gt;();</b>
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(userId);</b>
+<b class="nc">&nbsp;        Groups group = groupsRepository.findById(groupId);</b>
+<b class="nc">&nbsp;        if (user == null || group == null) {</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Failed to assign group&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            group.addUser(user);</b>
+<b class="nc">&nbsp;            user.addGroups(group);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;, &quot;Expenses assigned&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean isValidId(String userId) {
+<b class="fc">&nbsp;        return userId != null &amp;&amp; !userId.isEmpty();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean isValidUserId(String userId) {
+<b class="fc">&nbsp;        return isValidId(userId) &amp;&amp; userRepository.findByEmail(userId) != null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private boolean isAdmin(String userId) {
+<b class="fc">&nbsp;        return userRepository.findByEmail(userId).getRole().equals(&quot;admin&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-26 13:49</div>
+</div>
+</body>
+</html>
