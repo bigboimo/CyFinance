@@ -77,16 +77,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when
-        // the user performs a swipe-to-refresh gesture.
-
-//        SwipeRefreshLayout mySwipeRefreshLayout = findViewById(R.id.swipeRefresh);
-//        mySwipeRefreshLayout.setOnRefreshListener(() -> {
-//                    //Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
-//
-//                    getRequest();
-//                }
-//        );
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
