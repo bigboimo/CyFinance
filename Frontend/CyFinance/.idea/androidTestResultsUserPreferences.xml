@@ -3,54 +3,39 @@
   <component name="AndroidTestResultsUserPreferences">
     <option name="androidTestResultsTableState">
       <map>
-        <entry key="-1861438073">
+        <entry key="797767439">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
+                  <entry key="Pixel_3_XL_API_34" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
           </value>
         </entry>
-        <entry key="-674736225">
+        <entry key="1022752196">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
-                  <entry key="Pixel_3a_XL_Edited_API_34" value="120" />
+                  <entry key="Pixel_3_XL_API_34" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
           </value>
         </entry>
-        <entry key="141980711">
+        <entry key="1436319901">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
-                  <entry key="Pixel_3a_XL_Edited_API_34" value="120" />
-                  <entry key="Tests" value="360" />
-                </map>
-              </option>
-            </AndroidTestResultsTableState>
-          </value>
-        </entry>
-        <entry key="1755089511">
-          <value>
-            <AndroidTestResultsTableState>
-              <option name="preferredColumnWidths">
-                <map>
-                  <entry key="Duration" value="90" />
-                  <entry key="Pixel_3a_XL_Edited_API_34" value="120" />
+                  <entry key="Pixel_3_XL_API_34" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
