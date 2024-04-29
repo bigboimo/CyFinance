@@ -39,7 +39,7 @@ public class adminTest {
             new ActivityScenarioRule<>(LoginActivity.class);
 
     @Test
-    public void adminTest() {
+    public void adminAlertTest() {
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.login_username_edt),
                         childAtPosition(
