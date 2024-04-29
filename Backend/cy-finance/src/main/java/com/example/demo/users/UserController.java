@@ -18,6 +18,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import java.net.URI;
 import java.util.*;
 
 @RestController
@@ -46,54 +47,60 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(
             @CookieValue(name = "user-id", required = false) String userId) {
-        logger.info("[GET /users] Cookie: " + userId);
+        String endpointString = "[GET /users] ";
+
+        logger.info(endpointString + "Cookie: " + userId);
         if (isValidUserId(userId) && isAdmin(userId)) {
-            logger.info("[GET /users] Successfully accessed data by user: " + userRepository.findByEmail(userId).getName());
+            logger.info(endpointString + "Successfully accessed data by user: " + userRepository.findByEmail(userId).getName());
             return ResponseEntity.ok(userRepository.findAll());
         } else {
             if (isValidUserId(userId))
-                logger.info("[GET /users] Role: " + userRepository.findByEmail(userId).getRole());
-            logger.warn("[GET /users] Attempted access from invalid user");
-            return ResponseEntity.ok(null);
+                logger.info(endpointString + "Role: " + userRepository.findByEmail(userId).getRole());
+            logger.warn(endpointString + "Attempted access from invalid user");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable String id,
                                         @CookieValue(name = "user-id", required = false) String userId) {
-        logger.info("[GET /users/{id}] Cookie: " + userId);
+        String endpointString = "[GET /users/{id}] ";
+
+        logger.info(endpointString + "Cookie: " + userId);
         // TODO: Find out how to make sure the empty cookie request is only for signup
         // Only return user if the cookie is set and the user is either an admin or the requested user
         if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
-            logger.info("[GET /users/{id}] Successfully accessed data by user: " + userId);
+            logger.info(endpointString + "Successfully accessed data by user: " + userId);
             return ResponseEntity.ok(userRepository.findByEmail(id));
         } else {
-            logger.warn("[GET /users/{id}] Attempted access from invalid user");
-            return ResponseEntity.ok(null);
+            logger.warn(endpointString + "Attempted access from invalid user");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
     @PostMapping("/users")
     public ResponseEntity<Response<String>> setUser(@RequestBody User user,
                                                     @CookieValue(name = "user-id", required = false) String userId) {
+        String endpointString = "[POST /users] ";
+
         User createdUser;
 
-        logger.info("[POST /users] Cookie: " + userId);
-        logger.info("[POST /users] User: " + user);
+        logger.info(endpointString + "Cookie: " + userId);
+        logger.info(endpointString + "User: " + user);
         Response<String> response = new Response<>();
         // Able to create user if not logged in (for signup) or admin
         if (userId == null || (isValidUserId(userId) && isAdmin(userId))) {
             if (user == null) {
-                logger.warn("[POST /users] No user provided");
+                logger.warn(endpointString + "No user provided");
                 response.put("message", "No user provided");
             } else if (userRepository.findByEmail(user.getEmail()) != null) {
-                logger.warn("[POST /users] User: " + user.getEmail() + " already exists");
+                logger.warn(endpointString + "User: " + user.getEmail() + " already exists");
                 response.put("message", "User already exists");
             } else {
                 user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
                 userRepository.save(user);
                 createdUser = userRepository.findByEmail(user.getEmail());
-                logger.info("[POST /users] User created: " + user);
+                logger.info(endpointString + "User created: " + createdUser);
 
                 ResponseCookie springCookie = ResponseCookie.from("user-id", String.valueOf(createdUser.getEmail()))
                         .maxAge(60)
@@ -103,17 +110,20 @@ public class UserController {
 
                 response.put("message", "User created");
 
-                return ResponseEntity.ok().headers(responseHeaders).body(response);
+                return ResponseEntity.created(URI.create("/users/" + createdUser.getEmail())).headers(responseHeaders).body(response);
             }
         } else {
-            logger.warn("[POST /users] Attempted access from invalid user");
+            logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User creation not allowed");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<Response<String>> login(@RequestParam String email, @RequestParam String password) {
+        String endpointString = "[POST /login] ";
+
         Response<String> response = new Response<>();
 
         User foundUser = userRepository.findByEmail(email);
@@ -124,12 +134,14 @@ public class UserController {
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set(HttpHeaders.SET_COOKIE, springCookie.toString());
 
+            logger.info(endpointString + "Login successful for user: " + email);
             response.put("message", "success");
 
             return ResponseEntity.ok()
                     .headers(responseHeaders)
                     .body(response);
         } else {
+            logger.warn(endpointString + "Login failure for user: " + email);
             response.put("message", "failure");
             return ResponseEntity.ok(response);
         }
@@ -137,8 +149,11 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<Response<String>> logout() {
+        String endpointString = "[POST /logout] ";
+
         Response<String> response = new Response<>();
         response.put("message", "Successfully logged out");
+        logger.info(endpointString + "User logged out");
         ResponseCookie springCookie = ResponseCookie
                 .from("user-id", null)
                 .build();
@@ -150,14 +165,17 @@ public class UserController {
     @PutMapping("/users")
     public ResponseEntity<Response<String>> changeUser(@RequestBody User user,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
+        String endpointString = "[PUT /users] ";
+
         Response<String> response = new Response<>();
 
-        logger.info("[PUT /users] Cookie: " + userId);
+        logger.info(endpointString + "Cookie: " + userId);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
         if (isValidUserId(userId) && (isAdmin(userId) || user.getEmail().equals(userId))) {
             if (user == null) {
-                logger.warn("[PUT /users] User not provided");
+                logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 User originalUser = userRepository.findByEmail(user.getEmail());
                 // TODO: Check if user cookie is admin before allowing change to admin role
@@ -173,105 +191,117 @@ public class UserController {
                 user.setAssetsTotal(originalUser.getAssetsTotal());
                 user.setNetWorth(originalUser.getNetWorth());
                 userRepository.save(user);
-                logger.info("[PUT /users] User " + user.getName() + " modified by " + userId);
+                logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
+                return ResponseEntity.ok(response);
             }
         } else {
-            logger.warn("[PUT /users] Attempted access from invalid user");
+            logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/users/{userEmail}/assettotal/{newTotal}")
     public ResponseEntity<Response<String>> changeUserAssetTotal(@PathVariable String userEmail,
                                                        @PathVariable int newTotal,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
+        String endpointString = "[PUT /users/" + userEmail + "/assettotal/" + newTotal + "] ";
+
         Response<String> response = new Response<>();
 
-        logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] Cookie: " + userId);
+        logger.info(endpointString + "Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-            if (user == null) {
-                logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] User not provided");
-                response.put("message", "No user provided");
-            } else {
-                user.setAssetsTotal(newTotal);
-                userRepository.save(user);
-                logger.info("[PUT /users/{userEmail}/assettotal/{newTotal}] User " + user.getName() + " modified by " + userId);
-                response.put("message", "User modified");
-            }
+        if (user == null) {
+            logger.warn(endpointString + "User not provided");
+            response.put("message", "No user provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            user.setAssetsTotal(newTotal);
+            userRepository.save(user);
+            logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
+            response.put("message", "User modified");
+            return ResponseEntity.ok(response);
         } else {
-            logger.warn("[PUT /users/{userEmail}/assettotal/{newTotal}] Attempted access from invalid user");
+            logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/users/{userEmail}/liabilitiestotal/{newTotal}")
     public ResponseEntity<Response<String>> changeUserLiabilitiesTotal(@PathVariable String userEmail,
                                                                  @PathVariable int newTotal,
                                                                  @CookieValue(name = "user-id", required = false) String userId) {
+        String endpointString = "[PUT /users/" + userEmail + "/liabilitiestotal/" + newTotal + "] ";
+
         Response<String> response = new Response<>();
 
-        logger.info("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] Cookie: " + userId);
+        logger.info(endpointString + "Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-            if (user == null) {
-                logger.warn("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] User not provided");
-                response.put("message", "No user provided");
-            } else {
-                user.setLiabilitiesTotal(newTotal);
-                userRepository.save(user);
-                logger.info("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] User " + user.getName() + " modified by " + userId);
-                response.put("message", "User modified");
-            }
+        if (user == null) {
+            logger.warn(endpointString + "User not provided");
+            response.put("message", "No user provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            user.setLiabilitiesTotal(newTotal);
+            userRepository.save(user);
+            logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
+            response.put("message", "User modified");
+            return ResponseEntity.ok(response);
         } else {
-            logger.warn("[PUT /users/{userEmail}/liabilitiestotal/{newTotal}] Attempted access from invalid user");
+            logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/users/{userEmail}/networth/{newTotal}")
     public ResponseEntity<Response<String>> changeUserNetWorth(@PathVariable String userEmail,
                                                                        @PathVariable int newTotal,
                                                                        @CookieValue(name = "user-id", required = false) String userId) {
+        String endpointString = "[PUT /users/" + userEmail + "/networth/" + newTotal + "] ";
+
         Response<String> response = new Response<>();
 
-        logger.info("[PUT /users/{userEmail}/networth/{newTotal}] Cookie: " + userId);
+        logger.info(endpointString + "Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
         if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
             if (user == null) {
-                logger.warn("[PUT /users/{userEmail}/networth/{newTotal}] User not provided");
+                logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 user.setNetWorth(newTotal);
                 userRepository.save(user);
-                logger.info("[PUT /users/{userEmail}/networth/{newTotal}] User " + user.getName() + " modified by " + userId);
+                logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
+                return ResponseEntity.ok(response);
             }
         } else {
-            logger.warn("[PUT /users/{userEmail}/networth/{newTotal}] Attempted access from invalid user");
+            logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Response<String>> deleteUser(@PathVariable String id,
                                                        @CookieValue(name = "user-id", required = false) String userId) {
+        String endpointString = "[DELETE /users/" + id + "] ";
+
         Response<String> response = new Response<>();
         if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
             userRepository.deleteByEmail(id);
-            logger.info("[DELETE /users] Entry for userId " + id + " deleted by userId " + userId);
+            logger.info(endpointString + "Entry for user deleted by userId " + userId);
             response.put("message", "User deleted");
         } else {
-            logger.warn("[DELETE /users] Attempted access from invalid user");
+            logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
         return ResponseEntity.ok(response);
     }
@@ -279,17 +309,21 @@ public class UserController {
     @PostMapping("/users/{userId}/assets")
     public ResponseEntity<Response<String>> addUserAssets(@PathVariable String userId,
                                                           @RequestBody Assets assets) {
+        String endpointString = "[POST /users/" + userId + "/assets] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         if (user == null) {
+            logger.info(endpointString + "User not found");
             response.put("message", "Failed to assign assets");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             assets.setUser(user);
             assetsRepository.save(assets);
             user.addAssets(assets);
             user.setNetWorth(user.getNetWorth() + assets.getAmount());
             userRepository.save(user);
+            logger.info(endpointString + "New asset assigned to user");
             response.put("message", "Assets assigned to user");
             return ResponseEntity.ok(response);
         }
@@ -298,35 +332,43 @@ public class UserController {
     @PutMapping("/users/{userId}/assets")
     public ResponseEntity<Response<String>> editUserAssets(@PathVariable String userId,
                                                           @RequestBody Assets assets) {
+        String endpointString = "[PUT /users/" + userId + "/assets] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         Assets originalAssets = assetsRepository.findAssetsById(assets.getId());
         if (user == null || (!userId.equals(originalAssets.getUser().getEmail()))) {
+            logger.info(endpointString + "Failed to edit asset on user");
             response.put("message", "Failed to edit assets");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             user.setNetWorth(user.getNetWorth() - originalAssets.getAmount() + assets.getAmount());
             assets.setUser(user);
             assetsRepository.save(assets);
             userRepository.save(user);
+            logger.info(endpointString + "Assets updated for user");
             response.put("message", "Assets updated");
             return ResponseEntity.ok(response);
         }
     }
 
-    @DeleteMapping("/users/{userId}/assets/{assetId}")
+    @DeleteMapping("/users/{userId}/assets/{assetsId}")
     public ResponseEntity<Response<String>> removeUserAssets(@PathVariable String userId, @PathVariable int assetsId) {
+        String endpointString = "[DELETE /users/" + userId + "/assets/" + assetsId + "] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         Assets assets = assetsRepository.findAssetsById(assetsId);
         if (user == null || assets == null) {
+            logger.warn(endpointString + "Failed to delete asset for user");
             response.put("message", "Failed to delete assets");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             assetsRepository.deleteAssetsById(assetsId);
             user.removeAssets(assets);
             user.setNetWorth(user.getNetWorth() - assets.getAmount());
             userRepository.save(user);
+            logger.info(endpointString + "Asset deleted for user");
             response.put("message", "Assets deleted");
             return ResponseEntity.ok(response);
         }
@@ -335,17 +377,21 @@ public class UserController {
     @PostMapping("/users/{userId}/liabilities")
     public ResponseEntity<Response<String>> addUserLiabilities(@PathVariable String userId,
                                                                @RequestBody Liabilities liabilities) {
+        String endpointString = "[POST /users/" + userId + "/liabilities] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         if (user == null) {
+            logger.warn(endpointString + "Failed to assign liability for user");
             response.put("message", "Failed to assign liabilities");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             liabilities.setUser(user);
             liabilitiesRepository.save(liabilities);
             user.addLiabilities(liabilities);
             user.setNetWorth(user.getNetWorth() - liabilities.getAmount());
             userRepository.save(user);
+            logger.info(endpointString + "Liability successfully assigned for user");
             response.put("message", "Liabilities assigned to user");
             return ResponseEntity.ok(response);
         }
@@ -354,17 +400,21 @@ public class UserController {
     @PutMapping("/users/{userId}/liabilities")
     public ResponseEntity<Response<String>> editUserLiabilities(@PathVariable String userId,
                                                            @RequestBody Liabilities liabilities) {
+        String endpointString = "[PUT /users/" + userId + "/liabilities] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         Liabilities originalLiabilities = liabilitiesRepository.findLiabilitiesById(liabilities.getId());
         if (user == null || (!userId.equals(originalLiabilities.getUser().getEmail()))) {
+            logger.warn(endpointString + "Failed to edit liability for user");
             response.put("message", "Failed to edit liabilities");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             user.setNetWorth(user.getNetWorth() + originalLiabilities.getAmount() - liabilities.getAmount());
             liabilities.setUser(user);
             liabilitiesRepository.save(liabilities);
             userRepository.save(user);
+            logger.info(endpointString + "Liability successfully updated for user");
             response.put("message", "Liabilities updated");
             return ResponseEntity.ok(response);
         }
@@ -372,17 +422,21 @@ public class UserController {
     @DeleteMapping("/users/{userId}/liabilities/{liabilitiesId}")
     public ResponseEntity<Response<String>> removeUserLiabilities(@PathVariable String userId,
                                                                   @PathVariable int liabilitiesId) {
+        String endpointString = "[DELETE /users/" + userId + "/liabilities/" +liabilitiesId + "] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         Liabilities liabilities = liabilitiesRepository.findLiabilitiesById(liabilitiesId);
         if (user == null || liabilities == null) {
+            logger.warn(endpointString + "Liability failed to delete for user");
             response.put("message", "Failed to delete liabilities");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
         } else {
             user.removeLiabilities(liabilities);
             user.setNetWorth(user.getNetWorth() + liabilities.getAmount());
             liabilitiesRepository.deleteLiabilitiesById(liabilitiesId);
             userRepository.save(user);
+            logger.info(endpointString + "Liability successfully deleted for user");
             response.put("message", "Liabilities deleted");
             return ResponseEntity.ok(response);
         }
@@ -390,6 +444,8 @@ public class UserController {
 
     @PostMapping("/users/{userId}/earnings/{earningsId}")
     public ResponseEntity<?> attachEarningsToUser(@PathVariable String userId, @PathVariable int earningsId) {
+        String endpointString = "[POST /users/" + userId + "/earnings/" + earningsId + "] ";
+
         // Assuming userRepository and earningsRepository have been appropriately autowired
         User user = userRepository.findByEmail(userId);
         if (user == null) {
@@ -423,6 +479,8 @@ public class UserController {
 
     @PostMapping("/users/{userId}/expenses/{expensesId}")
     public ResponseEntity<?> attachExpensesToUser(@PathVariable String userId, @PathVariable int expensesId) {
+        String endpointString = "[POST /users/" + userId + "/expenses/" + expensesId + "] ";
+
         // Assuming userRepository and expensesRepository have been appropriately autowired
         User user = userRepository.findByEmail(userId);
         if (user == null) {
@@ -455,16 +513,20 @@ public class UserController {
 
     @PostMapping("/users/{userId}/groups/{groupId}")
     public ResponseEntity<Response<String>> attachGroupsToUser(@PathVariable String userId, @PathVariable int groupId) {
+        String endpointString = "[POST /users/" + userId + "/groups/" + groupId + "] ";
+
         Response<String> response = new Response<>();
         User user = userRepository.findByEmail(userId);
         Groups group = groupsRepository.findById(groupId);
         if (user == null || group == null) {
+            logger.warn(endpointString + "Failed to assign group for user");
             response.put("message", "Failed to assign group");
         } else {
             group.addUser(user);
             user.addGroups(group);
             userRepository.save(user);
-            response.put("message", "Expenses assigned");
+            logger.info(endpointString + "Successfully assigned group for user");
+            response.put("message", "Group assigned");
         }
         return ResponseEntity.ok(response);
     }

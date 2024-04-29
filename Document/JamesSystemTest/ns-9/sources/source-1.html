@@ -1,0 +1,355 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > User</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.demo.users</a>
+</div>
+
+<h1>Coverage Summary for Class: User (com.example.demo.users)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (24/36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.6%
+  </span>
+  <span class="absValue">
+    (28/44)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$0P0xyYBo</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$bZyFkwDU</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$glNE6lgm</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$re2osX8i</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$sX3VyZzY</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$txdqqnxl</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$5lFsDYHO</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$cRX0FJn2</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$gHcJxUhG</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$JAW22TIG</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$lkcfBKhg</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$weSIIVjm</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (24/36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.6%
+  </span>
+  <span class="absValue">
+    (28/44)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.demo.users;
+&nbsp;
+&nbsp;import com.example.demo.assets.Assets;
+&nbsp;import com.example.demo.earnings.Earnings;
+&nbsp;import com.example.demo.expenses.Expenses;
+&nbsp;import com.example.demo.liabilities.Liabilities;
+&nbsp;import com.example.demo.userGroups.Groups;
+&nbsp;import jakarta.persistence.*;
+&nbsp;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * The User entity represents a user in the system.
+&nbsp; * It has relationships with several other entities:
+&nbsp; * - One-to-Many with Assets: A user can own multiple assets.
+&nbsp; * - One-to-Many with Earnings: A user can have multiple earnings records.
+&nbsp; * - One-to-Many with Expenses: A user has a single record of expenses.
+&nbsp; * - Many-to-Many with Groups: A user can belong to multiple groups.
+&nbsp; */
+&nbsp;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name=&quot;users&quot;)
+&nbsp;public class User {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    private String name;
+&nbsp;    private String password;
+&nbsp;    private String role;
+&nbsp;    @Column(columnDefinition = &quot;integer default 0&quot;)
+&nbsp;    private int assetsTotal;
+&nbsp;    @Column(columnDefinition = &quot;integer default 0&quot;)
+&nbsp;    private int liabilitiesTotal;
+&nbsp;    @Column(columnDefinition = &quot;integer default 0&quot;)
+&nbsp;    private int netWorth;
+&nbsp;
+&nbsp;    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;user&quot;)
+&nbsp;    private Set&lt;Assets&gt; assets;
+&nbsp;
+&nbsp;    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;user&quot;)
+&nbsp;    private Set&lt;Liabilities&gt; liabilities;
+&nbsp;
+&nbsp;    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;user&quot;)
+&nbsp;    private Set&lt;Earnings&gt; earnings;
+&nbsp;
+&nbsp;    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;user&quot;)
+&nbsp;    private Set&lt;Expenses&gt; expenses;
+&nbsp;
+&nbsp;
+&nbsp;    @ManyToMany
+&nbsp;    @JoinTable(
+&nbsp;            name = &quot;users_groups&quot;,
+&nbsp;            joinColumns = @JoinColumn(name = &quot;user_id&quot;),
+&nbsp;            inverseJoinColumns = @JoinColumn(name = &quot;group_id&quot;))
+&nbsp;    private Set&lt;Groups&gt; groups;
+&nbsp;
+<b class="fc">&nbsp;    public User(String name, String email, String password, String role) {</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.email = email;</b>
+<b class="fc">&nbsp;        this.password = password;</b>
+<b class="fc">&nbsp;        this.role = role;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public User() {}</b>
+&nbsp;
+&nbsp;    public Set&lt;Earnings&gt; getEarnings() {
+<b class="fc">&nbsp;        return earnings;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEarnings(Set&lt;Earnings&gt; earnings) {
+<b class="nc">&nbsp;        this.earnings = earnings;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addEarnings(Earnings earning) {
+<b class="nc">&nbsp;        this.earnings.add(earning);</b>
+<b class="nc">&nbsp;        earning.setUser(this);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void removeEarnings(Earnings earning) {
+<b class="nc">&nbsp;        this.earnings.remove(earning);</b>
+<b class="nc">&nbsp;        earning.setUser(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmail() {
+<b class="fc">&nbsp;        return email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmail(String email) {
+<b class="fc">&nbsp;        this.email = email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPassword() {
+<b class="fc">&nbsp;        return password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPassword(String password) {
+<b class="fc">&nbsp;        this.password = password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getRole() {
+<b class="fc">&nbsp;        return role;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRole(String role) {
+<b class="fc">&nbsp;        this.role = role;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getNetWorth() {
+<b class="fc">&nbsp;        return netWorth;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNetWorth(int netWorth) {
+<b class="fc">&nbsp;        this.netWorth = netWorth;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Set&lt;Assets&gt; getAssets() {
+<b class="fc">&nbsp;        return assets;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addAssets(Assets assets) {
+<b class="fc">&nbsp;        this.assets.add(assets);</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public void removeAssets(Assets assets) { this.assets.remove(assets); }</b>
+&nbsp;
+&nbsp;    public Set&lt;Liabilities&gt; getLiabilities() {
+<b class="fc">&nbsp;        return liabilities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addLiabilities(Liabilities liabilities) {
+<b class="nc">&nbsp;        this.liabilities.add(liabilities);</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public void removeLiabilities(Liabilities liabilities) { this.liabilities.remove(liabilities); }</b>
+&nbsp;
+<b class="nc">&nbsp;    public void setAssets(Set&lt;Assets&gt; assets) { this.assets = assets; }</b>
+&nbsp;
+&nbsp;    public Set&lt;Expenses&gt; getExpenses() {
+<b class="fc">&nbsp;        return expenses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setExpenses(Set&lt;Expenses&gt; expenses) {
+<b class="nc">&nbsp;        this.expenses = expenses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addExpense(Expenses expense) {
+<b class="nc">&nbsp;        this.expenses.add(expense);</b>
+<b class="nc">&nbsp;        expense.setUser(this); // Assuming `Expenses` has a `setUser(User user)` method for the back-reference.</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void removeExpense(Expenses expense) {
+<b class="nc">&nbsp;        this.expenses.remove(expense);</b>
+<b class="nc">&nbsp;        expense.setUser(null); // This disassociates the expense from the user.</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public Set&lt;Groups&gt; getGroups() {
+<b class="fc">&nbsp;        return groups;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addGroups(Groups group) {
+<b class="nc">&nbsp;        this.groups.add(group);</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public void removeGroups(Groups group) { this.groups.remove(group); }</b>
+&nbsp;
+&nbsp;    public void setGroups(Set&lt;Groups&gt; groups) {
+<b class="nc">&nbsp;        this.groups = groups;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getAssetsTotal() {
+<b class="fc">&nbsp;        return assetsTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAssetsTotal(int assetsTotal) {
+<b class="fc">&nbsp;        this.assetsTotal = assetsTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getLiabilitiesTotal() {
+<b class="fc">&nbsp;        return liabilitiesTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLiabilitiesTotal(int liabilitiesTotal) {
+<b class="fc">&nbsp;        this.liabilitiesTotal = liabilitiesTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="fc">&nbsp;        return &quot;{&quot; +</b>
+&nbsp;                &quot;\&quot;name\&quot;:\&quot;&quot; + name + &#39;\&quot;&#39; +
+&nbsp;                &quot;, \&quot;email\&quot;:\&quot;&quot; + email + &#39;\&quot;&#39; +
+&nbsp;                &quot;, \&quot;password\&quot;:\&quot;&quot; + password + &#39;\&quot;&#39; +
+&nbsp;                &quot;, \&quot;role\&quot;:\&quot;&quot; + role + &#39;\&quot;&#39; +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-26 13:49</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > CyFinanceApplication</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.demo</a>
+</div>
+
+<h1>Coverage Summary for Class: CyFinanceApplication (com.example.demo)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CyFinanceApplication</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CyFinanceApplication$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">CyFinanceApplication$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">CyFinanceApplication$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.demo;
+&nbsp;
+&nbsp;import com.example.demo.users.User;
+&nbsp;import com.example.demo.users.UserRepository;
+&nbsp;import org.springframework.boot.CommandLineRunner;
+&nbsp;import org.springframework.boot.SpringApplication;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+&nbsp;
+&nbsp;@SpringBootApplication
+&nbsp;@EnableJpaRepositories
+<b class="fc">&nbsp;public class CyFinanceApplication {</b>
+&nbsp;
+&nbsp;	public static void main(String[] args) {
+<b class="nc">&nbsp;		SpringApplication.run(CyFinanceApplication.class, args);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	// Create Initial admin user and create normal user
+&nbsp;	/**
+&nbsp;	 *
+&nbsp;	 * @param userRepository repository for the User entity
+&nbsp;	 * Creates a commandLine runner to enter dummy data into the database
+&nbsp;	 */
+&nbsp;	@Bean
+&nbsp;	CommandLineRunner initUser(UserRepository userRepository) {
+<b class="fc">&nbsp;		return args -&gt; {</b>
+<b class="fc">&nbsp;			User admin = new User(&quot;Admin&quot;, &quot;test@email.com&quot;, &quot;$2a$10$HU0kP0mnHf5xDlZ3wFg6o.e5xq6JVH4xIpERCoezOBzCttbr/9/MK&quot;, &quot;admin&quot;);</b>
+<b class="fc">&nbsp;			userRepository.save(admin);</b>
+<b class="fc">&nbsp;			User user = new User(&quot;Test User&quot;, &quot;test2@email.com&quot;, &quot;$2a$10$zLzt5KZ.fI5SR4SOzl7ZCuqftmJVcqjPj2FGm3i89z0ePfkb02.mW&quot;, &quot;user&quot;);</b>
+<b class="fc">&nbsp;			userRepository.save(user);</b>
+&nbsp;		};
+&nbsp;	}
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-26 13:49</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,202 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Liabilities</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.demo.liabilities</a>
+</div>
+
+<h1>Coverage Summary for Class: Liabilities (com.example.demo.liabilities)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Liabilities</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Liabilities$HibernateInstantiator$5dWZAkPg</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateInstantiator$AN0AulGk</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateInstantiator$FZqYufxd</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateInstantiator$K1cwhTAA</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateInstantiator$Qz8Gkz00</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateInstantiator$WLpyVK3M</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateProxy$3lpv1pdS</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateProxy$4sP6vfMO</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateProxy$nvPI6ysR</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateProxy$UWo1sg4I</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateProxy$xHofEyou</td>
+  </tr>
+  <tr>
+    <td class="name">Liabilities$HibernateProxy$ZuY4xKld</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.demo.liabilities;
+&nbsp;
+&nbsp;import com.example.demo.users.User;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;liabilities&quot;)
+&nbsp;public class Liabilities {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private int id;
+&nbsp;
+&nbsp;    private String label;
+&nbsp;    private int amount;
+&nbsp;
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+&nbsp;    @JsonIgnore
+&nbsp;    private User user;
+&nbsp;
+<b class="fc">&nbsp;    public Liabilities() {}</b>
+&nbsp;
+&nbsp;    public User getUser() {
+<b class="nc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser(User user) {
+<b class="nc">&nbsp;        this.user = user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getLabel() {
+<b class="nc">&nbsp;        return label;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLabel(String label) {
+<b class="nc">&nbsp;        this.label = label;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getAmount() {
+<b class="nc">&nbsp;        return amount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAmount(int amount) {
+<b class="nc">&nbsp;        this.amount = amount;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-26 13:49</div>
+</div>
+</body>
+</html>
