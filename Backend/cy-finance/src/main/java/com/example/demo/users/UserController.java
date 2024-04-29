@@ -14,17 +14,26 @@ import com.example.demo.util.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.*;
 
 @RestController
 public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+    @Value("${file-storage-directory}")
+    private String directory;
 
     @Autowired
     EarningsRepository earningsRepository;
@@ -529,6 +538,68 @@ public class UserController {
             response.put("message", "Group assigned");
         }
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/users/{userEmail}/profilepicture")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable String userEmail,
+                                                    @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[GET /users/{userEmail}/profilepicture] ";
+
+        logger.info(endpointString + "Cookie: " + userId);
+        // Only return image if the cookie is set and the user is either an admin or the requested user
+        if (!isValidUserId(userEmail)) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            logger.info(endpointString + "Successfully accessed data by user: " + userId);
+
+            User user = userRepository.findByEmail(userEmail);
+            File imageFile = new File(user.getProfilePictureFile());
+            return ResponseEntity.ok(Files.readAllBytes(imageFile.toPath()));
+        } else {
+            logger.warn(endpointString + "Attempted access from invalid user");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+    }
+
+    @PutMapping("/users/{userEmail}/profilepicture")
+    public ResponseEntity<Response<String>> sendProfilePicture(@PathVariable String userEmail,
+                                                               @RequestParam("image") MultipartFile imageFile,
+                                                    @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[PUT /users/{userEmail}/profilepicture] ";
+        Response<String> response = new Response<>();
+
+        logger.info(endpointString + "Cookie: " + userId);
+        // Only set image if the cookie is set and the user is either an admin or the requested user
+        if (!isValidUserId(userEmail)) {
+            response.put("message", "Invalid user provided");
+            return ResponseEntity.badRequest().body(response);
+        } else if (imageFile == null || imageFile.getOriginalFilename() == null) {
+            response.put("message", "No image provided");
+            return ResponseEntity.badRequest().body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+            try {
+                File destinationFile = new File(directory + File.separator + imageFile.getOriginalFilename());
+                imageFile.transferTo(destinationFile);  // save file to disk
+                logger.info(endpointString + imageFile.getSize() + " | " + imageFile.hashCode());
+
+                User user = userRepository.findByEmail(userEmail);
+                user.setProfilePictureFile(destinationFile.getAbsolutePath());
+                userRepository.save(user);
+
+                response.put("message", "File uploaded successfully: " + destinationFile.getAbsolutePath());
+                return ResponseEntity.created(new URI("/users/" + userEmail + "/profilepicture")).body(response);
+            } catch (IOException e) {
+                response.put("message", "Failed to upload file: " + e.getMessage());
+                return ResponseEntity.internalServerError().body(response);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            logger.warn(endpointString + "Attempted access from invalid user");
+            response.put("message", "User not allowed to perform this action");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
     }
 
     private boolean isValidId(String userId) {
