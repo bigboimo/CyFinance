@@ -9,8 +9,6 @@
     android:background="@color/colorAccent"
     tools:context=".HomeActivity">
 
-
-
     <TextView
         android:id="@+id/text_total"
         android:layout_width="match_parent"
@@ -104,18 +102,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_profile"
-        android:layout_width="55dp"
+        android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+        android:text="Profile"
+        android:textColor="@color/colorAccent"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:icon="@drawable/ic_profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.782"
+        app:layout_constraintHorizontal_bias="0.697"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />

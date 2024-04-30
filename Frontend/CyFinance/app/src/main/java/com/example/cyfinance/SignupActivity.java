@@ -111,7 +111,7 @@ public class SignupActivity extends AppCompatActivity {
                         session.createLoginSession(userId);
 
                         // Go to the main activity
-                        Intent intent = new Intent(SignupActivity.this, EarningsActivity.class);
+                        Intent intent = new Intent(SignupActivity.this, NetworthActivity.class);
                         startActivity(intent);  // go to MainActivity with the key-value data
                     }
                 } catch (JSONException e) {
