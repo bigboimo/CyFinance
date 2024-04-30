@@ -69,7 +69,10 @@ public class UserController {
         logger.info(endpointString + "Cookie: " + userId);
         // TODO: Find out how to make sure the empty cookie request is only for signup
         // Only return user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
+        if (!isValidUserId(id)) {
+            logger.warn(endpointString + "Attempted access for invalid user: " + id);
+            return ResponseEntity.badRequest().body(null);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
             logger.info(endpointString + "Successfully accessed data by user: " + userId);
             return ResponseEntity.ok(userRepository.findByEmail(id));
         } else {
@@ -93,9 +96,11 @@ public class UserController {
             if (user == null) {
                 logger.warn(endpointString + "No user provided");
                 response.put("message", "No user provided");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else if (userRepository.findByEmail(user.getEmail()) != null) {
                 logger.warn(endpointString + "User: " + user.getEmail() + " already exists");
                 response.put("message", "User already exists");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
                 userRepository.save(user);
@@ -117,7 +122,6 @@ public class UserController {
             response.put("message", "User creation not allowed");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @PostMapping("/login")
@@ -171,30 +175,33 @@ public class UserController {
 
         logger.info(endpointString + "Cookie: " + userId);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || user.getEmail().equals(userId))) {
-            if (user == null) {
+        if (user == null) {
+            logger.warn(endpointString + "User not provided");
+            response.put("message", "No user provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || user.getEmail().equals(userId))) {
+            User originalUser = userRepository.findByEmail(user.getEmail());
+            if (originalUser == null) {
                 logger.warn(endpointString + "User not provided");
                 response.put("message", "No user provided");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            } else {
-                User originalUser = userRepository.findByEmail(user.getEmail());
-                // TODO: Check if user cookie is admin before allowing change to admin role
-                // Check fields
-                if (user.getName() == null) user.setName(originalUser.getName());
-                if (user.getRole() == null) user.setRole(originalUser.getRole());
-                if (user.getPassword() == null) {
-                    user.setPassword(originalUser.getPassword());
-                } else {
-                    user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-                }
-                user.setLiabilitiesTotal(originalUser.getLiabilitiesTotal());
-                user.setAssetsTotal(originalUser.getAssetsTotal());
-                user.setNetWorth(originalUser.getNetWorth());
-                userRepository.save(user);
-                logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
-                response.put("message", "User modified");
-                return ResponseEntity.ok(response);
             }
+            // TODO: Check if user cookie is admin before allowing change to admin role
+            // Check fields
+            if (user.getName() == null) user.setName(originalUser.getName());
+            if (user.getRole() == null) user.setRole(originalUser.getRole());
+            if (user.getPassword() == null) {
+                user.setPassword(originalUser.getPassword());
+            } else {
+                user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+            }
+            user.setLiabilitiesTotal(originalUser.getLiabilitiesTotal());
+            user.setAssetsTotal(originalUser.getAssetsTotal());
+            user.setNetWorth(originalUser.getNetWorth());
+            userRepository.save(user);
+            logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
+            response.put("message", "User modified");
+            return ResponseEntity.ok(response);
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
@@ -269,18 +276,16 @@ public class UserController {
         logger.info(endpointString + "Cookie: " + userId);
         User user = userRepository.findByEmail(userEmail);
         // Only edit user if the cookie is set and the user is either an admin or the requested user
-        if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-            if (user == null) {
-                logger.warn(endpointString + "User not provided");
-                response.put("message", "No user provided");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            } else {
+        if (user == null) {
+            logger.warn(endpointString + "User not provided");
+            response.put("message", "No user provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
                 user.setNetWorth(newTotal);
                 userRepository.save(user);
                 logger.info(endpointString + "User " + user.getName() + " modified by " + userId);
                 response.put("message", "User modified");
                 return ResponseEntity.ok(response);
-            }
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
@@ -294,16 +299,20 @@ public class UserController {
         String endpointString = "[DELETE /users/" + id + "] ";
 
         Response<String> response = new Response<>();
-        if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
+        if (!isValidUserId(id)) {
+            logger.warn(endpointString + "Invalid user provided: " + id);
+            response.put("message", "Invalid user provided");
+            return ResponseEntity.badRequest().body(response);
+        } else if (isValidUserId(userId) && (isAdmin(userId) || id.equals(userId))) {
             userRepository.deleteByEmail(id);
             logger.info(endpointString + "Entry for user deleted by userId " + userId);
             response.put("message", "User deleted");
+            return ResponseEntity.ok(response);
         } else {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/users/{userId}/assets")
