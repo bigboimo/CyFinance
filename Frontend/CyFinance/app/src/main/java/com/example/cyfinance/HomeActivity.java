@@ -3,6 +3,7 @@ package com.example.cyfinance;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,8 +59,6 @@ public class HomeActivity extends AppCompatActivity {
 
         Button refresh = findViewById(R.id.button_refresh);
 
-        FloatingActionButton change = findViewById(R.id.change_options);
-
         totalAssets = findViewById(R.id.text_assets);
 
         totalLiabilities = findViewById(R.id.text_liabilities);
@@ -67,8 +66,7 @@ public class HomeActivity extends AppCompatActivity {
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_home);
 
-        registerForContextMenu(findViewById(R.id.change_options));
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,30 +102,25 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.home_options, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Change Assets");
+        menu.add("Change Liabilities");
+        return super.onCreateOptionsMenu(menu);
     }
-
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.change_assets:
-                startActivity(new Intent(getApplicationContext(), AssetChange.class));
-                overridePendingTransition(0, 0);
-                return true;
-            case R.id.change_liability:
-                startActivity(new Intent(getApplicationContext(), LiabilityChange.class));
-                overridePendingTransition(0, 0);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Change Assets")) {
+            startActivity(new Intent(getApplicationContext(), AssetChange.class));
+            overridePendingTransition(0, 0);
+            return true;
         }
+        else if(item.getTitle().equals("Change Liabilities")) {
+            startActivity(new Intent(getApplicationContext(), LiabilityChange.class));
+            overridePendingTransition(0, 0);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
-
     private void getRequest() {
 
         // Convert input to JSONObject
