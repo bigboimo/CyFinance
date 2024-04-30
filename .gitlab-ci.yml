@@ -11,7 +11,7 @@ maven-build:
     - backend_tag    # change to your runner's tag
   script:               # what to execute for this job
     - cd Backend/cy-finance        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-    - mvn package -e       # maven package
+    - mvn package -e -Dspring.profiles.active=prod      # maven package
   artifacts:            # where to output the packaged jar file, change 'Backend' to to where you have the pom.xml
     paths:
     - Backend/cy-finance/target/*.jar
@@ -27,7 +27,7 @@ maven-test:
      - backend_tag   # change to your runner's tag
   script:
      - cd Backend/cy-finance       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-     - mvn test         # maven test
+     - mvn test -Dspring.profiles.active=prod        # maven test
   only:
     refs:
       - main            # only to trigger the pipeline when changes are pushed to 'main'
