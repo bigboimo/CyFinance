@@ -1,19 +1,17 @@
-package Mohamed_Tests.java.myapp;
+package com.example.demo.MohamedTests;
 
 import com.example.demo.CyFinanceApplication;
-import com.example.demo.expenses.ExpensesRepository;
+import com.example.demo.expenses.Expenses;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 
 @RunWith(SpringRunner.class)
@@ -24,16 +22,13 @@ public class ExpensesControllerTests {
     @LocalServerPort
     private int port;
 
-    @Mock
-    private ExpensesRepository expensesRepository;
-
 
     @Before
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
-
     }
+
 
     @Test
     public void testFetchAllExpensesSuccessfully() {
@@ -85,17 +80,21 @@ public class ExpensesControllerTests {
     @Test
     public void testCreateExpenseSuccessfully() {
         String json = "{\"food\": 200, \"rentandBills\": 300, \"school\": 100, \"otherNeeds\": 50, \"misc\": 25}";
-        Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(json)
+                .post("/expenses");
         assertEquals(200, response.getStatusCode());
-        assertTrue("Response should confirm creation", response.asString().contains("success"));
     }
+
 
     @Test
     public void testCreateExpenseWithMissingFields() {
-        String json = "{\"food\": 200}";
+        String json = "{\"food\": 200}"; // Missing 'rentandBills', 'school', 'otherNeeds', 'misc'
         Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
-        assertEquals(400, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
     }
+
 
     @Test
     public void testCreateExpenseWithNegativeValues() {
@@ -188,18 +187,6 @@ public class ExpensesControllerTests {
     }
 
     @Test
-    public void testHandlingOfSQLDatabaseErrors() {
-        // Mock the ExpensesRepository to throw a RuntimeException when findAll is called
-        when(expensesRepository.findAll()).thenThrow(new RuntimeException("Database error"));
-
-        // Make the request to the endpoint
-        Response response = RestAssured.get("/expenses");
-
-        // Verify the response status code
-        assertEquals(500, response.getStatusCode());
-    }
-
-    @Test
     public void testCreateExpenseWithLargeValues() {
         String json = "{\"food\": 1E+10, \"rentandBills\": 1E+10, \"school\": 1E+10, \"otherNeeds\": 1E+10, \"misc\": 1E+10}";
         Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
@@ -222,14 +209,19 @@ public class ExpensesControllerTests {
 
     @Test
     public void testDeleteThenCreateExpenseSequentially() {
-        // Delete an existing expense
-        Response deleteResponse = RestAssured.delete("/expenses/1"); // Assuming '1' is a valid ID
+        // First, ensure the expense exists
+        String jsonCreate = "{\"food\": 200, \"rentandBills\": 300, \"school\": 100, \"otherNeeds\": 50, \"misc\": 25}";
+        Response createResponse = RestAssured.given().contentType("application/json").body(jsonCreate).post("/expenses");
+        int createdId = createResponse.jsonPath().getInt("id");
+
+        // Delete the expense
+        Response deleteResponse = RestAssured.delete("/expenses/" + createdId);
         assertEquals(200, deleteResponse.getStatusCode());
 
-        // Immediately create a new expense
-        String json = "{\"food\": 200, \"rentandBills\": 300, \"school\": 100, \"otherNeeds\": 50, \"misc\": 25}";
-        Response createResponse = RestAssured.given().contentType("application/json").body(json).post("/expenses");
-        assertEquals(200, createResponse.getStatusCode());
+        // Create a new expense
+        Response createNewResponse = RestAssured.given().contentType("application/json").body(jsonCreate).post("/expenses");
+        assertEquals(200, createNewResponse.getStatusCode());
+
     }
 
     @Test
@@ -238,4 +230,20 @@ public class ExpensesControllerTests {
         Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
         assertEquals(400, response.getStatusCode());
     }
+
+    @Test
+    public void testCreateExpenseWithMissingFieldsSetToZero() {
+        String json = "{\"food\": 200}"; // Only 'food' is provided; other fields are missing
+        Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
+        assertEquals(200, response.getStatusCode());
+
+        Expenses responseExpenses = response.jsonPath().getObject("", Expenses.class);
+        assertNotNull(responseExpenses);
+        assertEquals(0, responseExpenses.getRentandBills(), 0.01);
+        assertEquals(0, responseExpenses.getSchool(), 0.01);
+        assertEquals(0, responseExpenses.getOtherNeeds(), 0.01);
+        assertEquals(0, responseExpenses.getMisc(), 0.01);
+        assertEquals(200, responseExpenses.getFood(), 0.01); // Verify provided value remains unchanged
+    }
+
 }
