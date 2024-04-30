@@ -5,6 +5,7 @@ import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.liabilities.Liabilities;
 import com.example.demo.userGroups.Groups;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -49,6 +50,8 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Expenses> expenses;
 
+    @JsonIgnore
+    private String profilePictureFile;
 
     @ManyToMany
     @JoinTable(
@@ -194,6 +197,14 @@ public class User {
 
     public void setLiabilitiesTotal(int liabilitiesTotal) {
         this.liabilitiesTotal = liabilitiesTotal;
+    }
+
+    public String getProfilePictureFile() {
+        return profilePictureFile;
+    }
+
+    public void setProfilePictureFile(String profilePictureFile) {
+        this.profilePictureFile = profilePictureFile;
     }
 
     @Override
