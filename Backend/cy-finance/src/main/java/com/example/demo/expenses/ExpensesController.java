@@ -1,8 +1,8 @@
 package com.example.demo.expenses;
 
 
-import com.example.demo.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,13 +71,22 @@ public class ExpensesController {
     @PostMapping
     public ResponseEntity<?> createExpenses(@RequestBody Expenses expenses) {
         try {
+            // Validate that the expenses object is not null
             if (expenses == null) {
-                return ResponseEntity.badRequest().body(FAILURE);
+                return ResponseEntity.badRequest().body("{\"error\":\"Expenses data is required.\"}");
             }
+            // Validate that all expense amounts are non-negative
+            if (expenses.getFood() < 0 || expenses.getRentandBills() < 0 || expenses.getSchool() < 0 ||
+                    expenses.getOtherNeeds() < 0 || expenses.getMisc() < 0) {
+                return ResponseEntity.badRequest().body("{\"error\":\"Expense amounts must be non-negative.\"}");
+            }
+            // Save the expenses to the database
             Expenses savedExpenses = expensesRepository.save(expenses);
+            // Return the saved expenses
             return ResponseEntity.ok(savedExpenses);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(FAILURE);
+            // If an exception occurs, return an error response
+            return ResponseEntity.badRequest().body("{\"error\":\"An error occurred while saving expenses.\"}");
         }
     }
 
@@ -94,7 +103,12 @@ public class ExpensesController {
     public ResponseEntity<String> updateExpenses(@PathVariable Long id, @RequestBody Expenses request) {
         try {
             if (request == null) {
-                return ResponseEntity.badRequest().body(FAILURE);
+                return ResponseEntity.badRequest().body("{\"error\":\"Request body cannot be null\"}");
+            }
+            // Check for negative values in the request
+            if (request.getFood() < 0 || request.getRentandBills() < 0 || request.getSchool() < 0 ||
+                    request.getOtherNeeds() < 0 || request.getMisc() < 0) {
+                return ResponseEntity.badRequest().body("{\"error\":\"Expense amounts must be non-negative.\"}");
             }
             return expensesRepository.findById(id)
                     .map(existingExpenses -> {
@@ -112,6 +126,7 @@ public class ExpensesController {
         }
     }
 
+
     /**
      * Delete an expenses record by its ID.
      * Uses findById to conditionally find and delete the record, demonstrating functional style.
@@ -122,20 +137,23 @@ public class ExpensesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteExpenses(@PathVariable Long id) {
         try {
-            expensesRepository.findById(id)
-                    .ifPresent(expensesRepository::delete);
-            return ResponseEntity.ok(SUCCESS);
+            // Directly attempt to find the expense by ID
+            Expenses expense = expensesRepository.findById(id).orElse(null);
+            if (expense == null) {
+                // If no expense is found with the given ID, return a 404 Not Found
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Expense not found.\"}");
+            }
+            // If the expense exists, proceed to delete it
+            expensesRepository.delete(expense);
+            // Return a 200 OK response indicating success
+            return ResponseEntity.ok("{\"message\":\"Expense successfully deleted.\"}");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(FAILURE);
+            // If an exception occurs, return a 400 Bad Request with a failure message
+            return ResponseEntity.badRequest().body("{\"error\":\"An error occurred while deleting the expense.\"}");
         }
     }
 
 
-    @DeleteMapping(path = "/expenses/{id}")
-    String deleteExpenses(@PathVariable int id) {
-        Response<String> response = new Response<>();
-        expensesRepository.deleteById(id);
-        response.put("message", "Expenses deleted");
-        return response.toString();
-    }
+
+
 }
