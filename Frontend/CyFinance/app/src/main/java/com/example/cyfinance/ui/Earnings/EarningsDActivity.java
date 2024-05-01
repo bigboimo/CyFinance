@@ -52,6 +52,7 @@ public class EarningsDActivity extends AppCompatActivity {
         secondaryIncomeEditText = findViewById(R.id.secondary);
         updateButton = findViewById(R.id.update_btn);
         navView = findViewById(R.id.nav_view);
+        navView.setSelectedItemId(R.id.navigation_expenses);
 
 
         updateButton.setOnClickListener(new View.OnClickListener() {
@@ -76,12 +77,17 @@ public class EarningsDActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_admin:
                         startActivity(new Intent(getApplicationContext(), AdminActivity.class));
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_expenses:
                         startActivity(new Intent(getApplicationContext(), ExpensesDActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.navigation_earnings:
                         return true;
                 }
                 return false;

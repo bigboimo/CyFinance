@@ -5,6 +5,12 @@
       <entry key="adminSettingsTest()">
         <State />
       </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="networthTest()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>

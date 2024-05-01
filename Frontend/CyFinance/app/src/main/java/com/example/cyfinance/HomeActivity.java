@@ -1,6 +1,22 @@
 package com.example.cyfinance;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -10,27 +26,11 @@ import com.example.cyfinance.ui.Admin.AdminActivity;
 import com.example.cyfinance.ui.Change.AssetChange;
 import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
-
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.view.MenuItem;
-
-import androidx.annotation.NonNull;
-
-
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.json.JSONArray;
@@ -40,7 +40,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity  {
 
     TextView totalNetworth;
     TextView totalAssets;
@@ -60,9 +60,7 @@ public class HomeActivity extends AppCompatActivity {
 
         totalNetworth = findViewById(R.id.text_networth);
 
-        Button refresh = findViewById(R.id.refresh_button);
-
-        FloatingActionButton change = findViewById(R.id.change_options);
+        Button refresh = findViewById(R.id.button_refresh);
 
         totalAssets = findViewById(R.id.text_assets);
 
@@ -71,8 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_home);
 
-        registerForContextMenu(findViewById(R.id.change_options));
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,10 +77,12 @@ public class HomeActivity extends AppCompatActivity {
                 getRequest();
             }
         });
+
+
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            //overpending:closes an activity without a transaction
+                //overpending:closes an activity without a transaction
                 switch (item.getItemId()) {
                     case R.id.navigation_earnings:
                         startActivity(new Intent(getApplicationContext(), EarningsDActivity.class));
@@ -105,31 +104,27 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.home_options, menu);
-    }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.change_assets:
-                startActivity(new Intent(getApplicationContext(), AssetChange.class));
-                overridePendingTransition(0, 0);
-                return true;
-            case R.id.change_liability:
-                startActivity(new Intent(getApplicationContext(), LiabilityChange.class));
-                overridePendingTransition(0, 0);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Change Assets");
+        menu.add("Change Liabilities");
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Change Assets")) {
+            startActivity(new Intent(getApplicationContext(), AssetChange.class));
+            overridePendingTransition(0, 0);
+            return true;
         }
+        else if(item.getTitle().equals("Change Liabilities")) {
+            startActivity(new Intent(getApplicationContext(), LiabilityChange.class));
+            overridePendingTransition(0, 0);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
-
     private void getRequest() {
 
         // Convert input to JSONObject
@@ -177,14 +172,6 @@ public class HomeActivity extends AppCompatActivity {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Cookie", "user-id=" + session.getUserDetails().get("id"));
                 return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                //params.put();
-                //params.put();
-                return params;
             }
         };
 
