@@ -2,21 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <entry key="adminSettingsTest()">
-=======
-      <entry key="CasperSystemTest">
-=======
-      <entry key="adminSettingsTest()">
->>>>>>> f688ead (Added some text for the totals)
-        <State />
-      </entry>
       <entry key="app">
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-        <State />
-      </entry>
-      <entry key="networthTest()">
         <State />
       </entry>
     </value>
