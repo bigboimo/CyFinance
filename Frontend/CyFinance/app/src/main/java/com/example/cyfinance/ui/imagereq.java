@@ -76,6 +76,5 @@ public class imagereq extends AppCompatActivity {
         );
 
         // Adding the request to the Volley request queue managed by VolleySingleton
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(imageRequest);
     }
 }
