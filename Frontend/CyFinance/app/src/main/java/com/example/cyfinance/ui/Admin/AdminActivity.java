@@ -57,19 +57,19 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
         NavigationBarView navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_admin);
-        registerForContextMenu(findViewById(R.id.change_user1));
+        //registerForContextMenu(findViewById(R.id.change_user1));
         //registerForContextMenu(findViewById(R.id.change_user2));
         session = new SessionManager(getApplicationContext());
 
         //Layout Elements
-        Button refresh = findViewById(R.id.button_refresh);
+        //Button refresh = findViewById(R.id.button_refresh);
 
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getRequest();
-            }
-        });
+//        refresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getRequest();
+//            }
+//        });
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -129,8 +129,8 @@ public class AdminActivity extends AppCompatActivity {
                             System.out.println("[Login] HTTP Response: " + response);
                             JSONArray data = response.getJSONArray("data");
                             JSONObject headers = response.getJSONObject("headers");
-                            TextView user1 = findViewById(R.id.text_user1);
-                            TextView user2 = findViewById(R.id.text_user2);
+                            //TextView user1 = findViewById(R.id.text_user1);
+                            //TextView user2 = findViewById(R.id.text_user2);
                             adminLayout = findViewById(R.id.admin_layout);
 
 //                            user1S = data.getJSONObject(0).getString("email");
