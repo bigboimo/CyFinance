@@ -104,7 +104,6 @@ public class HomeActivity extends AppCompatActivity  {
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Change Assets");

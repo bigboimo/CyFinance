@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+//Requests need to be fixed
 public class NetworthActivity extends AppCompatActivity {
 
     private EditText assetEditText;

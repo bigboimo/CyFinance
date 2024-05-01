@@ -53,6 +53,8 @@
             android:exported="true"/>
         <activity android:name=".ui.Change.PasswordChange"
             android:exported="true"/>
+        <activity android:name=".ui.SendAlert"
+            android:exported="true"/>
 
     </application>
 </manifest>

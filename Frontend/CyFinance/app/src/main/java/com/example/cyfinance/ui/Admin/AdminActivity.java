@@ -35,6 +35,7 @@ import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Change.PasswordChange;
 import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
+import com.example.cyfinance.ui.SendAlert;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
@@ -48,12 +49,11 @@ import java.util.Map;
 /*
     Push Notifications for WS in DEMO 4
  */
-public class AdminActivity extends AppCompatActivity implements WebSocketListener {
-    private String BASE_URL = Constants.WS + "/alerts/";
+public class AdminActivity extends AppCompatActivity {
+    //private String BASE_URL = Constants.WS + "/alerts/";
     TextView adminMessage;
     SessionManager session;
     String Response;
-    ConstraintLayout adminLayout;
     String user1S;
     String user2S;
     public void onCreate(Bundle savedInstanceState) {
@@ -66,19 +66,9 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         registerForContextMenu(findViewById(R.id.change_user1));
         //registerForContextMenu(findViewById(R.id.change_user2));
 
-        //Session Declaration and Websocket URL
-        session = new SessionManager(getApplicationContext());
-        String serverURL = BASE_URL + session.getUserDetails().get("id");
 
         //Layout Elements
-        adminMessage = findViewById(R.id.text_alert);
-        EditText messageText = findViewById(R.id.text_notifications);
-        Button sendAlert = findViewById(R.id.alert_button);
         Button refresh = findViewById(R.id.button_refresh);
-
-        //Websocket
-        WebSocketManager.getInstance().connectWebSocket(serverURL);
-        WebSocketManager.getInstance().setWebSocketListener(this);
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,18 +99,23 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
                 return false;
             }
         });
-
-        sendAlert.setOnClickListener(view -> {
-
-            try {
-                WebSocketManager.getInstance().sendMessage(messageText.getText().toString());
-            } catch (Exception e) {
-                Log.d("ExceptionSendMessage:", e.getMessage().toString());
-            }
-
-
-        });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Send Alert");
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Send Alert")) {
+            startActivity(new Intent(getApplicationContext(), SendAlert.class));
+            overridePendingTransition(0, 0);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void getRequest() {
         JSONObject postBody = null;
@@ -281,30 +276,4 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
-
-    @Override
-    public void onWebSocketOpen(ServerHandshake handshakedata) {
-    }
-
-    @Override
-    public void onWebSocketMessage(String message) {
-        runOnUiThread(() -> {
-            String s = adminMessage.getText().toString();
-            adminMessage.setText(message);
-        });
-    }
-
-    @Override
-    public void onWebSocketClose(int code, String reason, boolean remote) {
-        String closedBy = remote ? "server" : "local";
-        runOnUiThread(() -> {
-            String s = adminMessage.getText().toString();
-            adminMessage.setText(s + " " + closedBy + reason);
-        });
-    }
-
-    @Override
-    public void onWebSocketError(Exception ex) {
-    }
-
 }

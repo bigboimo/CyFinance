@@ -30,13 +30,9 @@ public class SignupActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private EditText confirmEditText;   // define confirm edittext variable
     private Button signupButton;       // define signup button variable
-
     String username;
-
     String password;
-
     private String confirm;
-
     static String Response;
     private SessionManager session;
     private String userId;
