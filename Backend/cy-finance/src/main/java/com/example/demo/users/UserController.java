@@ -773,9 +773,9 @@ public class UserController {
 
 
 
-    @PutMapping("/users/{userEmail}/receipts/{label}")
+    @PutMapping("/users/{userEmail}/receipts/{receiptId}")
     public ResponseEntity<JSONObject> editReceipts(@PathVariable String userEmail,
-                                                   @PathVariable String label,
+                                                   @PathVariable int receiptId,
                                                    @RequestParam("image") MultipartFile imageFile,
                                                    @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
         String endpointString = "[PUT /users/{userEmail}/receipts/{label}] ";
@@ -796,12 +796,18 @@ public class UserController {
         }
 
         // Retrieve the receipt by label and user email
-        Optional<Receipts> receiptOpt = receiptsRepository.findByLabelAndUserEmail(label, userEmail);
+        Optional<Receipts> receiptOpt = receiptsRepository.findById((long) receiptId);
         if (receiptOpt.isEmpty()) {
             response.put("message", "Receipt not found.");
             return ResponseEntity.notFound().build();
         }
+
         Receipts receipt = receiptOpt.get();
+        // Additional security check to confirm receipt belongs to the user
+        if (!receipt.getUser().getEmail().equals(userEmail)) {
+            response.put("message", "Receipt does not belong to user.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
 
         // Ensure the upload directory exists or create it if it does not
         File uploadDir = new File(directory);
