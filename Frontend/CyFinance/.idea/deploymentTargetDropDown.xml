@@ -2,7 +2,26 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+<<<<<<< HEAD
       <entry key="adminSettingsTest()">
+=======
+      <entry key="CasperSystemTest">
+        <State />
+      </entry>
+      <entry key="app">
+>>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
+        <State />
+      </entry>
+      <entry key="networthTest()">
+        <State />
+      </entry>
+      <entry key="successLogin()">
+        <State />
+      </entry>
+      <entry key="successSignup()">
+        <State />
+      </entry>
+      <entry key="userAlreadyCreated()">
         <State />
       </entry>
     </value>
