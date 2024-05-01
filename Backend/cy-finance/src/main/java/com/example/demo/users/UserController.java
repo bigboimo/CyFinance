@@ -717,27 +717,33 @@ public class UserController {
         JSONObject response = new JSONObject();
 
         logger.info(endpointString + "Cookie: " + userId);
+
+        // Authentication and authorization check
         try {
             if (!isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
                 response.put("message", "Unauthorized access or invalid user.");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
 
+            // Check if the uploaded image file is empty or has an unsupported content type
             if (imageFile.isEmpty() || !isSupportedContentType(imageFile.getContentType())) {
                 response.put("message", "Invalid file or unsupported format.");
                 return ResponseEntity.badRequest().body(response);
             }
 
+            // Prepare the directory for saving the uploaded file
             File uploadDir = new File(directory);
             if (!uploadDir.exists() && !uploadDir.mkdirs()) {
                 response.put("message", "Failed to create upload directory.");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
 
+            // Generate a unique filename and save the file
             String filename = UUID.randomUUID().toString() + "-" + imageFile.getOriginalFilename();
             File savedFile = new File(uploadDir, filename);
             imageFile.transferTo(savedFile);
 
+            // Create and save the receipt record in the database
             User user = userRepository.findByEmail(userEmail);
             Receipts receipt = new Receipts();
             receipt.setUser(user);
@@ -746,6 +752,7 @@ public class UserController {
             receipt.setUploadedAt(new Date());
             receiptsRepository.save(receipt);
 
+            // Prepare and return the response
             response.put("message", "Receipt successfully uploaded.");
             response.put("receiptId", receipt.getId());
             response.put("path", receipt.getPath());
@@ -759,10 +766,10 @@ public class UserController {
         }
     }
 
+
     private boolean isSupportedContentType(String contentType) {
         return contentType != null && (contentType.equals("image/jpeg") || contentType.equals("image/png"));
     }
-
 
 
 
@@ -776,16 +783,19 @@ public class UserController {
 
         logger.info(endpointString + "Cookie: " + userId);
 
+        // Check for authorization and valid user credentials
         if (!isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
             response.put("message", "Unauthorized access or invalid user.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
+        // Validate the content type of the uploaded image file
         if (imageFile.isEmpty() || !isSupportedContentType(imageFile.getContentType())) {
             response.put("message", "Invalid file type. Only JPEG and PNG are allowed.");
             return ResponseEntity.badRequest().body(response);
         }
 
+        // Retrieve the receipt by label and user email
         Optional<Receipts> receiptOpt = receiptsRepository.findByLabelAndUserEmail(label, userEmail);
         if (receiptOpt.isEmpty()) {
             response.put("message", "Receipt not found.");
@@ -793,17 +803,19 @@ public class UserController {
         }
         Receipts receipt = receiptOpt.get();
 
+        // Ensure the upload directory exists or create it if it does not
         File uploadDir = new File(directory);
         if (!uploadDir.exists() && !uploadDir.mkdirs()) {
             response.put("message", "Failed to create directory for uploads.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
+        // Generate a unique filename for the new file and save the file
         String newFilename = UUID.randomUUID().toString() + "-" + imageFile.getOriginalFilename();
         File newFile = new File(uploadDir, newFilename);
         imageFile.transferTo(newFile);
 
-        // Check if there's an existing file and attempt to delete it
+        // Check if there's an existing file and attempt to delete it if present
         if (receipt.getPath() != null) {
             File oldFile = new File(receipt.getPath());
             if (oldFile.exists()) {
@@ -816,10 +828,12 @@ public class UserController {
             }
         }
 
+        // Update the receipt details in the database
         receipt.setPath(newFile.getAbsolutePath());
         receipt.setUploadedAt(new Date());
         receiptsRepository.save(receipt);
 
+        // Prepare and send the successful response
         response.put("message", "Receipt updated successfully.");
         response.put("label", receipt.getLabel());
         response.put("path", receipt.getPath());
@@ -828,50 +842,47 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-
-
     @DeleteMapping("/users/{userEmail}/receipts/{receiptId}")
     public ResponseEntity<JSONObject> deleteReceipts(@PathVariable String userEmail,
                                                      @PathVariable int receiptId,
-                                                     @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+                                                     @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
         String endpointString = "[DELETE /users/{userEmail}/receipts/{receiptId}] ";
         JSONObject response = new JSONObject();
 
         logger.info(endpointString + "Cookie: " + userId);
-        try {
-            if (!isValidUserId(userEmail) || !isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
-                response.put("message", "Unauthorized access or invalid user.");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
 
-            Optional<Receipts> receiptOpt = receiptsRepository.findById((long) receiptId);
-            if (receiptOpt.isEmpty()) {
-                response.put("message", "Receipt not found.");
-                return ResponseEntity.notFound().build();
-            }
-
-            Receipts receipt = receiptOpt.get();
-            if (!receipt.getUser().getEmail().equals(userEmail)) {
-                response.put("message", "Receipt does not belong to user.");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-
-            // Delete the file associated with the receipt
-            File file = new File(receipt.getPath());
-            if (file.exists() && !file.delete()) {
-                logger.error("Failed to delete the file: " + receipt.getPath());
-                response.put("message", "Failed to delete the file.");
-                return ResponseEntity.internalServerError().body(response);
-            }
-
-            // Delete the receipt from the database
-            receiptsRepository.delete(receipt);
-            response.put("message", "Receipt deleted successfully.");
-            return ResponseEntity.ok(response);
-        } catch (JSONException e) {
-            logger.error("JSON processing error", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        // Authorization checks: ensure the user is logged in, is the user in question or an admin
+        if (!isValidUserId(userEmail) || !isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
+            response.put("message", "Unauthorized access or invalid user.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
+
+        // Retrieve the receipt by ID
+        Optional<Receipts> receiptOpt = receiptsRepository.findById((long) receiptId);
+        if (receiptOpt.isEmpty()) {
+            response.put("message", "Receipt not found.");
+            return ResponseEntity.notFound().build();
+        }
+
+        Receipts receipt = receiptOpt.get();
+        // Additional security check to confirm receipt belongs to the user
+        if (!receipt.getUser().getEmail().equals(userEmail)) {
+            response.put("message", "Receipt does not belong to user.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        // Attempt to delete the file associated with the receipt
+        File file = new File(receipt.getPath());
+        if (file.exists() && !file.delete()) {
+            logger.error("Failed to delete the file: " + receipt.getPath());
+            response.put("message", "Failed to delete the file.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+
+        // Delete the receipt record from the database
+        receiptsRepository.delete(receipt);
+        response.put("message", "Receipt deleted successfully.");
+        return ResponseEntity.ok(response);
     }
 
 
