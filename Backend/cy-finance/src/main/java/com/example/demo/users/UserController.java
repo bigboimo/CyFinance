@@ -710,106 +710,170 @@ public class UserController {
 
     @PostMapping("/users/{userEmail}/receipts/{label}")
     public ResponseEntity<JSONObject> addReceipts(@PathVariable String userEmail,
-                                                      @PathVariable String label,
+                                                  @PathVariable String label,
                                                   @RequestParam("image") MultipartFile imageFile,
-                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
-        String endpointString = "[GET /users/{userEmail}/receipts/{receiptId}] ";
+                                                  @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
+        String endpointString = "[POST /users/{userEmail}/receipts/{label}] ";
         JSONObject response = new JSONObject();
 
         logger.info(endpointString + "Cookie: " + userId);
         try {
-            // Only return image if the cookie is set and the user is either an admin or the requested user
-            if (!isValidUserId(userEmail)) {
-                response.put("message", "Invalid user provided");
-                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
-            }
-            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-                logger.info(endpointString + "Successfully accessed data by user: " + userId);
-
-                // TODO
-                // Add receipt to user
-
-                // Save file
-
-                // Respond
-                return ResponseEntity.ok(response);
-            } else {
-                logger.warn(endpointString + "Attempted access from invalid user");
-                response.put("message", "User not allowed to perform this action");
+            if (!isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
+                response.put("message", "Unauthorized access or invalid user.");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+
+            if (imageFile.isEmpty() || !isSupportedContentType(imageFile.getContentType())) {
+                response.put("message", "Invalid file or unsupported format.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            File uploadDir = new File(directory);
+            if (!uploadDir.exists() && !uploadDir.mkdirs()) {
+                response.put("message", "Failed to create upload directory.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+
+            String filename = UUID.randomUUID().toString() + "-" + imageFile.getOriginalFilename();
+            File savedFile = new File(uploadDir, filename);
+            imageFile.transferTo(savedFile);
+
+            User user = userRepository.findByEmail(userEmail);
+            Receipts receipt = new Receipts();
+            receipt.setUser(user);
+            receipt.setLabel(label);
+            receipt.setPath(savedFile.getAbsolutePath());
+            receipt.setUploadedAt(new Date());
+            receiptsRepository.save(receipt);
+
+            response.put("message", "Receipt successfully uploaded.");
+            response.put("receiptId", receipt.getId());
+            response.put("path", receipt.getPath());
+            response.put("uploadedAt", receipt.getUploadedAt().toString());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error uploading receipt", e);
+            response.put("message", "Error uploading receipt.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    private boolean isSupportedContentType(String contentType) {
+        return contentType != null && (contentType.equals("image/jpeg") || contentType.equals("image/png"));
+    }
+
+
+
 
     @PutMapping("/users/{userEmail}/receipts/{label}")
     public ResponseEntity<JSONObject> editReceipts(@PathVariable String userEmail,
-                                                      @PathVariable String label,
-                                                      @RequestParam("image") MultipartFile imageFile,
-                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
-        String endpointString = "[GET /users/{userEmail}/receipts/{receiptId}] ";
+                                                   @PathVariable String label,
+                                                   @RequestParam("image") MultipartFile imageFile,
+                                                   @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
+        String endpointString = "[PUT /users/{userEmail}/receipts/{label}] ";
         JSONObject response = new JSONObject();
 
         logger.info(endpointString + "Cookie: " + userId);
-        try {
-            // Only return image if the cookie is set and the user is either an admin or the requested user
-            if (!isValidUserId(userEmail)) {
-                response.put("message", "Invalid user provided");
-                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
-            }
-            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-                logger.info(endpointString + "Successfully accessed data by user: " + userId);
 
-                // TODO
-                // Find receipt for user
-
-                // Change path and uploadedAt
-
-                // Upload file
-
-                // Respond
-                return ResponseEntity.ok(response);
-            } else {
-                logger.warn(endpointString + "Attempted access from invalid user");
-                response.put("message", "User not allowed to perform this action");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        if (!isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
+            response.put("message", "Unauthorized access or invalid user.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
+
+        if (imageFile.isEmpty() || !isSupportedContentType(imageFile.getContentType())) {
+            response.put("message", "Invalid file type. Only JPEG and PNG are allowed.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        Optional<Receipts> receiptOpt = receiptsRepository.findByLabelAndUserEmail(label, userEmail);
+        if (receiptOpt.isEmpty()) {
+            response.put("message", "Receipt not found.");
+            return ResponseEntity.notFound().build();
+        }
+        Receipts receipt = receiptOpt.get();
+
+        File uploadDir = new File(directory);
+        if (!uploadDir.exists() && !uploadDir.mkdirs()) {
+            response.put("message", "Failed to create directory for uploads.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+        String newFilename = UUID.randomUUID().toString() + "-" + imageFile.getOriginalFilename();
+        File newFile = new File(uploadDir, newFilename);
+        imageFile.transferTo(newFile);
+
+        // Check if there's an existing file and attempt to delete it
+        if (receipt.getPath() != null) {
+            File oldFile = new File(receipt.getPath());
+            if (oldFile.exists()) {
+                boolean deleteSuccess = oldFile.delete();
+                if (!deleteSuccess) {
+                    logger.error("Failed to delete old file at " + oldFile.getAbsolutePath());
+                    response.put("message", "Failed to delete old file.");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                }
+            }
+        }
+
+        receipt.setPath(newFile.getAbsolutePath());
+        receipt.setUploadedAt(new Date());
+        receiptsRepository.save(receipt);
+
+        response.put("message", "Receipt updated successfully.");
+        response.put("label", receipt.getLabel());
+        response.put("path", receipt.getPath());
+        response.put("uploadedAt", receipt.getUploadedAt().toString());
+
+        return ResponseEntity.ok(response);
     }
+
+
 
     @DeleteMapping("/users/{userEmail}/receipts/{receiptId}")
     public ResponseEntity<JSONObject> deleteReceipts(@PathVariable String userEmail,
-                                                      @PathVariable int receiptId,
-                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+                                                     @PathVariable int receiptId,
+                                                     @CookieValue(name = "user-id", required = false) String userId) throws IOException {
         String endpointString = "[DELETE /users/{userEmail}/receipts/{receiptId}] ";
         JSONObject response = new JSONObject();
 
         logger.info(endpointString + "Cookie: " + userId);
         try {
-            // Only return image if the cookie is set and the user is either an admin or the requested user
-            if (!isValidUserId(userEmail)) {
-                response.put("message", "Invalid user provided");
-                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
-            }
-            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
-                logger.info(endpointString + "Successfully accessed data by user: " + userId);
-                // TODO: Delete file from drive and user
-
-
-                // Respond
-                return ResponseEntity.ok(response);
-            } else {
-                logger.warn(endpointString + "Attempted access from invalid user");
-                response.put("message", "User not allowed to perform this action");
+            if (!isValidUserId(userEmail) || !isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
+                response.put("message", "Unauthorized access or invalid user.");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
+
+            Optional<Receipts> receiptOpt = receiptsRepository.findById((long) receiptId);
+            if (receiptOpt.isEmpty()) {
+                response.put("message", "Receipt not found.");
+                return ResponseEntity.notFound().build();
+            }
+
+            Receipts receipt = receiptOpt.get();
+            if (!receipt.getUser().getEmail().equals(userEmail)) {
+                response.put("message", "Receipt does not belong to user.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+
+            // Delete the file associated with the receipt
+            File file = new File(receipt.getPath());
+            if (file.exists() && !file.delete()) {
+                logger.error("Failed to delete the file: " + receipt.getPath());
+                response.put("message", "Failed to delete the file.");
+                return ResponseEntity.internalServerError().body(response);
+            }
+
+            // Delete the receipt from the database
+            receiptsRepository.delete(receipt);
+            response.put("message", "Receipt deleted successfully.");
+            return ResponseEntity.ok(response);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            logger.error("JSON processing error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     private boolean isValidId(String userId) {
         return userId != null && !userId.isEmpty();
