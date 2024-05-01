@@ -539,14 +539,15 @@ public class UserController {
         if (user == null || group == null) {
             logger.warn(endpointString + "Failed to assign group for user");
             response.put("message", "Failed to assign group");
+            return ResponseEntity.badRequest().body(response);
         } else {
             group.addUser(user);
             user.addGroups(group);
             userRepository.save(user);
             logger.info(endpointString + "Successfully assigned group for user");
             response.put("message", "Group assigned");
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{userEmail}/profilepicture")

@@ -32,6 +32,10 @@ public class GroupsController {
     @GetMapping("/{id}")
     public ResponseEntity<Groups> getGroupsById(@PathVariable int id) {
         logger.info("[GET /users/" + id + "]");
+        Groups groups = groupsRepository.findById(id);
+        if (groups == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
         return ResponseEntity.ok(groupsRepository.findById(id));
     }
 
@@ -43,17 +47,29 @@ public class GroupsController {
             groupsRepository.save(group);
             logger.info("[POST /groups] Successfully added group");
             response.put("message", "success");
+            return ResponseEntity.ok(response);
         } else {
             logger.info("[POST /groups] Group already exists");
             response.put("message", "A group with that name already exists");
+            return ResponseEntity.badRequest().body(response);
         }
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping
     public ResponseEntity<Response<String>> editGroup(@RequestBody Groups group) {
         logger.info("[PUT /groups] Changing group: " + group);
         Response<String> response = new Response<>();
+
+        if (group == null || groupsRepository.findById(group.getId()) == null) {
+            response.put("message", "Invalid group provided");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (groupsRepository.findByName(group.getName()) != null) {
+            response.put("message", "Name taken");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         groupsRepository.save(group);
         response.put("message", "success");
         return ResponseEntity.ok(response);
@@ -63,6 +79,12 @@ public class GroupsController {
     public ResponseEntity<Response<String>> deleteGroup(@PathVariable int id) {
         logger.info("[DELETE /{id}");
         Response<String> response = new Response<>();
+
+        if (groupsRepository.findById(id) == null) {
+            response.put("message", "Group doesn't exist");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         groupsRepository.deleteById(id);
         response.put("message", "success");
         return ResponseEntity.ok(response);
