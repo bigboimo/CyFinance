@@ -3,9 +3,13 @@
   <component name="deploymentTargetDropDown">
     <value>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <entry key="adminSettingsTest()">
 =======
       <entry key="CasperSystemTest">
+=======
+      <entry key="adminSettingsTest()">
+>>>>>>> f688ead (Added some text for the totals)
         <State />
       </entry>
       <entry key="app">
@@ -13,15 +17,6 @@
         <State />
       </entry>
       <entry key="networthTest()">
-        <State />
-      </entry>
-      <entry key="successLogin()">
-        <State />
-      </entry>
-      <entry key="successSignup()">
-        <State />
-      </entry>
-      <entry key="userAlreadyCreated()">
         <State />
       </entry>
     </value>

@@ -87,8 +87,7 @@ dependencies {
     implementation 'org.java-websocket:Java-WebSocket:1.5.1'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.github.blackfizz:eazegraph:1.2.5l@aar'
-    implementation 'com.nineoldandroids:library:2.4.0'
+
 
     /* Testing */
     testImplementation 'junit:junit:4.13.2'
