@@ -3,115 +3,39 @@
   <component name="AndroidTestResultsUserPreferences">
     <option name="androidTestResultsTableState">
       <map>
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <entry key="797767439">
-=======
-        <entry key="-1651875267">
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-=======
-        <entry key="-1651875267">
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
+        <entry key="-674736225">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-                  <entry key="Pixel_3_XL_API_34" value="120" />
-=======
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-=======
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
+                  <entry key="Pixel_3_XL_Edited_API_34" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
           </value>
         </entry>
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <entry key="1022752196">
-=======
-        <entry key="-1202520597">
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-=======
-        <entry key="-1202520597">
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
+        <entry key="1750971377">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-                  <entry key="Pixel_3_XL_API_34" value="120" />
-=======
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-=======
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
+                  <entry key="Pixel_3_XL_Edited_API_34" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
           </value>
         </entry>
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <entry key="1436319901">
-=======
-        <entry key="739071493">
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-=======
-        <entry key="739071493">
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
+        <entry key="1814074333">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-                  <entry key="Pixel_3_XL_API_34" value="120" />
-=======
-=======
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
-                  <entry key="Tests" value="360" />
-                </map>
-              </option>
-            </AndroidTestResultsTableState>
-          </value>
-        </entry>
-        <entry key="1452296480">
-          <value>
-            <AndroidTestResultsTableState>
-              <option name="preferredColumnWidths">
-                <map>
-                  <entry key="Duration" value="90" />
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
-                  <entry key="Tests" value="360" />
-                </map>
-              </option>
-            </AndroidTestResultsTableState>
-          </value>
-        </entry>
-        <entry key="1950246091">
-          <value>
-            <AndroidTestResultsTableState>
-              <option name="preferredColumnWidths">
-                <map>
-                  <entry key="Duration" value="90" />
-                  <entry key="Pixel_3a_XL_Edited_1_API_34" value="120" />
-<<<<<<< HEAD
->>>>>>> 8d77d88 (Scrapped most of my experimental work. Going to work on a different angle to fulfill my goals)
-=======
->>>>>>> 50899da982135293e2a933b267d826d2b65ac7bb
+                  <entry key="Pixel_3_XL_Edited_API_34" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>

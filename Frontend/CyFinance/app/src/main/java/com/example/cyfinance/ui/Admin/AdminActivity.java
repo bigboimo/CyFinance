@@ -1,6 +1,7 @@
 package com.example.cyfinance.ui.Admin;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -18,6 +20,7 @@ import com.android.volley.VolleyError;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,9 +44,9 @@ import java.util.Map;
     Push Notifications for WS in DEMO 4
  */
 public class AdminActivity extends AppCompatActivity {
-    //private String BASE_URL = Constants.WS + "/alerts/";
-    TextView adminMessage;
+
     SessionManager session;
+    LinearLayout adminLayout;
     String Response;
     String user1S;
     String user2S;
@@ -56,7 +59,7 @@ public class AdminActivity extends AppCompatActivity {
         navView.setSelectedItemId(R.id.navigation_admin);
         registerForContextMenu(findViewById(R.id.change_user1));
         //registerForContextMenu(findViewById(R.id.change_user2));
-
+        session = new SessionManager(getApplicationContext());
 
         //Layout Elements
         Button refresh = findViewById(R.id.button_refresh);
@@ -95,6 +98,7 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Send Alert");
+        menu.add("Refresh");
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -103,6 +107,9 @@ public class AdminActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), SendAlert.class));
             overridePendingTransition(0, 0);
             return true;
+        }
+        else if(item.getTitle().equals("Refresh")) {
+            getRequest();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -124,29 +131,30 @@ public class AdminActivity extends AppCompatActivity {
                             JSONObject headers = response.getJSONObject("headers");
                             TextView user1 = findViewById(R.id.text_user1);
                             TextView user2 = findViewById(R.id.text_user2);
-                            //adminLayout = findViewById(R.id.admin_layout);
+                            adminLayout = findViewById(R.id.admin_layout);
 
-                            user1S = data.getJSONObject(0).getString("email");
-                            user2S = data.getJSONObject(1).getString("email");
+//                            user1S = data.getJSONObject(0).getString("email");
+//                            user2S = data.getJSONObject(1).getString("email");
 
-                            user1.setText(data.getJSONObject(0).getString("email"));
-                            user2.setText(data.getJSONObject(1).getString("email"));
+//                            user1.setText(data.getJSONObject(0).getString("email"));
+//                            user2.setText(data.getJSONObject(1).getString("email"));
 
                             //Loop that dynamically adds elements based on data array length
-//                            for(int i = 0; i < data.length(); i++) {
-//                                String user = data.getJSONObject(i).getString("email");
-//                                TextView newUser = new TextView(AdminActivity.this);
-//
-//                                newUser.setLayoutParams(new ConstraintLayout.LayoutParams(
-//                                        ConstraintLayout.LayoutParams.MATCH_PARENT,
-//                                        ConstraintLayout.LayoutParams.MATCH_PARENT
-//                                ));
-//
-//                                newUser.setText(user);
-//                                newUser.setTextColor(Color.WHITE);
-//                                newUser.setTextSize(25);
-//                                adminLayout.addView(newUser);
-//                            }
+                            for(int i = 0; i < data.length(); i++) {
+                                String user = data.getJSONObject(i).getString("email");
+                                TextView newUser = new TextView(AdminActivity.this);
+
+                                newUser.setLayoutParams(new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT
+                                ));
+
+                                newUser.setText(user);
+                                newUser.setTextColor(Color.WHITE);
+                                newUser.setTextSize(25);
+                                //newUser.setPadding(0,0,0,30);
+                                adminLayout.addView(newUser);
+                            }
 
                         } catch (JSONException e) {
                             System.out.println(e);

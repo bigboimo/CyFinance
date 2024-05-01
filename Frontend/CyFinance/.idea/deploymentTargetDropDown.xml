@@ -2,13 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="NetworthTest">
+        <State />
+      </entry>
+      <entry key="adminAlertTest()">
+        <State />
+      </entry>
+      <entry key="adminAlertTest() (1)">
+        <State />
+      </entry>
       <entry key="adminSettingsTest()">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="networthTest()">
         <State />
       </entry>
     </value>
