@@ -51,6 +51,10 @@ public class HomeActivity extends AppCompatActivity  {
     int NetworthResponse;
     String LiabilitiesResponse;
 
+    Button profileButton;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,8 @@ public class HomeActivity extends AppCompatActivity  {
         totalNetworth = findViewById(R.id.text_networth);
 
         Button refresh = findViewById(R.id.button_refresh);
+        profileButton = findViewById(R.id.button_profile);
+
 
         totalAssets = findViewById(R.id.text_assets);
 
@@ -78,7 +84,16 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
+        profileButton.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                
+            }
+        });
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
