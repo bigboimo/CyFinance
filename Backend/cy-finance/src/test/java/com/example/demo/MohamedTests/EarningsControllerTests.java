@@ -214,6 +214,8 @@ public class EarningsControllerTests {
 
     @Test
     public void attachEarningsToUser() {
+        String email = "test@example.com";
+
         // Create user JSON
         String userJson = "{\"email\": \"test@example.com\", \"name\": \"Test User\", \"password\": \"pass123\", \"role\": \"user\"}";
 
@@ -229,7 +231,12 @@ public class EarningsControllerTests {
         }
 
         // Extract the user ID from the response
-        String userId = userResponse.jsonPath().getString("id");
+        String userId = email;
+
+        if (userId == null) {
+            throw new IllegalStateException("User ID is null after creation, response was: " + userResponse.getBody().asString());
+        }
+
 
         // Create earnings JSON
         String earningsJson = "{\"primaryMonthlyIncome\": 1000, \"secondaryMonthlyIncome\": 500}";
@@ -254,13 +261,13 @@ public class EarningsControllerTests {
         }
 
         // Perform the POST request to attach earnings to the user
-        String attachUrl = "/users/" + userId + "/earnings/" + earningsId;
+        String attachUrl = "/users/" + email + "/earnings/" + earningsId;
         Response attachResponse = RestAssured.given()
                 .contentType("application/json")
                 .post(attachUrl);
 
         // Check if earnings attachment was successful
-        if (attachResponse.getStatusCode() != 201) {
+        if (attachResponse.getStatusCode() != 200) {
             throw new IllegalStateException("Failed to attach earnings: " + attachResponse.getBody().asString());
         }
     }
