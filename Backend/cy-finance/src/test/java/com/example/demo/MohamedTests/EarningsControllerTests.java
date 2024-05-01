@@ -1,9 +1,13 @@
 package com.example.demo.MohamedTests;
 
 import com.example.demo.CyFinanceApplication;
+import com.example.demo.earnings.Earnings;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +16,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertTrue;
 import org.springframework.test.annotation.DirtiesContext;
+import static org.junit.Assert.*;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -28,6 +34,7 @@ public class EarningsControllerTests {
     @LocalServerPort
     private int port;
 
+    private String userId;
     private String earningsId;
 
     @Before
@@ -39,7 +46,11 @@ public class EarningsControllerTests {
 
     @After
     public void tearDown() {
-        // Clean up created data to avoid side effects between tests
+        if (userId != null) {
+            RestAssured.given()
+                    .when()
+                    .delete("/users/" + userId);
+        }
         if (earningsId != null) {
             RestAssured.given()
                     .when()
@@ -200,4 +211,66 @@ public class EarningsControllerTests {
                 .post("/earnings");
         assertEquals("Expected HTTP status 200 OK even with extra fields", 200, response.getStatusCode());
     }
+
+    @Test
+    public void attachEarningsToUser() {
+        String email = "test@example.com";
+
+        // Create user JSON
+        String userJson = "{\"email\": \"test@example.com\", \"name\": \"Test User\", \"password\": \"pass123\", \"role\": \"user\"}";
+
+        // Perform the POST request to create user
+        Response userResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(userJson)
+                .post("/users");
+
+        // Check if user creation was successful
+        if (userResponse.getStatusCode() != 201) {
+            throw new IllegalStateException("Failed to create user: " + userResponse.getBody().asString());
+        }
+
+        // Extract the user ID from the response
+        String userId = email;
+
+        if (userId == null) {
+            throw new IllegalStateException("User ID is null after creation, response was: " + userResponse.getBody().asString());
+        }
+
+
+        // Create earnings JSON
+        String earningsJson = "{\"primaryMonthlyIncome\": 1000, \"secondaryMonthlyIncome\": 500}";
+
+        // Perform the POST request to create earnings
+        Response earningsResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(earningsJson)
+                .post("/earnings");
+
+        // Check if earnings creation was successful
+        if (earningsResponse.getStatusCode() != 200) {
+            throw new IllegalStateException("Failed to create earnings: " + earningsResponse.getBody().asString());
+        }
+
+        // Extract the earnings ID from the response
+        String earningsId = earningsResponse.jsonPath().getString("id");
+
+        // Check if earnings ID is null
+        if (earningsId == null) {
+            throw new IllegalStateException("Earnings ID is null after creation");
+        }
+
+        // Perform the POST request to attach earnings to the user
+        String attachUrl = "/users/" + email + "/earnings/" + earningsId;
+        Response attachResponse = RestAssured.given()
+                .contentType("application/json")
+                .post(attachUrl);
+
+        // Check if earnings attachment was successful
+        if (attachResponse.getStatusCode() != 200) {
+            throw new IllegalStateException("Failed to attach earnings: " + attachResponse.getBody().asString());
+        }
+    }
+
+
 }

@@ -2,6 +2,7 @@ package com.example.demo.MohamedTests;
 
 import com.example.demo.CyFinanceApplication;
 import com.example.demo.expenses.Expenses;
+import com.example.demo.users.User;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.*;
@@ -320,5 +321,89 @@ public class ExpensesControllerTests {
         assertEquals(0, responseExpenses.getMisc(), 0.01);
         assertEquals(200, responseExpenses.getFood(), 0.01); // Verify provided value remains unchanged
     }
+
+
+    @Test
+    public void testCreateAndAssignExpenses() {
+        // Create a user first to assign expenses to
+        String userJson = "{\"email\": \"test@example.com\", \"name\": \"Test User\", \"password\": \"pass123\", \"role\": \"user\"}";
+        Response userResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(userJson)
+                .post("/users");
+        String userEmail = userResponse.jsonPath().getString("email");
+
+        // Create an expense
+        String expenseJson = "{\"food\": 150, \"rentandBills\": 250, \"school\": 100, \"otherNeeds\": 75, \"misc\": 50, \"user\": {\"email\": \"" + userEmail + "\"}}";
+        Response expenseResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(expenseJson)
+                .post("/expenses");
+        assertEquals("Verify HTTP status code for expense creation", 200, expenseResponse.getStatusCode());
+        int expenseId = expenseResponse.jsonPath().getInt("id");
+
+        // Retrieve the assigned expense to the user and validate the content of the assigned expenses to confirm the details match
+        Response assignedExpenseResponse = RestAssured.get("/users/" + userEmail + "/expenses");
+        assertTrue("Check if the expense is assigned to the user", assignedExpenseResponse.asString().contains(String.valueOf(expenseId)));
+    }
+
+    // Create a user and assign expenses for testing
+    private String createUserAndAssignExpenses() {
+        // Create user
+        String userJson = "{\"email\": \"test@example.com\", \"name\": \"Test User\", \"password\": \"pass123\", \"role\": \"user\"}";
+        Response userResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(userJson)
+                .post("/users");
+
+        // Check if user creation was successful
+        if (userResponse.getStatusCode() != 201) {
+            throw new IllegalStateException("Failed to create user: " + userResponse.getBody().asString());
+        }
+
+        // Extract user email from the response
+        String userEmail = userResponse.jsonPath().getString("email");
+
+        // Assign expenses to the created user
+        String expenseJson = "{\"food\": 100, \"rentandBills\": 150, \"school\": 50, \"otherNeeds\": 30, \"misc\": 20, \"userEmail\": \"" + userEmail + "\"}";
+        Response expenseResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(expenseJson)
+                .post("/expenses");
+
+        // Check if expense assignment was successful
+        if (expenseResponse.getStatusCode() != 200) {
+            throw new IllegalStateException("Failed to assign expenses: " + expenseResponse.getBody().asString());
+        }
+
+        return userEmail;
+    }
+    @Test
+    public void testUpdateAssignedExpenses() {
+        String userEmail = createUserAndAssignExpenses();
+
+        int expenseId = 1; // Get this ID from creation logic or set up if database is known
+        String updatedExpenseJson = "{\"food\": 200, \"rentandBills\": 300, \"school\": 150, \"otherNeeds\": 100, \"misc\": 60}";
+        Response updateResponse = RestAssured.given()
+                .contentType("application/json")
+                .body(updatedExpenseJson)
+                .put("/expenses/" + expenseId);
+        assertEquals("Check HTTP status code for updating expenses", 200, updateResponse.getStatusCode());
+        assertTrue("Verify the response indicates success", updateResponse.asString().contains("success"));
+    }
+
+    @Test
+    public void testDeleteAssignedExpenses() {
+        String userEmail = createUserAndAssignExpenses();
+        int expenseId = 1; // Get this ID from creation logic or set up if database is known
+        Response deleteResponse = RestAssured.delete("/expenses/" + expenseId);
+        assertEquals("Check HTTP status code for deleting expenses", 200, deleteResponse.getStatusCode());
+        assertTrue("Verify the response indicates successful deletion", deleteResponse.asString().contains("success"));
+    }
+
+
+
+
+
 
 }
