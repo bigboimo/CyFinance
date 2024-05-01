@@ -1,4 +1,4 @@
-package com.example.cyfinance.ui;
+package com.example.cyfinance.ui.Admin;
 
 import android.Manifest;
 import android.app.NotificationChannel;
@@ -20,13 +20,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.cyfinance.EarningsActivity;
 import com.example.cyfinance.HomeActivity;
-import com.example.cyfinance.NetworthActivity;
 import com.example.cyfinance.R;
-import com.example.cyfinance.ui.Admin.AdminActivity;
-import com.example.cyfinance.ui.Admin.WebSocketListener;
-import com.example.cyfinance.ui.Admin.WebSocketManager;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.SessionManager;
 
@@ -139,7 +134,5 @@ public class SendAlert extends AppCompatActivity implements WebSocketListener {
 
         notificationManager.notify(0, builder.build());
 
-
     }
-
 }

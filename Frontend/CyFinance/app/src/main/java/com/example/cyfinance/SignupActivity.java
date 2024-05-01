@@ -49,7 +49,6 @@ public class SignupActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signup_signup_btn);  // link to signup button in the Signup activity XML
 
 
-
         /* click listener on signup button pressed */
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override

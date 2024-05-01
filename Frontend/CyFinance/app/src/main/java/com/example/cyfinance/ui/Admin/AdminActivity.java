@@ -2,7 +2,6 @@ package com.example.cyfinance.ui.Admin;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -20,9 +18,7 @@ import com.android.volley.VolleyError;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,16 +26,11 @@ import org.json.JSONObject;
 import com.example.cyfinance.HomeActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.VolleySingleton;
-import com.example.cyfinance.ui.Change.AssetChange;
-import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Change.PasswordChange;
-import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
-import com.example.cyfinance.ui.SendAlert;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.HashMap;
