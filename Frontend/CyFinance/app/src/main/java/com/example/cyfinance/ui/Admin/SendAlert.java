@@ -105,7 +105,6 @@ public class SendAlert extends AppCompatActivity implements WebSocketListener {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
 
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setStyle(new NotificationCompat.BigTextStyle())
