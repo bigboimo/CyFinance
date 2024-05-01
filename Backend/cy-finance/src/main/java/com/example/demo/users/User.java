@@ -4,9 +4,12 @@ import com.example.demo.assets.Assets;
 import com.example.demo.earnings.Earnings;
 import com.example.demo.expenses.Expenses;
 import com.example.demo.liabilities.Liabilities;
+import com.example.demo.receipts.Receipts;
 import com.example.demo.userGroups.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
@@ -52,6 +55,11 @@ public class User {
 
     @JsonIgnore
     private String profilePictureFile;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @Getter
+    @Setter
+    private Set<Receipts> receipts;
 
     @ManyToMany
     @JoinTable(
