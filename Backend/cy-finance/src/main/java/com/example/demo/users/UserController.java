@@ -8,9 +8,14 @@ import com.example.demo.expenses.ExpensesRepository;
 import com.example.demo.assets.Assets;
 import com.example.demo.liabilities.Liabilities;
 import com.example.demo.liabilities.LiabilitiesRepository;
+import com.example.demo.receipts.Receipts;
+import com.example.demo.receipts.ReceiptsRepository;
 import com.example.demo.userGroups.Groups;
 import com.example.demo.userGroups.GroupsRepository;
 import com.example.demo.util.Response;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,9 @@ public class UserController {
 
     @Autowired
     GroupsRepository groupsRepository;
+
+    @Autowired
+    ReceiptsRepository receiptsRepository;
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(
@@ -608,6 +616,198 @@ public class UserController {
             logger.warn(endpointString + "Attempted access from invalid user");
             response.put("message", "User not allowed to perform this action");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+    }
+
+    @GetMapping("/users/{userEmail}/receipts")
+    public ResponseEntity<JSONObject> getReceipts(@PathVariable String userEmail,
+                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[GET /users/{userEmail}/receipts] ";
+        JSONObject response = new JSONObject();
+
+        logger.info(endpointString + "Cookie: " + userId);
+        try {
+            // Only return image if the cookie is set and the user is either an admin or the requested user
+            if (!isValidUserId(userEmail)) {
+                response.put("message", "Invalid user provided");
+                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+            }
+            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+                logger.info(endpointString + "Successfully accessed data by user: " + userId);
+
+                // Get receipt data
+                User user = userRepository.findByEmail(userEmail);
+                Set<Receipts> receipts = user.getReceipts();
+                response.put("receiptsData", new JSONArray());
+                JSONArray fileObjects;
+                int i = 0;
+                for(Receipts receipt : receipts) {
+                    File imageFile = new File(receipt.getPath());
+
+                    // Assemble receipt and metadata
+                    fileObjects = response.getJSONArray("receiptsData");
+                    fileObjects.put(i, new JSONObject().put("metadata", receipts)
+                                            .put("file", Files.readAllBytes(imageFile.toPath())));
+                    response.put("receiptsData", fileObjects);
+                    i++;
+                }
+                response.put("numReceipts", i);
+
+                // Respond
+                return ResponseEntity.ok(response);
+            } else {
+                logger.warn(endpointString + "Attempted access from invalid user");
+                response.put("message", "User not allowed to perform this action");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/users/{userEmail}/receipts/{receiptId}")
+    public ResponseEntity<JSONObject> getReceiptsById(@PathVariable String userEmail,
+                                                      @PathVariable int receiptId,
+                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[GET /users/{userEmail}/receipts/{receiptId}] ";
+        JSONObject response = new JSONObject();
+
+        logger.info(endpointString + "Cookie: " + userId);
+        try {
+            // Only return image if the cookie is set and the user is either an admin or the requested user
+            if (!isValidUserId(userEmail)) {
+                response.put("message", "Invalid user provided");
+                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+            }
+            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+                logger.info(endpointString + "Successfully accessed data by user: " + userId);
+
+                // Get receipt data
+                User user = userRepository.findByEmail(userEmail);
+                Receipts receipts = receiptsRepository.findById(receiptId);
+                // If receipt's user is not equal to the provided user
+                if (!receipts.getUser().getEmail().equals(user.getEmail())) {
+                    response.put("message", "Receipt not assigned to user");
+                    return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+                }
+                File imageFile = new File(receipts.getPath());
+
+                // Assemble receipt and metadata
+                response.put("metadata", receipts);
+                response.put("file", Files.readAllBytes(imageFile.toPath()));
+
+                // Respond
+                return ResponseEntity.ok(response);
+            } else {
+                logger.warn(endpointString + "Attempted access from invalid user");
+                response.put("message", "User not allowed to perform this action");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/users/{userEmail}/receipts/{label}")
+    public ResponseEntity<JSONObject> addReceipts(@PathVariable String userEmail,
+                                                      @PathVariable String label,
+                                                  @RequestParam("image") MultipartFile imageFile,
+                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[GET /users/{userEmail}/receipts/{receiptId}] ";
+        JSONObject response = new JSONObject();
+
+        logger.info(endpointString + "Cookie: " + userId);
+        try {
+            // Only return image if the cookie is set and the user is either an admin or the requested user
+            if (!isValidUserId(userEmail)) {
+                response.put("message", "Invalid user provided");
+                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+            }
+            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+                logger.info(endpointString + "Successfully accessed data by user: " + userId);
+
+                // TODO
+                // Add receipt to user
+
+                // Save file
+
+                // Respond
+                return ResponseEntity.ok(response);
+            } else {
+                logger.warn(endpointString + "Attempted access from invalid user");
+                response.put("message", "User not allowed to perform this action");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/users/{userEmail}/receipts/{label}")
+    public ResponseEntity<JSONObject> editReceipts(@PathVariable String userEmail,
+                                                      @PathVariable String label,
+                                                      @RequestParam("image") MultipartFile imageFile,
+                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[GET /users/{userEmail}/receipts/{receiptId}] ";
+        JSONObject response = new JSONObject();
+
+        logger.info(endpointString + "Cookie: " + userId);
+        try {
+            // Only return image if the cookie is set and the user is either an admin or the requested user
+            if (!isValidUserId(userEmail)) {
+                response.put("message", "Invalid user provided");
+                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+            }
+            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+                logger.info(endpointString + "Successfully accessed data by user: " + userId);
+
+                // TODO
+                // Find receipt for user
+
+                // Change path and uploadedAt
+
+                // Upload file
+
+                // Respond
+                return ResponseEntity.ok(response);
+            } else {
+                logger.warn(endpointString + "Attempted access from invalid user");
+                response.put("message", "User not allowed to perform this action");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @DeleteMapping("/users/{userEmail}/receipts/{receiptId}")
+    public ResponseEntity<JSONObject> deleteReceipts(@PathVariable String userEmail,
+                                                      @PathVariable int receiptId,
+                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException {
+        String endpointString = "[DELETE /users/{userEmail}/receipts/{receiptId}] ";
+        JSONObject response = new JSONObject();
+
+        logger.info(endpointString + "Cookie: " + userId);
+        try {
+            // Only return image if the cookie is set and the user is either an admin or the requested user
+            if (!isValidUserId(userEmail)) {
+                response.put("message", "Invalid user provided");
+                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+            }
+            if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
+                logger.info(endpointString + "Successfully accessed data by user: " + userId);
+                // TODO: Delete file from drive and user
+
+
+                // Respond
+                return ResponseEntity.ok(response);
+            } else {
+                logger.warn(endpointString + "Attempted access from invalid user");
+                response.put("message", "User not allowed to perform this action");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 
