@@ -30,13 +30,9 @@ public class SignupActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private EditText confirmEditText;   // define confirm edittext variable
     private Button signupButton;       // define signup button variable
-
     String username;
-
     String password;
-
     private String confirm;
-
     static String Response;
     private SessionManager session;
     private String userId;
@@ -51,7 +47,6 @@ public class SignupActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.signup_password_edt);  // link to password edtext in the Signup activity XML
         confirmEditText = findViewById(R.id.signup_confirm_edt);    // link to confirm edtext in the Signup activity XML
         signupButton = findViewById(R.id.signup_signup_btn);  // link to signup button in the Signup activity XML
-
 
 
         /* click listener on signup button pressed */

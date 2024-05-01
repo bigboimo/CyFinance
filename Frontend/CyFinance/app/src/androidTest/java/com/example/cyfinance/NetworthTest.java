@@ -48,7 +48,7 @@ public class NetworthTest {
                                         1),
                                 0),
                         isDisplayed()));
-        appCompatEditText.perform(replaceText("test@email.com"), closeSoftKeyboard());
+        appCompatEditText.perform(replaceText("admin@email.com"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText2 = onView(
                 allOf(withId(R.id.login_password_edt),
@@ -74,15 +74,22 @@ public class NetworthTest {
             Thread.sleep(SIMULATED_DELAY_MS);
         } catch (InterruptedException e) {}
 
-        ViewInteraction floatingActionButton = onView(
-                allOf(withId(R.id.change_options), withContentDescription("submit")));
-        floatingActionButton.perform(longClick());
 
-        ViewInteraction materialTextView = onView(
-                allOf(withId(android.R.id.title), withText("Change Asset Value"),
+        ViewInteraction overflowMenuButton = onView(
+                allOf(withContentDescription("More options"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(android.R.id.content),
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton.perform(click());
+
+        ViewInteraction materialTextView = onView(
+                allOf(withId(androidx.core.R.id.title), withText("Change Assets"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(androidx.appcompat.R.id.content),
                                         0),
                                 0),
                         isDisplayed()));
@@ -112,10 +119,16 @@ public class NetworthTest {
             Thread.sleep(SIMULATED_DELAY_MS);
         } catch (InterruptedException e) {}
 
-
-        ViewInteraction materialButton5 = onView(
-                allOf(withId(R.id.refresh_button), withText("Refresh")));
-        materialButton5.perform(click());
+        ViewInteraction materialButton2 = onView(
+                allOf(withId(R.id.button_refresh),
+                        childAtPosition(
+                                allOf(withId(R.id.swipeRefresh),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                4),
+                        isDisplayed()));
+        materialButton2.perform(click());
 
         try {
             Thread.sleep(SIMULATED_DELAY_MS);
@@ -135,7 +148,7 @@ public class NetworthTest {
                                         1),
                                 0),
                         isDisplayed()));
-        appCompatEditText.perform(replaceText("test@email.com"), closeSoftKeyboard());
+        appCompatEditText.perform(replaceText("admin@email.com"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText2 = onView(
                 allOf(withId(R.id.login_password_edt),
@@ -161,20 +174,25 @@ public class NetworthTest {
             Thread.sleep(SIMULATED_DELAY_MS);
         } catch (InterruptedException e) {}
 
-        ViewInteraction floatingActionButton = onView(
-                allOf(withId(R.id.change_options), withContentDescription("submit")));
-        floatingActionButton.perform(longClick());
-
-
-        ViewInteraction materialTextView2 = onView(
-                allOf(withId(android.R.id.title), withText("Change Liability Value"),
+        ViewInteraction overflowMenuButton = onView(
+                allOf(withContentDescription("More options"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(android.R.id.content),
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton.perform(click());
+
+        ViewInteraction materialTextView = onView(
+                allOf(withId(androidx.core.R.id.title), withText("Change Liabilities"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(androidx.appcompat.R.id.content),
                                         0),
                                 0),
                         isDisplayed()));
-        materialTextView2.perform(click());
+        materialTextView.perform(click());
 
         ViewInteraction appCompatEditText4 = onView(
                 allOf(withId(R.id.liabilities_edt_txt),
@@ -200,9 +218,16 @@ public class NetworthTest {
             Thread.sleep(SIMULATED_DELAY_MS);
         } catch (InterruptedException e) {}
 
-        ViewInteraction materialButton5 = onView(
-                allOf(withId(R.id.refresh_button), withText("Refresh")));
-        materialButton5.perform(click());
+        ViewInteraction materialButton2 = onView(
+                allOf(withId(R.id.button_refresh),
+                        childAtPosition(
+                                allOf(withId(R.id.swipeRefresh),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                4),
+                        isDisplayed()));
+        materialButton2.perform(click());
 
         try {
             Thread.sleep(SIMULATED_DELAY_MS);

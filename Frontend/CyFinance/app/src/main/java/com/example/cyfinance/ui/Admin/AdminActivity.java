@@ -1,8 +1,8 @@
 package com.example.cyfinance.ui.Admin;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -22,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,15 +29,11 @@ import org.json.JSONObject;
 import com.example.cyfinance.HomeActivity;
 import com.example.cyfinance.R;
 import com.example.cyfinance.VolleySingleton;
-import com.example.cyfinance.ui.Change.AssetChange;
-import com.example.cyfinance.ui.Change.LiabilityChange;
 import com.example.cyfinance.ui.Change.PasswordChange;
-import com.example.cyfinance.ui.Earnings.EarningsDActivity;
 import com.example.cyfinance.ui.Expenses.ExpensesDActivity;
 import com.example.cyfinance.util.Constants;
 import com.example.cyfinance.util.JsonRequest;
 import com.example.cyfinance.util.SessionManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.HashMap;
@@ -48,12 +43,11 @@ import java.util.Map;
 /*
     Push Notifications for WS in DEMO 4
  */
-public class AdminActivity extends AppCompatActivity implements WebSocketListener {
-    private String BASE_URL = Constants.WS + "/alerts/";
-    TextView adminMessage;
+public class AdminActivity extends AppCompatActivity {
+
     SessionManager session;
+    LinearLayout adminLayout;
     String Response;
-    ConstraintLayout adminLayout;
     String user1S;
     String user2S;
     public void onCreate(Bundle savedInstanceState) {
@@ -65,20 +59,10 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         navView.setSelectedItemId(R.id.navigation_admin);
         registerForContextMenu(findViewById(R.id.change_user1));
         //registerForContextMenu(findViewById(R.id.change_user2));
-
-        //Session Declaration and Websocket URL
         session = new SessionManager(getApplicationContext());
-        String serverURL = BASE_URL + session.getUserDetails().get("id");
 
         //Layout Elements
-        adminMessage = findViewById(R.id.text_alert);
-        EditText messageText = findViewById(R.id.text_notifications);
-        Button sendAlert = findViewById(R.id.alert_button);
         Button refresh = findViewById(R.id.button_refresh);
-
-        //Websocket
-        WebSocketManager.getInstance().connectWebSocket(serverURL);
-        WebSocketManager.getInstance().setWebSocketListener(this);
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,18 +93,27 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
                 return false;
             }
         });
-
-        sendAlert.setOnClickListener(view -> {
-
-            try {
-                WebSocketManager.getInstance().sendMessage(messageText.getText().toString());
-            } catch (Exception e) {
-                Log.d("ExceptionSendMessage:", e.getMessage().toString());
-            }
-
-
-        });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Send Alert");
+        menu.add("Refresh");
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getTitle().equals("Send Alert")) {
+            startActivity(new Intent(getApplicationContext(), SendAlert.class));
+            overridePendingTransition(0, 0);
+            return true;
+        }
+        else if(item.getTitle().equals("Refresh")) {
+            getRequest();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void getRequest() {
         JSONObject postBody = null;
@@ -138,29 +131,30 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
                             JSONObject headers = response.getJSONObject("headers");
                             TextView user1 = findViewById(R.id.text_user1);
                             TextView user2 = findViewById(R.id.text_user2);
-                            //adminLayout = findViewById(R.id.admin_layout);
+                            adminLayout = findViewById(R.id.admin_layout);
 
-                            user1S = data.getJSONObject(0).getString("email");
-                            user2S = data.getJSONObject(1).getString("email");
+//                            user1S = data.getJSONObject(0).getString("email");
+//                            user2S = data.getJSONObject(1).getString("email");
 
-                            user1.setText(data.getJSONObject(0).getString("email"));
-                            user2.setText(data.getJSONObject(1).getString("email"));
+//                            user1.setText(data.getJSONObject(0).getString("email"));
+//                            user2.setText(data.getJSONObject(1).getString("email"));
 
                             //Loop that dynamically adds elements based on data array length
-//                            for(int i = 0; i < data.length(); i++) {
-//                                String user = data.getJSONObject(i).getString("email");
-//                                TextView newUser = new TextView(AdminActivity.this);
-//
-//                                newUser.setLayoutParams(new ConstraintLayout.LayoutParams(
-//                                        ConstraintLayout.LayoutParams.MATCH_PARENT,
-//                                        ConstraintLayout.LayoutParams.MATCH_PARENT
-//                                ));
-//
-//                                newUser.setText(user);
-//                                newUser.setTextColor(Color.WHITE);
-//                                newUser.setTextSize(25);
-//                                adminLayout.addView(newUser);
-//                            }
+                            for(int i = 0; i < data.length(); i++) {
+                                String user = data.getJSONObject(i).getString("email");
+                                TextView newUser = new TextView(AdminActivity.this);
+
+                                newUser.setLayoutParams(new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT
+                                ));
+
+                                newUser.setText(user);
+                                newUser.setTextColor(Color.WHITE);
+                                newUser.setTextSize(25);
+                                //newUser.setPadding(0,0,0,30);
+                                adminLayout.addView(newUser);
+                            }
 
                         } catch (JSONException e) {
                             System.out.println(e);
@@ -281,30 +275,4 @@ public class AdminActivity extends AppCompatActivity implements WebSocketListene
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
-
-    @Override
-    public void onWebSocketOpen(ServerHandshake handshakedata) {
-    }
-
-    @Override
-    public void onWebSocketMessage(String message) {
-        runOnUiThread(() -> {
-            String s = adminMessage.getText().toString();
-            adminMessage.setText(message);
-        });
-    }
-
-    @Override
-    public void onWebSocketClose(int code, String reason, boolean remote) {
-        String closedBy = remote ? "server" : "local";
-        runOnUiThread(() -> {
-            String s = adminMessage.getText().toString();
-            adminMessage.setText(s + " " + closedBy + reason);
-        });
-    }
-
-    @Override
-    public void onWebSocketError(Exception ex) {
-    }
-
 }

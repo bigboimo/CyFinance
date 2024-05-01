@@ -52,7 +52,7 @@ public class EarningsDActivity extends AppCompatActivity {
         secondaryIncomeEditText = findViewById(R.id.secondary);
         updateButton = findViewById(R.id.update_btn);
         navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_expenses);
+        navView.setSelectedItemId(R.id.navigation_earnings);
 
 
         updateButton.setOnClickListener(new View.OnClickListener() {
