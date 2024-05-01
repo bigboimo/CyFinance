@@ -7,10 +7,7 @@ import android.util.LruCache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
-<<<<<<< Updated upstream
-=======
 import com.android.volley.toolbox.JsonObjectRequest;
->>>>>>> Stashed changes
 import com.android.volley.toolbox.Volley;
 import com.example.cyfinance.util.MultipartRequest;
 
@@ -58,22 +55,15 @@ public class VolleySingleton {
         return requestQueue;
     }
 
-<<<<<<< Updated upstream
-    public <T> void addToRequestQueue(Request<T> req) {
-=======
+
     public <T> void addToRequestQueue(JsonObjectRequest req) {
->>>>>>> Stashed changes
         getRequestQueue().add(req);
     }
 
     public ImageLoader getImageLoader() {
         return imageLoader;
     }
-<<<<<<< Updated upstream
-=======
-
     public void addToRequestQueue(MultipartRequest uploadRequest) {
         getRequestQueue().add(uploadRequest);
     }
->>>>>>> Stashed changes
 }
