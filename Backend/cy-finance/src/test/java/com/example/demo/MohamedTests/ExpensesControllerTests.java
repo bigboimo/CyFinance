@@ -29,7 +29,7 @@ public class ExpensesControllerTests {
         RestAssured.baseURI = "http://localhost";
     }
 
-
+    // Test to verify that the API can fetch all expenses and returns HTTP status 200.
     @Test
     public void testFetchAllExpensesSuccessfully() {
         Response response = RestAssured.get("/expenses");
@@ -37,6 +37,7 @@ public class ExpensesControllerTests {
         assertNotNull("Expenses list should not be null", response.getBody());
     }
 
+    // Test to ensure that fetching expenses from an empty database returns an empty list but still status 200.
     @Test
     public void testFetchAllExpensesWhenEmpty() {
         Response response = RestAssured.get("/expenses");
@@ -44,6 +45,8 @@ public class ExpensesControllerTests {
         assertTrue("Response should contain an empty list", response.asString().contains("[]"));
     }
 
+
+    // Tests that a valid expense ID can retrieve the correct expense details.
     @Test
     public void testRetrieveExpenseByValidID() {
         // First, create an expense and capture its ID
@@ -64,6 +67,8 @@ public class ExpensesControllerTests {
                 response.asString().contains("\"id\":" + createdId));
     }
 
+
+    // Test to ensure that retrieving an expense with a non-existing ID results in HTTP status 404.
     @Test
     public void testRetrieveFailureForNonExistingID() {
         // Assume this ID does not exist
@@ -71,12 +76,16 @@ public class ExpensesControllerTests {
         assertEquals(404, response.getStatusCode());
     }
 
+
+    // Test to verify that attempting to retrieve an expense with an invalid ID format returns HTTP status 400.
     @Test
     public void testRetrieveWithInvalidIDFormat() {
         Response response = RestAssured.get("/expenses/abc");
         assertEquals(400, response.getStatusCode());
     }
 
+
+    // Test that a new expense can be successfully created and that the response correctly reflects the created expense.
     @Test
     public void testCreateExpenseSuccessfully() {
         String json = "{\"food\": 200, \"rentandBills\": 300, \"school\": 100, \"otherNeeds\": 50, \"misc\": 25}";
@@ -85,17 +94,38 @@ public class ExpensesControllerTests {
                 .body(json)
                 .post("/expenses");
         assertEquals(200, response.getStatusCode());
+
+        // Deserialize response into Expenses object and verify contents
+        Expenses createdExpense = response.as(Expenses.class);
+        assertNotNull("Created expense object should not be null", createdExpense);
+        assertEquals(200, createdExpense.getFood(), 0.01);
+        assertEquals(300, createdExpense.getRentandBills(), 0.01);
+        assertEquals(100, createdExpense.getSchool(), 0.01);
+        assertEquals(50, createdExpense.getOtherNeeds(), 0.01);
+        assertEquals(25, createdExpense.getMisc(), 0.01);
     }
 
 
+    // Test that creating an expense with some fields missing sets those missing fields to their default values (assumed zero).
     @Test
     public void testCreateExpenseWithMissingFields() {
         String json = "{\"food\": 200}"; // Missing 'rentandBills', 'school', 'otherNeeds', 'misc'
         Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
         assertEquals(200, response.getStatusCode());
+
+        // Deserialize response into Expenses object
+        Expenses createdExpense = response.as(Expenses.class);
+
+        // Verify that the missing fields are set to their default values, assuming 0 is the default
+        assertNotNull("Created expense object should not be null", createdExpense);
+        assertEquals("Food value should match the provided value", 200, createdExpense.getFood(), 0.01);
+        assertEquals("Rent and Bills should be 0 as it's missing", 0, createdExpense.getRentandBills(), 0.01);
+        assertEquals("School expenses should be 0 as it's missing", 0, createdExpense.getSchool(), 0.01);
+        assertEquals("Other Needs should be 0 as it's missing", 0, createdExpense.getOtherNeeds(), 0.01);
+        assertEquals("Misc expenses should be 0 as it's missing", 0, createdExpense.getMisc(), 0.01);
     }
 
-
+    // Test to confirm that creating an expense with negative values correctly returns HTTP status 400.
     @Test
     public void testCreateExpenseWithNegativeValues() {
         String json = "{\"food\": -200, \"rentandBills\": -300}";
@@ -103,6 +133,8 @@ public class ExpensesControllerTests {
         assertEquals(400, response.getStatusCode());
     }
 
+
+    // Test that an existing expense can be updated successfully and that the response includes a success message.
     @Test
     public void testUpdateExistingExpenseSuccessfully() {
         // First, create an expense to ensure it exists
@@ -112,6 +144,7 @@ public class ExpensesControllerTests {
                 .body(jsonCreate)
                 .post("/expenses");
         int createdId = createResponse.jsonPath().getInt("id"); // Extract the created ID
+        assertEquals(200, createResponse.getStatusCode());
 
         // Now, update the newly created expense
         String jsonUpdate = "{\"food\": 250, \"rentandBills\": 400}";
@@ -120,10 +153,16 @@ public class ExpensesControllerTests {
                 .body(jsonUpdate)
                 .put("/expenses/" + createdId); // Use the created ID for update
         assertEquals(200, response.getStatusCode());
-        assertTrue("Response should confirm update", response.asString().contains("success"));
+
+        // Verify response content type
+        assertEquals("text/plain;charset=UTF-8", response.getContentType());
+
+        // Check if the response body contains the expected success message
+        assertTrue("Response should confirm update", response.asString().contains("{\"message\":\"success\"}"));
     }
 
 
+    // Test that updating a non-existing expense results in HTTP status 404.
     @Test
     public void testUpdateNonExistingExpense() {
         String json = "{\"food\": 300, \"rentandBills\": 450}";
@@ -131,6 +170,8 @@ public class ExpensesControllerTests {
         assertEquals(404, response.getStatusCode());
     }
 
+
+    // Test that updating an expense with invalid data (negative values) results in HTTP status 400.
     @Test
     public void testUpdateExpenseWithInvalidData() {
         // Create a valid expense first
@@ -150,6 +191,8 @@ public class ExpensesControllerTests {
         assertEquals(400, response.getStatusCode());
     }
 
+
+    // Test that an expense can be deleted successfully and the response confirms the deletion.
     @Test
     public void testDeleteExpenseSuccessfully() {
         // First, create an expense
@@ -166,18 +209,24 @@ public class ExpensesControllerTests {
         assertTrue("Response should confirm deletion", response.asString().contains("success"));
     }
 
+
+    // Test to ensure that attempting to delete a non-existing expense results in HTTP status 404.
     @Test
     public void testDeleteNonExistingExpense() {
         Response response = RestAssured.delete("/expenses/9999");
         assertEquals(404, response.getStatusCode());
     }
 
+
+    // Test that attempting to delete an expense with an invalid ID format returns HTTP status 400.
     @Test
     public void testDeleteExpenseWithInvalidIdFormat() {
         Response response = RestAssured.delete("/expenses/abc"); // Non-numeric ID
         assertEquals(400, response.getStatusCode());
     }
 
+
+    // Test that creating an expense while ignoring unmapped fields doesn't break the functionality and still returns HTTP status 200.
     @Test
     public void testCreateExpenseIgnoringUnmappedFields() {
         String json = "{\"food\": 100, \"rentandBills\": 200, \"extraField\": \"unexpected\"}";
@@ -186,15 +235,35 @@ public class ExpensesControllerTests {
         assertTrue("Response should not contain extra fields", !response.asString().contains("\"extraField\":"));
     }
 
+
+    // Test that the API can handle very large values for expenses, either by succeeding with HTTP status 200 or by returning a meaningful error with status 400.
     @Test
     public void testCreateExpenseWithLargeValues() {
         String json = "{\"food\": 1E+10, \"rentandBills\": 1E+10, \"school\": 1E+10, \"otherNeeds\": 1E+10, \"misc\": 1E+10}";
-        Response response = RestAssured.given().contentType("application/json").body(json).post("/expenses");
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(json)
+                .post("/expenses");
+
         boolean isSuccessful = response.getStatusCode() == 200;
         boolean isProperErrorHandling = response.getStatusCode() == 400 && response.asString().contains("value too large");
+
         assertTrue("API should handle large values by either succeeding or providing a meaningful error", isSuccessful || isProperErrorHandling);
+
+        if (response.getStatusCode() == 200) {
+            // Deserialize response into Expenses object and verify contents
+            Expenses createdExpense = response.as(Expenses.class);
+            assertNotNull("Created expense object should not be null", createdExpense);
+            assertEquals(1E+10, createdExpense.getFood(), 0.01);
+            assertEquals(1E+10, createdExpense.getRentandBills(), 0.01);
+            assertEquals(1E+10, createdExpense.getSchool(), 0.01);
+            assertEquals(1E+10, createdExpense.getOtherNeeds(), 0.01);
+            assertEquals(1E+10, createdExpense.getMisc(), 0.01);
+        }
     }
 
+
+    // Test that updating an expense with the same values results in HTTP status 200 and confirms no actual data change.
     @Test
     public void testUpdateWithoutChanges() {
         String json = "{\"food\": 200, \"rentandBills\": 300, \"school\": 100, \"otherNeeds\": 50, \"misc\": 25}";
@@ -207,6 +276,8 @@ public class ExpensesControllerTests {
         assertTrue("Response should confirm no actual data change", updateResponse.asString().contains("success"));
     }
 
+
+    // Test the sequence of deleting an existing expense and then immediately creating a new one to check for any residue or state issues.
     @Test
     public void testDeleteThenCreateExpenseSequentially() {
         // First, ensure the expense exists
@@ -224,6 +295,8 @@ public class ExpensesControllerTests {
 
     }
 
+
+    // Test to confirm that malformed JSON input results in HTTP status 400.
     @Test
     public void testCreateExpenseWithMalformedJson() {
         String json = "{food: 200, rentAndBills: 300}"; // Incorrect JSON format
@@ -231,6 +304,8 @@ public class ExpensesControllerTests {
         assertEquals(400, response.getStatusCode());
     }
 
+
+    // Test to verify that missing fields in the expense creation are automatically set to zero, ensuring default values are used where data is not provided.
     @Test
     public void testCreateExpenseWithMissingFieldsSetToZero() {
         String json = "{\"food\": 200}"; // Only 'food' is provided; other fields are missing
