@@ -2,16 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="HusseinSystemTest">
-        <State />
-      </entry>
-      <entry key="app">
-        <State />
-      </entry>
-      <entry key="testPrimaryIncomeInputAcceptance()">
-        <State />
-      </entry>
-      <entry key="testSecondaryIncomeInputAcceptance()">
+      <entry key="adminSettingsTest()">
         <State />
       </entry>
     </value>
