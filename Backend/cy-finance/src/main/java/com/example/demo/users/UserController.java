@@ -619,8 +619,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{userEmail}/receipts")
-    public ResponseEntity<JSONObject> getReceipts(@PathVariable String userEmail,
+    @GetMapping(path="/users/{userEmail}/receipts", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getReceipts(@PathVariable String userEmail,
                                                       @CookieValue(name = "user-id", required = false) String userId) throws IOException {
         String endpointString = "[GET /users/{userEmail}/receipts] ";
         JSONObject response = new JSONObject();
@@ -630,7 +630,7 @@ public class UserController {
             // Only return image if the cookie is set and the user is either an admin or the requested user
             if (!isValidUserId(userEmail)) {
                 response.put("message", "Invalid user provided");
-                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+                return ResponseEntity.badRequest().body(response.toString());
             }
             if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
                 logger.info(endpointString + "Successfully accessed data by user: " + userId);
@@ -646,19 +646,24 @@ public class UserController {
 
                     // Assemble receipt and metadata
                     fileObjects = response.getJSONArray("receiptsData");
-                    fileObjects.put(i, new JSONObject().put("metadata", receipts)
-                                            .put("file", Files.readAllBytes(imageFile.toPath())));
+                    fileObjects.put(i, new JSONObject()
+                            .put("metadata", new JSONObject()
+                                    .put("id", receipt.getId())
+                                    .put("label", receipt.getLabel())
+                                    .put("uploadedAt", receipt.getUploadedAt())
+                            )
+                    );
                     response.put("receiptsData", fileObjects);
                     i++;
                 }
                 response.put("numReceipts", i);
 
                 // Respond
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(response.toString());
             } else {
                 logger.warn(endpointString + "Attempted access from invalid user");
                 response.put("message", "User not allowed to perform this action");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response.toString());
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -666,7 +671,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{userEmail}/receipts/{receiptId}")
-    public ResponseEntity<JSONObject> getReceiptsById(@PathVariable String userEmail,
+    public ResponseEntity<byte[]> getReceiptsById(@PathVariable String userEmail,
                                                       @PathVariable int receiptId,
                                                       @CookieValue(name = "user-id", required = false) String userId) throws IOException {
         String endpointString = "[GET /users/{userEmail}/receipts/{receiptId}] ";
@@ -677,7 +682,7 @@ public class UserController {
             // Only return image if the cookie is set and the user is either an admin or the requested user
             if (!isValidUserId(userEmail)) {
                 response.put("message", "Invalid user provided");
-                return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+                return ResponseEntity.badRequest().body(response.toString().getBytes());
             }
             if (isValidUserId(userId) && (isAdmin(userId) || userEmail.equals(userId))) {
                 logger.info(endpointString + "Successfully accessed data by user: " + userId);
@@ -688,20 +693,16 @@ public class UserController {
                 // If receipt's user is not equal to the provided user
                 if (!receipts.getUser().getEmail().equals(user.getEmail())) {
                     response.put("message", "Receipt not assigned to user");
-                    return ResponseEntity.badRequest().body(new JSONObject(response.toString()));
+                    return ResponseEntity.badRequest().body(response.toString().getBytes());
                 }
                 File imageFile = new File(receipts.getPath());
 
-                // Assemble receipt and metadata
-                response.put("metadata", receipts);
-                response.put("file", Files.readAllBytes(imageFile.toPath()));
-
                 // Respond
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(Files.readAllBytes(imageFile.toPath()));
             } else {
                 logger.warn(endpointString + "Attempted access from invalid user");
                 response.put("message", "User not allowed to perform this action");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response.toString().getBytes());
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -709,24 +710,29 @@ public class UserController {
     }
 
     @PostMapping("/users/{userEmail}/receipts/{label}")
-    public ResponseEntity<JSONObject> addReceipts(@PathVariable String userEmail,
+    public ResponseEntity<Response<String>> addReceipts(@PathVariable String userEmail,
                                                   @PathVariable String label,
                                                   @RequestParam("image") MultipartFile imageFile,
                                                   @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
         String endpointString = "[POST /users/{userEmail}/receipts/{label}] ";
-        JSONObject response = new JSONObject();
+        Response<String> response = new Response<>();
 
         logger.info(endpointString + "Cookie: " + userId);
 
         // Authentication and authorization check
         try {
+            if (!isValidUserId(userEmail)) {
+                response.put("message", "Invalid user provided");
+                return ResponseEntity.badRequest().body(response);
+            }
+
             if (!isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
                 response.put("message", "Unauthorized access or invalid user.");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
 
             // Check if the uploaded image file is empty or has an unsupported content type
-            if (imageFile.isEmpty() || !isSupportedContentType(imageFile.getContentType())) {
+            if (imageFile.isEmpty()) {
                 response.put("message", "Invalid file or unsupported format.");
                 return ResponseEntity.badRequest().body(response);
             }
@@ -739,11 +745,13 @@ public class UserController {
             }
 
             // Generate a unique filename and save the file
+            logger.info(endpointString + "Generating filename");
             String filename = UUID.randomUUID().toString() + "-" + imageFile.getOriginalFilename();
             File savedFile = new File(uploadDir, filename);
             imageFile.transferTo(savedFile);
 
             // Create and save the receipt record in the database
+            logger.info(endpointString + "Saving data in database");
             User user = userRepository.findByEmail(userEmail);
             Receipts receipt = new Receipts();
             receipt.setUser(user);
@@ -753,8 +761,9 @@ public class UserController {
             receiptsRepository.save(receipt);
 
             // Prepare and return the response
+            logger.info(endpointString + "Setting response");
             response.put("message", "Receipt successfully uploaded.");
-            response.put("receiptId", receipt.getId());
+            response.put("receiptId", String.valueOf(receipt.getId()));
             response.put("path", receipt.getPath());
             response.put("uploadedAt", receipt.getUploadedAt().toString());
 
@@ -774,14 +783,19 @@ public class UserController {
 
 
     @PutMapping("/users/{userEmail}/receipts/{receiptId}")
-    public ResponseEntity<JSONObject> editReceipts(@PathVariable String userEmail,
+    public ResponseEntity<Response<String>> editReceipts(@PathVariable String userEmail,
                                                    @PathVariable int receiptId,
                                                    @RequestParam("image") MultipartFile imageFile,
                                                    @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
         String endpointString = "[PUT /users/{userEmail}/receipts/{label}] ";
-        JSONObject response = new JSONObject();
+        Response<String> response = new Response<>();
 
         logger.info(endpointString + "Cookie: " + userId);
+
+        if (!isValidUserId(userEmail)) {
+            response.put("message", "Invalid user provided");
+            return ResponseEntity.badRequest().body(response);
+        }
 
         // Check for authorization and valid user credentials
         if (!isValidUserId(userId) || (!isAdmin(userId) && !userEmail.equals(userId))) {
@@ -790,7 +804,7 @@ public class UserController {
         }
 
         // Validate the content type of the uploaded image file
-        if (imageFile.isEmpty() || !isSupportedContentType(imageFile.getContentType())) {
+        if (imageFile.isEmpty()) {
             response.put("message", "Invalid file type. Only JPEG and PNG are allowed.");
             return ResponseEntity.badRequest().body(response);
         }
@@ -799,7 +813,7 @@ public class UserController {
         Optional<Receipts> receiptOpt = receiptsRepository.findById((long) receiptId);
         if (receiptOpt.isEmpty()) {
             response.put("message", "Receipt not found.");
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(response);
         }
 
         Receipts receipt = receiptOpt.get();
@@ -849,11 +863,11 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{userEmail}/receipts/{receiptId}")
-    public ResponseEntity<JSONObject> deleteReceipts(@PathVariable String userEmail,
+    public ResponseEntity<Response<String>> deleteReceipts(@PathVariable String userEmail,
                                                      @PathVariable int receiptId,
                                                      @CookieValue(name = "user-id", required = false) String userId) throws IOException, JSONException {
         String endpointString = "[DELETE /users/{userEmail}/receipts/{receiptId}] ";
-        JSONObject response = new JSONObject();
+        Response<String> response = new Response<>();
 
         logger.info(endpointString + "Cookie: " + userId);
 
@@ -867,7 +881,7 @@ public class UserController {
         Optional<Receipts> receiptOpt = receiptsRepository.findById((long) receiptId);
         if (receiptOpt.isEmpty()) {
             response.put("message", "Receipt not found.");
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(response);
         }
 
         Receipts receipt = receiptOpt.get();
